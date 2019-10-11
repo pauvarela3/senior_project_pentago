@@ -1,4 +1,4 @@
-# senior_project_pentago
+# Senior Project Pentago
 Simulation of the board game Pentago, with hopes of eventually have a machine play and learn the game using reinforcement learning. 
 
 Right now, it has a basic output. It is currently using Numpy. 
