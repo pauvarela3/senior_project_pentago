@@ -2,10 +2,10 @@ import numpy as np
 
 
 class BoardGame:
-    def __init__(self):
-        self.board = np.zeros((4,3,3))
+    def __init__(self, squares, row, column):
+        self.board = np.zeros((squares,row,column))
         self.start_game()
-    def drop_piece(self, row, col, turn, board):
+    def drop_piece(self, row, col, board):
         self.quad = -99
         if self.row > 3 and self.col > 3:
             self.quad = 3
@@ -23,7 +23,8 @@ class BoardGame:
             self.quad = 0
             self.row = row - 1
             self.col = col - 1
-        print(self.quad, self.row, self.col) 
+        
+        print(self.turn) 
         
         if self.turn ==0:
             self.piece = 1
@@ -35,7 +36,9 @@ class BoardGame:
             return 
         else:
             self.turn += 1
+            print(self.turn)
             self.turn = self.turn % 2
+            print(self.turn)
             board[self.quad][self.row][self.col] = self.piece
             
     def valid_move(self, row, col, quad):
@@ -92,16 +95,20 @@ class BoardGame:
                 self.col = int(input("Choose Column(1-6: "))
                 
                 
-            self.drop_piece(self.row, self.col, self.turn, self.board)
+            self.drop_piece(self.row, self.col, self.board)
+            
+            self.print_board()
             
             self.quad = int(input("What Quadrant do you want to rotate: "))
             self.rotation = int(input("Right(0) or Left(1)"))
             
-            self.board = self.rotate_quad(self.board, self.quad, self.rotation)
-                
-            self.turn += 1
-            self.turn = self.turn % 2
+            self.board = self.rotate_quad(self.board, self.quad - 1, self.rotation)
             
             
-pentago = BoardGame()
+           
+            
+squares = 4
+rows = 3 
+columns = 3 
+pentago = BoardGame(squares, rows, columns)
 
