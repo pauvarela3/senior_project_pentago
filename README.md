@@ -7,7 +7,7 @@ If you have pip:
     pip install numpy
 
 TODO:
-  Add rules to check for win for pentago.
+  Add rules to check for win for pentago. (DONE and UPLOADED)
   Add user interface and graphics using pygame or tkinter. 
   Animation for the rotation of each quadrant
   
