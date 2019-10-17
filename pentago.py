@@ -40,7 +40,8 @@ class BoardGame:
             
             if self.winning_move(board, self.piece):
                 self.game_over = True
-                print(f'Congrats Player {self.turn}, you have won the game!')
+#                print("Congrats Player {}, you have won the game!").format(str(self.turn - 1))
+                print(f'Congrats, {self.turn}, you have won the game!')
     def valid_move(self, row, col, quad):
         if self.board[quad][row][col] == 0:
             return True
@@ -70,10 +71,6 @@ class BoardGame:
         elif rotation == right:
             self.board[quad] = list(zip(*reversed(board[quad])))
             
-        if self.winning_move(self.board, self.piece):
-            self.game_over = True
-            print(f'Congrats Player {self.turn}, you have won the game!')
-            
         return self.board
         
     
@@ -82,50 +79,46 @@ class BoardGame:
         for i in range(len(board[0]) * 2):
             quad = 0
             row = i
-            if i > 2:
-                row = i - 3
             col = 0
-            if i > 2:
+            if i > 3:
                 quad = 2
             if board[quad][row][col] == piece and board[quad][row][col+1] == piece and board[quad][row][col+2] == piece and board[quad + 1][row][col] == piece and board[quad+1][row][col+1] == piece:
                 return True
             elif board[quad][row][col+1] == piece and board[quad][row][col+2] == piece and board[quad+1][row][col] == piece and board[quad + 1][row][col+1] == piece and board[quad+1][row][col+2] == piece:
                 return True
-    
+            else:
                 #vertical win
-        for j in range(len(board[0]) * 2):
-            quad = 0
-            row = 0
-            col = j
-            if i > 2:
-                col = j - 3
-            if j > 2:
-                quad = 1
-            if board[quad][row][col] == piece and board[quad][row+1][col] == piece and board[quad][row+2][col] == piece and board[quad + 2][row][col] == piece and board[quad+2][row+1][col] == piece:
-                return True
-            elif board[quad][row+1][col] == piece and board[quad][row+2][col] == piece and board[quad+2][row][col] == piece and board[quad + 2][row+1][col] == piece and board[quad+2][row+2][col] == piece:
-                return True
-        #diagonal wins
-
-        #middle diagonals
-        if board[0][0][0] == piece and board[0][1][1] == piece and board[0][2][2] == piece and board[3][0][0] == piece and board[3][1][1] == piece:
-            return True
-        if board[0][1][1] == piece and board[0][2][2] == piece and board[3][0][0] == piece and board[3][1][1] == piece and board[3][2][2] == piece:
-            return True
-        if board[2][2][0] == piece and board[2][1][1] == piece and board[2][0][2] == piece and board[1][2][0] == piece and board[1][1][1] == piece:
-            return True
-        if board[2][1][1] == piece and board[2][0][2] == piece and board[1][2][0] == piece and board[1][1][1] == piece and board[1][0][2] == piece:
-            return True
-        #side diagonals
-        if board[0][1][0] == piece and board[0][2][1] == piece and board[2][0][2]== piece and board[3][1][0] == piece and board[3][2][1] == piece:
-            return True
-        if board[0][0][1] == piece and board[0][1][2] == piece and board[1][2][0]== piece and board[3][0][1] == piece and board[3][1][2] == piece:
-            return True
-        if board[1][0][1] == piece and board[1][1][0] == piece and board[0][2][2]== piece and board[2][0][1] == piece and board[2][1][0] == piece:
-            return True
-        if board[1][1][2] == piece and board[1][2][1] == piece and board[3][0][0]== piece and board[2][1][2] == piece and board[2][2][1] == piece:
-            return True
-        return False            
+                for i in range(len(board[0]) * 2):
+                    quad = 0
+                    row = 0
+                    col = i
+                    if i > 3:
+                        quad = 2
+                    if board[quad][row][col] == piece and board[quad][row+1][col] == piece and board[quad][row+2][col] == piece and board[quad + 2][row][col] == piece and board[quad+2][row+1][col] == piece:
+                        return True
+                    elif board[quad][row+1][col] == piece and board[quad][row+2][col] == piece and board[quad+2][row][col] == piece and board[quad + 2][row+1][col] == piece and board[quad+2][row+2][col] == piece:
+                        return True
+                    #diagonal wins
+                    else:
+                        #middle diagonals
+                        if board[0][0][0] == piece and board[0][1][1] == piece and board[0][2][2] == piece and board[3][0][0] == piece and board[3][1][1] == piece:
+                            return True
+                        if board[0][1][1] == piece and board[0][2][2] == piece and board[3][0][0] == piece and board[3][1][1] == piece and board[3][2][2] == piece:
+                            return True
+                        if board[2][2][0] == piece and board[2][1][1] == piece and board[2][0][2] == piece and board[1][2][0] == piece and board[1][1][1] == piece:
+                            return True
+                        if board[2][1][1] == piece and board[2][0][2] == piece and board[1][2][0] == piece and board[1][1][1] == piece and board[1][0][2] == piece:
+                            return True
+                        #side diagonals
+                        if board[0][1][0] == piece and board[0][2][1] == piece and board[2][0][2]== piece and board[3][1][0] == piece and board[3][2][1] == piece:
+                            return True
+                        if board[0][0][1] == piece and board[0][1][2] == piece and board[1][0][2]== piece and board[3][0][1] == piece and board[3][1][2] == piece:
+                            return True
+                        if board[1][0][1] == piece and board[1][1][0] == piece and board[0][2][2]== piece and board[2][0][1] == piece and board[2][1][0] == piece:
+                            return True
+                        if board[1][1][2] == piece and board[1][2][1] == piece and board[3][0][0]== piece and board[2][1][2] == piece and board[2][2][1] == piece:
+                            return True
+                        return False            
     
     def start_game(self):
         self.game_over = False
@@ -153,21 +146,17 @@ class BoardGame:
                 
             self.drop_piece(self.row, self.col, self.board)
             
-            if self.game_over == True:
-                break
-            else:
+            self.print_board()
             
-                self.print_board()
-                
-                self.quad = int(input("What Quadrant do you want to rotate: "))
-                assert type(self.quad) is int, "% is not an integer" % self.quad
-                assert self.quad <= 4 and self.quad >= 1, "Choose quadrant 1, 2, 3, or 4" 
-                
-                self.rotation = int(input("Right(0) or Left(1): "))
-                assert type(self.rotation) is int, "% is not an integer" % self.rotation
-                assert self.rotation == 0 or self.rotation == 1, "Choose 0 or 1" 
-                
-                self.board = self.rotate_quad(self.board, self.quad - 1, self.rotation)
+            self.quad = int(input("What Quadrant do you want to rotate: "))
+            assert type(self.quad) is int, "% is not an integer" % self.quad
+            assert self.quad <= 4 and self.quad >= 1, "Choose quadrant 1, 2, 3, or 4" 
+            
+            self.rotation = int(input("Right(0) or Left(1): "))
+            assert type(self.rotation) is int, "% is not an integer" % self.rotation
+            assert self.rotation == 0 or self.rotation == 1, "Choose 0 or 1" 
+            
+            self.board = self.rotate_quad(self.board, self.quad - 1, self.rotation)
             
             
            
