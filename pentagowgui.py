@@ -15,6 +15,7 @@ BLUE = (0,0,255)
 BLACK = (0,0,0)
 RED = (255,0,0)
 YELLOW = (255,255,0)
+WHITE = (255,255,255)
 
 radius = int(indsqu/2 - 5)
 
@@ -23,12 +24,15 @@ rows = 3
 columns = 3 
 
 turn = 0
+state = 0
 game_over = False
 
 board = np.zeros((squares, rows, columns))
 
 size = (squarescreen, squarescreen)
 screen = pygame.display.set_mode(size)
+
+pygame.display.set_caption("Pentago")
 
 
 running = True
@@ -50,6 +54,24 @@ def check_range(value):
     else: x = 0
     
     return x
+
+def check_quad(x, y):
+    row = check_range(x)
+    col = check_range(y)
+    
+    if (row == 1 or row ==2  or row==3 ) and (col ==1 or col==2 or col ==3):
+        quad = 0
+    elif (row == 1 or row ==2  or row==3 ) and (col ==4 or col==5 or col ==6):
+        quad = 2
+    elif (row == 4 or row ==5  or row==6 ) and (col ==1 or col==2 or col ==3):
+        quad = 1
+    elif (row == 4 or row ==5  or row==6 ) and (col ==4 or col==5 or col ==6):
+        quad = 3
+    else:
+        return -1
+    return quad
+    
+    
 
 
 def draw_board(screen, board):
@@ -104,6 +126,8 @@ def draw_board(screen, board):
                 pygame.draw.circle(screen,YELLOW, (int(c*indsqu+(indsqu/2))+380, int(r*indsqu+(indsqu/2))+380), radius)
 
 def drop_piece(row, col, board, turn, piece):
+    game_over = False
+
     if row > 3 and col > 3:
         quad = 3
         row = row - 4
@@ -125,10 +149,12 @@ def drop_piece(row, col, board, turn, piece):
         piece = 1
     else:
         piece = 2
+        
+
     
     if not valid_move(row, col, quad):
         print("Space is already occupied, select another place")
-        return turn
+        return turn, game_over
     else:
         turn += 1
         turn = turn % 2
@@ -137,8 +163,6 @@ def drop_piece(row, col, board, turn, piece):
         if winning_move(board, piece):
             game_over = True
             print(f'Congrats Player {piece}, you have won the game!')
-        else:
-            game_over = False
 
         return turn, game_over
 
@@ -152,6 +176,7 @@ def valid_move(row, col, quad):
 def rotate_quad(board, quad, rotation, piece):
     left = 1
     right = 0
+    game_over = False
     
     if rotation == left:
         board[quad] = list(zip(*reversed(board[quad])))
@@ -226,35 +251,62 @@ while running:
         if event.type == pygame.QUIT:
             sys.exit()
             running = False
-        if event.type == pygame.MOUSEBUTTONDOWN:
-
-            x = event.pos[0]
-            y = event.pos[1]
-                
-            col = check_range(x)
-            row = check_range(y)
-                        
-            if col == 0 or row == 0:
-                continue
-            else:
-                if turn == 0:
-                    piece = 1
-                    new, game_over = drop_piece(row, col, board, turn, piece)
-                else:
-                    piece = 2
-                    new, game_over = drop_piece(row, col, board, turn, piece)
+        if state == 0:
+            if event.type == pygame.MOUSEBUTTONDOWN:
+    
+                x = event.pos[0]
+                y = event.pos[1]
                     
-            turn = new
-            
-            
-            if game_over == True:
-                #button with message that game is over and ask if want to play again
-                board = clear_board(board)
-                draw_board(screen, board)
-                pygame.display.update()
-            
+                col = check_range(x)
+                row = check_range(y)
+                            
+                if col == 0 or row == 0:
+                    continue
+                else:
+                    if turn == 0:
+                        piece = 1
+                        new, game_over = drop_piece(row, col, board, turn, piece)
+                    else:
+                        piece = 2
+                        new, game_over = drop_piece(row, col, board, turn, piece)
+                        
+                turn = new
+                
+                
+                if game_over == True:
+                    #button with message that game is over and ask if want to play again
+                    board = clear_board(board)
+                    draw_board(screen, board)
+                    pygame.display.update()
+                state += 1
+                state = state % 2
+        else:
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                x = event.pos[0]
+                y = event.pos[1]
+                
+                quad = check_quad(x, y)
+                print(f'Quad: {quad}')
+                
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_LEFT:
+                    rotation = 1
+                    print(f'Rotation: {rotation}')
+                if event.key == pygame.K_RIGHT:
+                    rotation = 0
+                    print(f'Rotation: {rotation}')
+                
+                        
+                board, game_over = rotate_quad(board, quad, rotation, piece)
+                
+                
+                state += 1
+                state = state % 2
+        
+        
         draw_board(screen, board)
         pygame.display.update()
+        
                 
             
             
