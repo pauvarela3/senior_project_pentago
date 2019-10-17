@@ -8,8 +8,7 @@ If you have pip:
 
 TODO:
   Add rules to check for win for pentago. (DONE and UPLOADED)
-  Add user interface and graphics using pygame or tkinter. (DONE and UPLOADED)
+  Add user interface and graphics using pygame or tkinter. 
   Animation for the rotation of each quadrant
   
-To use pentagowgui.py, you must download pygame. 
   
