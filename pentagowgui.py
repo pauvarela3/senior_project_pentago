@@ -8,13 +8,13 @@ SQUARESIZE = 90 * 3
 squarescreen = 90 * 8
 COL = 6
 ROW = 6
-
+state_pass = 0
 indsqu = 90
 
 BLUE = (0,0,255)
 BLACK = (0,0,0)
 RED = (255,0,0)
-YELLOW = (255,255,0)
+DARK_RED = (169,0,0)
 WHITE = (255,255,255)
 
 radius = int(indsqu/2 - 5)
@@ -76,54 +76,54 @@ def check_quad(x, y):
 
 def draw_board(screen, board):
     
-    pygame.draw.rect(screen, BLUE, (65,65,SQUARESIZE, SQUARESIZE), 2)
+    pygame.draw.rect(screen, RED, (65,65,SQUARESIZE, SQUARESIZE), 2)
     for c in range(3):
         for r in range(3):
-            pygame.draw.rect(screen,BLUE, ((c*indsqu)+65, (r*indsqu)+65, indsqu, indsqu))
+            pygame.draw.rect(screen,RED, ((c*indsqu)+65, (r*indsqu)+65, indsqu, indsqu))
             
             if board[0][r][c] == 0:
-                pygame.draw.circle(screen,BLACK, (int(c*indsqu+(indsqu/2))+65, int(r*indsqu+(indsqu/2))+65), radius)
+                pygame.draw.circle(screen,DARK_RED, (int(c*indsqu+(indsqu/2))+65, int(r*indsqu+(indsqu/2))+65), radius)
             if board[0][r][c] == 1:
-                pygame.draw.circle(screen,RED, (int(c*indsqu+(indsqu/2))+65, int(r*indsqu+(indsqu/2))+65), radius)
+                pygame.draw.circle(screen,WHITE, (int(c*indsqu+(indsqu/2))+65, int(r*indsqu+(indsqu/2))+65), radius)
             if board[0][r][c] == 2:
-                pygame.draw.circle(screen,YELLOW, (int(c*indsqu+(indsqu/2))+65, int(r*indsqu+(indsqu/2))+65), radius)
+                pygame.draw.circle(screen,BLACK, (int(c*indsqu+(indsqu/2))+65, int(r*indsqu+(indsqu/2))+65), radius)
 
 
-    pygame.draw.rect(screen, BLUE, (SQUARESIZE + 110, 65, SQUARESIZE, SQUARESIZE), 2)
+    pygame.draw.rect(screen, RED, (SQUARESIZE + 110, 65, SQUARESIZE, SQUARESIZE), 2)
     for c in range(3):
         for r in range(3):
-            pygame.draw.rect(screen,BLUE, ((c*indsqu)+110 + SQUARESIZE, (r*indsqu)+65, indsqu, indsqu))
+            pygame.draw.rect(screen,RED, ((c*indsqu)+110 + SQUARESIZE, (r*indsqu)+65, indsqu, indsqu))
             
             if board[1][r][c] == 0:
-                pygame.draw.circle(screen,BLACK, (int(c*indsqu+(indsqu/2))+380, int(r*indsqu+(indsqu/2))+65), radius)
+                pygame.draw.circle(screen,DARK_RED, (int(c*indsqu+(indsqu/2))+380, int(r*indsqu+(indsqu/2))+65), radius)
             if board[1][r][c] == 1:
-                pygame.draw.circle(screen,RED, (int(c*indsqu+(indsqu/2))+380, int(r*indsqu+(indsqu/2))+65), radius)
+                pygame.draw.circle(screen,WHITE, (int(c*indsqu+(indsqu/2))+380, int(r*indsqu+(indsqu/2))+65), radius)
             if board[1][r][c] == 2:
-                pygame.draw.circle(screen,YELLOW, (int(c*indsqu+(indsqu/2))+380, int(r*indsqu+(indsqu/2))+65), radius)
+                pygame.draw.circle(screen,BLACK, (int(c*indsqu+(indsqu/2))+380, int(r*indsqu+(indsqu/2))+65), radius)
 
-    pygame.draw.rect(screen, BLUE, (65, 110 + SQUARESIZE, SQUARESIZE, SQUARESIZE), 2)
+    pygame.draw.rect(screen, RED, (65, 110 + SQUARESIZE, SQUARESIZE, SQUARESIZE), 2)
     for c in range(3):
         for r in range(3):
-            pygame.draw.rect(screen,BLUE, ((c*indsqu)+65, (r*indsqu)+110 + SQUARESIZE, indsqu, indsqu))
+            pygame.draw.rect(screen,RED, ((c*indsqu)+65, (r*indsqu)+110 + SQUARESIZE, indsqu, indsqu))
             
             if board[2][r][c] == 0:
-                pygame.draw.circle(screen,BLACK, (int(c*indsqu+(indsqu/2))+65, int(r*indsqu+(indsqu/2))+380), radius)
+                pygame.draw.circle(screen,DARK_RED, (int(c*indsqu+(indsqu/2))+65, int(r*indsqu+(indsqu/2))+380), radius)
             if board[2][r][c] == 1:
-                pygame.draw.circle(screen,RED, (int(c*indsqu+(indsqu/2))+65, int(r*indsqu+(indsqu/2))+380), radius)
+                pygame.draw.circle(screen,WHITE, (int(c*indsqu+(indsqu/2))+65, int(r*indsqu+(indsqu/2))+380), radius)
             if board[2][r][c] == 2:
-                pygame.draw.circle(screen,YELLOW, (int(c*indsqu+(indsqu/2))+65, int(r*indsqu+(indsqu/2))+380), radius)
+                pygame.draw.circle(screen,BLACK, (int(c*indsqu+(indsqu/2))+65, int(r*indsqu+(indsqu/2))+380), radius)
 
-    pygame.draw.rect(screen, BLUE, (SQUARESIZE + 110, 110 + SQUARESIZE, SQUARESIZE, SQUARESIZE), 2)
+    pygame.draw.rect(screen, RED, (SQUARESIZE + 110, 110 + SQUARESIZE, SQUARESIZE, SQUARESIZE), 2)
     for c in range(3):
         for r in range(3):
-            pygame.draw.rect(screen,BLUE, ((c*indsqu)+110 +SQUARESIZE, (r*indsqu)+110 + SQUARESIZE, indsqu, indsqu))
+            pygame.draw.rect(screen,RED, ((c*indsqu)+110 +SQUARESIZE, (r*indsqu)+110 + SQUARESIZE, indsqu, indsqu))
             
             if board[3][r][c] == 0:
-                pygame.draw.circle(screen,BLACK, (int(c*indsqu+(indsqu/2))+380, int(r*indsqu+(indsqu/2))+380), radius)
+                pygame.draw.circle(screen,DARK_RED, (int(c*indsqu+(indsqu/2))+380, int(r*indsqu+(indsqu/2))+380), radius)
             if board[3][r][c] == 1:
-                pygame.draw.circle(screen,RED, (int(c*indsqu+(indsqu/2))+380, int(r*indsqu+(indsqu/2))+380), radius)
+                pygame.draw.circle(screen,WHITE, (int(c*indsqu+(indsqu/2))+380, int(r*indsqu+(indsqu/2))+380), radius)
             if board[3][r][c] == 2:
-                pygame.draw.circle(screen,YELLOW, (int(c*indsqu+(indsqu/2))+380, int(r*indsqu+(indsqu/2))+380), radius)
+                pygame.draw.circle(screen,BLACK, (int(c*indsqu+(indsqu/2))+380, int(r*indsqu+(indsqu/2))+380), radius)
 
 def drop_piece(row, col, board, turn, piece):
     game_over = False
@@ -168,9 +168,12 @@ def drop_piece(row, col, board, turn, piece):
 
 
 def valid_move(row, col, quad):
+    global state_pass
     if board[quad][row][col] == 0:
+        state_pass = 1
         return True
     else:
+        state_pass = 0
         return False
 
 def rotate_quad(board, quad, rotation, piece):
@@ -253,13 +256,12 @@ while running:
             running = False
         if state == 0:
             if event.type == pygame.MOUSEBUTTONDOWN:
-    
+               
                 x = event.pos[0]
                 y = event.pos[1]
                     
                 col = check_range(x)
                 row = check_range(y)
-                            
                 if col == 0 or row == 0:
                     continue
                 else:
@@ -270,16 +272,18 @@ while running:
                         piece = 2
                         new, game_over = drop_piece(row, col, board, turn, piece)
                         
-                turn = new
-                
-                
+                turn = new  
                 if game_over == True:
                     #button with message that game is over and ask if want to play again
                     board = clear_board(board)
                     draw_board(screen, board)
                     pygame.display.update()
-                state += 1
-                state = state % 2
+                if  state_pass == 1:
+                    print ("Hey")
+                    state += 1
+                else:
+                    state = 0;
+                    
         else:
             if event.type == pygame.MOUSEBUTTONDOWN:
                 x = event.pos[0]
