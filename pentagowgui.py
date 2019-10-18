@@ -1,6 +1,7 @@
 import numpy as np
 import pygame 
 import sys
+from pygame.constants import MOUSEBUTTONDOWN
 
 pygame.init()
 
@@ -16,6 +17,7 @@ BLACK = (0,0,0)
 RED = (255,0,0)
 DARK_RED = (169,0,0)
 WHITE = (255,255,255)
+GRAY = (131,139,139)
 
 radius = int(indsqu/2 - 5)
 
@@ -26,10 +28,11 @@ columns = 3
 turn = 0
 state = 0
 game_over = False
+quad_done = False
 
 board = np.zeros((squares, rows, columns))
 
-size = (squarescreen, squarescreen)
+size = (squarescreen, squarescreen + 65)
 screen = pygame.display.set_mode(size)
 
 pygame.display.set_caption("Pentago")
@@ -56,22 +59,25 @@ def check_range(value):
     return x
 
 def check_quad(x, y):
-    row = check_range(x)
-    col = check_range(y)
+    col = x
+    row = y
     
-    if (row == 1 or row ==2  or row==3 ) and (col ==1 or col==2 or col ==3):
-        quad = 0
-    elif (row == 1 or row ==2  or row==3 ) and (col ==4 or col==5 or col ==6):
-        quad = 2
-    elif (row == 4 or row ==5  or row==6 ) and (col ==1 or col==2 or col ==3):
-        quad = 1
-    elif (row == 4 or row ==5  or row==6 ) and (col ==4 or col==5 or col ==6):
-        quad = 3
+    if (row >65 and row <335) and (col > 65 and col < 335):
+        return 0
+    elif (row >65 and row <335) and (col > 380 and col <650):
+        return 1
+    elif (row > 380 and row <650) and (col >65 and col <335):
+        return 2
+    elif (row > 380 and row <650) and (col > 380 and col <650):
+        return 3
     else:
         return -1
-    return quad
     
-    
+def in_range(x,y):
+    if(x > 65 and x <223) and (y > 713 and y < 744):
+        return True  
+    else:
+        return False 
 
 
 def draw_board(screen, board):
@@ -244,10 +250,11 @@ def winning_move(board, piece):
         return True
     return False          
 
-def clear_board(board):
+def clear_board():
     board = np.zeros((squares, rows, columns))
+    turn = 0
 
-    return board
+    return board, turn
             
 while running:
     for event in pygame.event.get():
@@ -255,6 +262,8 @@ while running:
             sys.exit()
             running = False
         if state == 0:
+            if event.type == MOUSEBUTTONDOWN and in_range(event.pos[0], event.pos[1]):
+                board, turn = clear_board()
             if event.type == pygame.MOUSEBUTTONDOWN:
                
                 x = event.pos[0]
@@ -272,14 +281,12 @@ while running:
                         piece = 2
                         new, game_over = drop_piece(row, col, board, turn, piece)
                         
-                turn = new  
                 if game_over == True:
                     #button with message that game is over and ask if want to play again
                     board = clear_board(board)
                     draw_board(screen, board)
                     pygame.display.update()
                 if  state_pass == 1:
-                    print ("Hey")
                     state += 1
                 else:
                     state = 0;
@@ -289,26 +296,35 @@ while running:
                 x = event.pos[0]
                 y = event.pos[1]
                 
-                quad = check_quad(x, y)
-                print(f'Quad: {quad}')
                 
-            if event.type == pygame.KEYDOWN:
+                quad = check_quad(x, y)
+                quad_done = True
+                
+            if event.type == pygame.KEYDOWN and quad_done == True:
                 if event.key == pygame.K_LEFT:
                     rotation = 1
-                    print(f'Rotation: {rotation}')
                 if event.key == pygame.K_RIGHT:
                     rotation = 0
-                    print(f'Rotation: {rotation}')
                 
                         
                 board, game_over = rotate_quad(board, quad, rotation, piece)
                 
-                
+                turn = new  
                 state += 1
                 state = state % 2
-        
+                quad_done = False
+                
+            if event.type == MOUSEBUTTONDOWN and in_range(event.pos[0], event.pos[1]):
+                board, turn = clear_board()
+
         
         draw_board(screen, board)
+        default_font = pygame.font.get_default_font()
+        font_renderer = pygame.font.Font(default_font, 32)
+        label = font_renderer.render(f"Turn: Player {turn + 1}", 1, WHITE, BLACK)
+        screen.blit(label, (245,670))
+        label = font_renderer.render("Start Over", 1, WHITE, GRAY)
+        screen.blit(label, (65, 710))
         pygame.display.update()
         
                 
