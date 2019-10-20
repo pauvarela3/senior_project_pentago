@@ -9,7 +9,7 @@ monomials = [
     ['2010', '2100', '0220', '1010', '1100'],
     ['1210', '1120', '3000', '2210', '2120']
 ]
-number_of_states =0
+number_of_states = 0
 empty = []
 
 
@@ -31,9 +31,10 @@ def rotate_4(quadrant, array):
         pprint(array)
         number_of_states += 1;
         #print("\n")
+        array_1 = copy.deepcopy(array)
         direction = str((int(direction) + 1))
         count = count + 1
-        empty.append(array)
+        empty.append(array_1)
 
 # rotate_4("0", monomials)
 # print("value of empty after loop: ")
@@ -55,7 +56,7 @@ def rotate_3(quadrant, array):
     #pprint(array)
     #print("\n")
     rotate_4("3", array)
-    empty.append(array)
+    #empty.append(array)
     direction = str((int(direction) + 1))
     count = count + 1
 
@@ -79,7 +80,7 @@ def rotate_2(quadrant, array):
           array[i][j] = array[i][j][:-1] + direction
 
     rotate_3("2", array)
-    empty.append(array)
+    #empty.append(array)
     direction = str((int(direction) + 1))
     count = count + 1
 
@@ -93,7 +94,7 @@ def rotate_1(quadrant, array):
   direction = "0"
   count = 0
   while count < 4:
-    print("\n\n\n\nOne whole rotate for the first quadrant has finished")
+    print("\n\n\n\none whole rotate for the first quadrant has finished")
     array = copy.deepcopy(monomials)
 
     for i in range(len(array)):
@@ -104,7 +105,7 @@ def rotate_1(quadrant, array):
           array[i][j] = array[i][j][:-1] + direction
 
     rotate_2("1", array)
-    empty.append(array)
+    #empty.append(array)
     direction = str((int(direction) + 1))
     count = count + 1
 
