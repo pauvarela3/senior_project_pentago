@@ -15,6 +15,7 @@ empty = []
 
 
 def rotate_4(quadrant, array):
+    boolean = False
     global number_of_states
     direction = "0"
     count = 0
@@ -28,21 +29,29 @@ def rotate_4(quadrant, array):
 
                 if monomials[i][j].startswith(quadrant):
                     array[i][j] = array[i][j][:-1] + direction
+                    boolean = True
+            if(boolean == True):
+                number_of_states += 1;
+                boolean = False
+                array_1 = copy.deepcopy(array[i])
+                empty.append(array_1)
+            
         pprint(array)
-        number_of_states += 1;
         #print("\n")
-        array_1 = copy.deepcopy(array)
+        #array_1 = copy.deepcopy(array)
         direction = str((int(direction) + 1))
         count = count + 1
-        empty.append(array_1)
+        #empty.append(array_1)
 
 # rotate_4("0", monomials)
 # print("value of empty after loop: ")
 # pprint(empty)
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 def rotate_3(quadrant, array):
+  global number_of_states
   direction = "0"
   count = 0
+  boolean = False
   while count < 4:
     #print("This should happen 4 times:\n")
     #array = copy.deepcopy(monomials)
@@ -53,6 +62,12 @@ def rotate_3(quadrant, array):
 
         if monomials[i][j].startswith(quadrant):
           array[i][j] = array[i][j][:-1] + direction
+          boolean = True
+      if(boolean == True):
+          number_of_states += 1;
+          boolean = False
+          array_1 = copy.deepcopy(array[i])
+          empty.append(array_1)
     #pprint(array)
     #print("\n")
     rotate_4("3", array)
@@ -66,8 +81,10 @@ def rotate_3(quadrant, array):
 # pprint(empty)
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 def rotate_2(quadrant, array):
+  global number_of_states
   direction = "0"
   count = 0
+  boolean = False
   while count < 4:
 
     #array = copy.deepcopy(monomials)
@@ -78,7 +95,12 @@ def rotate_2(quadrant, array):
 
         if monomials[i][j].startswith(quadrant):
           array[i][j] = array[i][j][:-1] + direction
-
+          boolean = True  
+      if(boolean == True):
+          number_of_states += 1;
+          boolean = False
+          array_1 = copy.deepcopy(array[i])
+          empty.append(array_1)
     rotate_3("2", array)
     #empty.append(array)
     direction = str((int(direction) + 1))
@@ -91,8 +113,11 @@ def rotate_2(quadrant, array):
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
 def rotate_1(quadrant, array):
+  global number_of_states
+  empty = copy.deepcopy(monomials)  
   direction = "0"
   count = 0
+  boolean = False
   while count < 4:
     print("\n\n\n\none whole rotate for the first quadrant has finished")
     array = copy.deepcopy(monomials)
@@ -103,7 +128,12 @@ def rotate_1(quadrant, array):
 
         if monomials[i][j].startswith(quadrant):
           array[i][j] = array[i][j][:-1] + direction
-
+          boolean = True  
+      if(boolean == True):
+          number_of_states += 1;
+          boolean = False
+          array_1 = copy.deepcopy(array[i])
+          empty.append(array_1)
     rotate_2("1", array)
     #empty.append(array)
     direction = str((int(direction) + 1))
@@ -113,6 +143,7 @@ def rotate_1(quadrant, array):
 rotate_1("0", monomials)
 print("value of empty after loop: ")
 pprint(empty)
+print("this is the number of monomials that shouldn't be duplicates")
 print(number_of_states)
 
 
