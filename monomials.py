@@ -9,17 +9,18 @@ monomials = [
     ['2010', '2100', '0220', '1010', '1100'],
     ['1210', '1120', '3000', '2210', '2120']
 ]
-
+number_of_states =0
 empty = []
 
 
 
 def rotate_4(quadrant, array):
+    global number_of_states
     direction = "0"
     count = 0
     while count < 4:
-
-        array = copy.deepcopy(monomials)
+        print("Printing all states:")
+        #array = copy.deepcopy(monomials)
 
         for i in range(len(array)):
 
@@ -27,7 +28,9 @@ def rotate_4(quadrant, array):
 
                 if monomials[i][j].startswith(quadrant):
                     array[i][j] = array[i][j][:-1] + direction
-
+        pprint(array)
+        number_of_states += 1;
+        #print("\n")
         direction = str((int(direction) + 1))
         count = count + 1
         empty.append(array)
@@ -40,8 +43,8 @@ def rotate_3(quadrant, array):
   direction = "0"
   count = 0
   while count < 4:
-
-    array = copy.deepcopy(monomials)
+    #print("This should happen 4 times:\n")
+    #array = copy.deepcopy(monomials)
 
     for i in range(len(array)):
 
@@ -49,7 +52,8 @@ def rotate_3(quadrant, array):
 
         if monomials[i][j].startswith(quadrant):
           array[i][j] = array[i][j][:-1] + direction
-
+    #pprint(array)
+    #print("\n")
     rotate_4("3", array)
     empty.append(array)
     direction = str((int(direction) + 1))
@@ -65,7 +69,7 @@ def rotate_2(quadrant, array):
   count = 0
   while count < 4:
 
-    array = copy.deepcopy(monomials)
+    #array = copy.deepcopy(monomials)
 
     for i in range(len(array)):
 
@@ -74,7 +78,7 @@ def rotate_2(quadrant, array):
         if monomials[i][j].startswith(quadrant):
           array[i][j] = array[i][j][:-1] + direction
 
-    rotate_4("2", array)
+    rotate_3("2", array)
     empty.append(array)
     direction = str((int(direction) + 1))
     count = count + 1
@@ -89,7 +93,7 @@ def rotate_1(quadrant, array):
   direction = "0"
   count = 0
   while count < 4:
-
+    print("\n\n\n\nOne whole rotate for the first quadrant has finished")
     array = copy.deepcopy(monomials)
 
     for i in range(len(array)):
@@ -108,7 +112,7 @@ def rotate_1(quadrant, array):
 rotate_1("0", monomials)
 print("value of empty after loop: ")
 pprint(empty)
-
+print(number_of_states)
 
 
 
