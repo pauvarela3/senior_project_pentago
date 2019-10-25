@@ -3,11 +3,39 @@ import copy
 print('\n')
 
 monomials = [
-    ['0010', '0120', '2200', '3010', '3120'],
-    #['0010', '0020', '2000', '2010', '2020'],
-    #['0000', '0110', '0220', '3000', '3110'],
-    #['2010', '2100', '0220', '1010', '1100'],
-    #['1210', '1120', '3000', '2210', '2120']
+     ['0000', '0010', '0020', '2000', '2010'],# 16
+     ['0010', '0020', '2000', '2010', '2020'],# 16
+     ['0000', '0110', '0220', '3000', '3110'],# 16
+     ['0110', '0220', '3000', '3110', '3220'],# 16 
+     ['0000', '0100', '0200', '1000', '1100'],# 16
+     ['0100', '0200', '1000', '1100', '1200'],# 16
+     ['0010', '0110', '0210', '1010', '1110'],# 16
+     ['0110', '0210', '1010', '1110', '1210'],# 16
+     ['0010', '0120', '2200', '3010', '3120'],# 64
+     ['0020', '0120', '0220', '1020', '1120'],# 16
+     ['0120', '0220', '1020', '1120', '1220'],# 16 
+     ['2000', '2100', '2200', '3000', '3100'],# 16
+     ['2100', '2200', '3000', '3100', '3200'],# 16
+     ['2010', '2110', '2210', '3010', '3110'],# 16
+     ['2110', '2210', '3010', '3110', '3210'],# 16
+     ['2010', '2100', '0220', '1010', '1100'],# 64
+     ['2020', '2120', '2220', '3020', '3120'],# 16
+     ['2120', '2220', '3020', '3120', '3220'],# 16
+     ['2020', '2110', '2200', '1020', '1110'],# 16
+     ['2110', '2200', '1020', '1110', '1200'],# 16
+     ['0100', '0110', '0120', '2100', '2110'],# 16
+     ['0110', '0120', '2100', '2110', '2120'],# 16
+     ['0100', '0210', '1020', '3100', '3210'],# 64
+     ['0200', '0210', '0220', '2200', '2210'],# 16
+     ['0210', '0220', '2200', '2210', '2220'],# 16
+     ['1000', '1010', '1020', '3000', '3010'],# 16
+     ['1010', '1020', '3000', '3010', '3020'],# 16
+     ['1100', '1110', '1120', '3100', '3110'],# 16
+     ['1110', '1120', '3100', '3110', '3120'],# 16
+     ['1200', '1210', '1220', '3200', '3210'],# 16
+     ['1210', '1220', '3200', '3210', '3220'],# 16
+     ['1210', '1120', '3000', '2210', '2120'],# 64
+                                              # 704
 ]
 number_of_states = 0
 empty = []
@@ -16,12 +44,9 @@ empty = []
 
 def rotate_4(quadrant, array):
     boolean = False
-    global number_of_states
     direction = "0"
     count = 0
     while count < 4:
-        print("Printing all states:")
-        #array = copy.deepcopy(monomials)
 
         for i in range(len(array)):
 
@@ -30,31 +55,23 @@ def rotate_4(quadrant, array):
                 if monomials[i][j].startswith(quadrant):
                     array[i][j] = array[i][j][:-1] + direction
                     boolean = True
-            if(boolean == True and direction):
-                number_of_states += 1;
+            if(boolean == True):
                 boolean = False
                 array_1 = copy.deepcopy(array[i])
                 empty.append(array_1)
             
-        pprint(array)
-        #print("\n")
-        #array_1 = copy.deepcopy(array)
         direction = str((int(direction) + 1))
         count = count + 1
-        #empty.append(array_1)
 
 # rotate_4("0", monomials)
 # print("value of empty after loop: ")
 # pprint(empty)
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 def rotate_3(quadrant, array):
-  global number_of_states
   direction = "0"
   count = 0
   boolean = False
   while count < 4:
-    #print("This should happen 4 times:\n")
-    #array = copy.deepcopy(monomials)
 
     for i in range(len(array)):
 
@@ -63,15 +80,11 @@ def rotate_3(quadrant, array):
         if monomials[i][j].startswith(quadrant):
           array[i][j] = array[i][j][:-1] + direction
           boolean = True
-      #if(boolean == True and direction != "0"):
-          #number_of_states += 1;
-      #    boolean = False
-       #   array_1 = copy.deepcopy(array[i])
-        #  empty.append(array_1)
-    #pprint(array)
-    #print("\n")
+      if(boolean == True):
+          boolean = False
+          array_1 = copy.deepcopy(array[i])
+          empty.append(array_1)
     rotate_4("3", array)
-    #empty.append(array)
     direction = str((int(direction) + 1))
     count = count + 1
 
@@ -81,13 +94,10 @@ def rotate_3(quadrant, array):
 # pprint(empty)
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 def rotate_2(quadrant, array):
-  global number_of_states
   direction = "0"
   count = 0
   boolean = False
   while count < 4:
-
-    #array = copy.deepcopy(monomials)
 
     for i in range(len(array)):
 
@@ -96,13 +106,11 @@ def rotate_2(quadrant, array):
         if monomials[i][j].startswith(quadrant):
           array[i][j] = array[i][j][:-1] + direction
           boolean = True  
-      #if(boolean == True and direction != "0"):
-          #number_of_states += 1;
-       #   boolean = False
-        #  array_1 = copy.deepcopy(array[i])
-         # empty.append(array_1)
+      if(boolean == True):
+          boolean = False
+          array_1 = copy.deepcopy(array[i])
+          empty.append(array_1)
     rotate_3("2", array)
-    #empty.append(array)
     direction = str((int(direction) + 1))
     count = count + 1
 
@@ -113,13 +121,11 @@ def rotate_2(quadrant, array):
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
 def rotate_1(quadrant, array):
-  global number_of_states
   empty = copy.deepcopy(monomials)  
   direction = "0"
   count = 0
   boolean = False
   while count < 4:
-    print("\n\n\n\none whole rotate for the first quadrant has finished")
     array = copy.deepcopy(monomials)
 
     for i in range(len(array)):
@@ -129,24 +135,29 @@ def rotate_1(quadrant, array):
         if monomials[i][j].startswith(quadrant):
           array[i][j] = array[i][j][:-1] + direction
           boolean = True  
-      #if(boolean == True):
-          #number_of_states += 1;
-       #   boolean = False
-        #  array_1 = copy.deepcopy(array[i])
-         # empty.append(array_1)
+      if(boolean == True):
+          boolean = False
+          array_1 = copy.deepcopy(array[i])
+          empty.append(array_1)
     rotate_2("1", array)
-    #empty.append(array)
     direction = str((int(direction) + 1))
     count = count + 1
 
 
 rotate_1("0", monomials)
-print("value of empty after loop: ")
-pprint(empty)
-print("this is the number of monomials that shouldn't be duplicates")
+print("this is the number of monomials with duplicates")
 print(len(empty))
 
 
+empty_1 = []
+for i in empty:
+    if i not in empty_1:
+        empty_1.append(i)
+
+print("Should have the duplicates cleaned off")
+pprint(empty_1)
+print("length of clean empty:")
+print(len(empty_1))
 
 
 
