@@ -72,7 +72,7 @@ def check_quad(x, y):
     elif (row > 380 and row <650) and (col > 380 and col <650):
         return 3
     else:
-        return -1
+        return 5
     
 def in_range(x,y):
     if(x > 65 and x <223) and (y > 713 and y < 744):
@@ -387,7 +387,11 @@ while running:
                     
                     
                     quad = check_quad(x, y)
-                    quad_done = True
+                    if quad == 5:
+                        quad_done = False
+                    else:
+                        quad_done = True
+                    
                     
                 if event.type == pygame.KEYDOWN and quad_done == True:
                     if event.key == pygame.K_LEFT:
