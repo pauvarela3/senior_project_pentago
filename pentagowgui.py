@@ -26,7 +26,8 @@ rows = 3
 columns = 3 
 
 turn = 0
-state = 0
+state = -1
+
 game_over = False
 quad_done = False
 
@@ -78,9 +79,20 @@ def in_range(x,y):
         return True  
     else:
         return False 
+    
+def check_pressed(x,y):
+    if( 219 < x and x < 501) and (259 < y and y < 359):
+        return 0
+    
+    elif (219 < x and x < 501) and (399 < y and y < 501):
+        return 1
+    else:
+        return -1
 
 
 def draw_board(screen, board):
+    
+    pygame.draw.rect(screen, BLACK, (65, 65, (SQUARESIZE * 2) + 45, (SQUARESIZE * 2) + 45))
     
     pygame.draw.rect(screen, RED, (65,65,SQUARESIZE, SQUARESIZE), 2)
     for c in range(3):
@@ -253,90 +265,154 @@ def winning_move(board, piece):
 def clear_board():
     board = np.zeros((squares, rows, columns))
     turn = 0
+    game_over = False
+    state = 0
 
-    return board, turn
+    return board, turn, game_over, state
+
+def game_menu(screen, event):
+    default_font = pygame.font.get_default_font()
+    font_renderer = pygame.font.Font(default_font, 80)
+    label = font_renderer.render("PENTAGO", 1, RED)
+    screen.blit(label, (165,120))
+    coord = (135, 220, 450, 320)
+    pygame.draw.rect(screen, BLUE, coord)
+    button1 = (220, 260, 280, 100)
+    pygame.draw.rect(screen, BLACK, button1)
+    button3 = (220, 400, 280, 100)
+    pygame.draw.rect(screen, BLACK, button3)
+    
+    font_label = pygame.font.Font(default_font, 32)
+    font_tiny = pygame.font.Font(default_font, 32)
+    label1 = font_label.render("Start Game:", 1, RED)
+    label12 = font_tiny.render("One Player", 1, RED)
+    label2 = font_label.render("Start Game:", 1, RED)
+    label22 = font_tiny.render("Two Player", 1, RED)
+    
+    screen.blit(label1, (265, 280))
+    screen.blit(label12, (270, 310))
+    screen.blit(label2, (265, 420))
+    screen.blit(label22, (270, 450))
+    
+    pygame.display.update()
+    
+    if event.type == MOUSEBUTTONDOWN:
+        pressed = check_pressed(event.pos[0], event.pos[1])
+        if pressed == -1:
+            game_menu(screen, event)
+        elif pressed == 0:
+            return pressed
+        elif pressed == 1:
+            return pressed
+        else:
+            game_menu(screen, event)
+def game_over_sign(x,y):
+    pressed = 1
+    return pressed
+    pass
+
             
 while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             sys.exit()
             running = False
-        if state == 0:
-            if event.type == MOUSEBUTTONDOWN and in_range(event.pos[0], event.pos[1]):
-                board, turn = clear_board()
-            if event.type == pygame.MOUSEBUTTONDOWN:
-               
-                x = event.pos[0]
-                y = event.pos[1]
-                    
-                col = check_range(x)
-                row = check_range(y)
-                if col == 0 or row == 0:
-                    continue
-                else:
-                    if turn == 0:
-                        piece = 1
-                        new, game_over = drop_piece(row, col, board, turn, piece)
-                    else:
-                        piece = 2
-                        new, game_over = drop_piece(row, col, board, turn, piece)
-                        
-                if game_over == True:
-                    #button with message that game is over and ask if want to play again
-                    board = clear_board(board)
-                    draw_board(screen, board)
-                    pygame.display.update()
-                if  state_pass == 1:
-                    state += 1
-                else:
-                    state = 0;
-                    
-        else:
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                x = event.pos[0]
-                y = event.pos[1]
-                
-                
-                quad = check_quad(x, y)
-                quad_done = True
-                
-            if event.type == pygame.KEYDOWN and quad_done == True:
-                if event.key == pygame.K_LEFT:
-                    rotation = 1
-                if event.key == pygame.K_RIGHT:
-                    rotation = 0
-                
-                        
-                board, game_over = rotate_quad(board, quad, rotation, piece)
-                
-                turn = new  
-                state += 1
-                state = state % 2
-                quad_done = False
-                
-            if event.type == MOUSEBUTTONDOWN and in_range(event.pos[0], event.pos[1]):
-                board, turn = clear_board()
-
-        
-        draw_board(screen, board)
         default_font = pygame.font.get_default_font()
         font_renderer = pygame.font.Font(default_font, 32)
-        label = font_renderer.render(f"Turn: Player {turn + 1}", 1, WHITE, BLACK)
-        screen.blit(label, (245,670))
-        label = font_renderer.render("Start Over", 1, WHITE, GRAY)
-        screen.blit(label, (65, 710))
-        pygame.display.update()
-        
+        font_gameover = pygame.font.Font(default_font, 45)
+        if event.type == MOUSEBUTTONDOWN and in_range(event.pos[0], event.pos[1]):
+            board, turn, game_over, state = clear_board()
+            draw_board(screen, board)
+            pygame.display.update()
+        if state == -1:
+            pressed = game_menu(screen, event)
+            if pressed == 0: #one player
+                state = 0
+            if pressed == 1: #two player
+                state = 0
                 
+        else: 
+            if not game_over:
+                label = font_gameover.render(f"Game Over: Player {turn + 1} Won!", 1, BLACK, BLACK)
+                screen.blit(label, (65,340))
+                draw_board(screen, board)
+                label = font_renderer.render(f"Turn: Player {turn + 1}", 1, WHITE, BLACK)
+                screen.blit(label, (245,670))
+                label = font_renderer.render("  Start Over  ", 1, WHITE, GRAY)
+                screen.blit(label, (65, 710))
             
+            pygame.display.update()
+            if state == 0:
+                
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                   
+                    x = event.pos[0]
+                    y = event.pos[1]
+                        
+                    col = check_range(x)
+                    row = check_range(y)
+                    if col == 0 or row == 0:
+                        continue
+                    else:
+                        if turn == 0:
+                            piece = 1
+                            new, game_over = drop_piece(row, col, board, turn, piece)
+                        else:
+                            piece = 2
+                            new, game_over = drop_piece(row, col, board, turn, piece)
+                            
+                    
+                    if  state_pass == 1:
+                        state += 1
+                    else:
+                        state = 0
+                    if game_over:
+                        label = font_gameover.render(f"Game Over: Player {turn + 1} Won!", 1, RED, BLACK)
+                        screen.blit(label, (65,340))
+                        pygame.display.update()
+                        print("here")
+                        if event.type == MOUSEBUTTONDOWN:
+                            pressed = game_over_sign(event.pos[0], event.pos[1])
+    
+                            if pressed == 0:
+                                board, turn, game_over, state = clear_board()
+                                draw_board(screen, board)
+                                pygame.display.update()
+    
+            else:
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    x = event.pos[0]
+                    y = event.pos[1]
+                    
+                    
+                    quad = check_quad(x, y)
+                    quad_done = True
+                    
+                if event.type == pygame.KEYDOWN and quad_done == True:
+                    if event.key == pygame.K_LEFT:
+                        rotation = 1
+                    if event.key == pygame.K_RIGHT:
+                        rotation = 0
+                    
+                            
+                    board, game_over = rotate_quad(board, quad, rotation, piece)
+                    
+                    
+                    turn = new  
+                    state += 1
+                    state = state % 2
+                    quad_done = False
+                    
+                    if game_over:
+                        checked = True
+                        while not checked:
+                            label = font_gameover.render(f"Game Over: Player {turn + 1} Won!", 1, RED, BLACK)
+                            screen.blit(label, (65,340))
+                            pygame.display.update()
+                            print("here")
+                            
+                        board, turn, game_over, state = clear_board()
+                        draw_board(screen, board)
+                        pygame.display.update()
             
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
+                    pygame.display.update()
