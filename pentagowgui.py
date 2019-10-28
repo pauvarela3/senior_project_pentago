@@ -367,6 +367,7 @@ while running:
                     else:
                         state = 0
                     if game_over:
+                        draw_board(screen, board)
                         label = font_gameover.render(f"Game Over: Player {turn + 1} Won!", 1, RED, BLACK)
                         screen.blit(label, (65,340))
                         pygame.display.update()
@@ -404,15 +405,18 @@ while running:
                     quad_done = False
                     
                     if game_over:
-                        checked = True
-                        while not checked:
-                            label = font_gameover.render(f"Game Over: Player {turn + 1} Won!", 1, RED, BLACK)
-                            screen.blit(label, (65,340))
-                            pygame.display.update()
-                            print("here")
-                            
-                        board, turn, game_over, state = clear_board()
                         draw_board(screen, board)
+                        label = font_gameover.render(f"Game Over: Player {turn + 1} Won!", 1, RED, BLACK)
+                        screen.blit(label, (65,340))
                         pygame.display.update()
+                        print("here")
+                        if event.type == MOUSEBUTTONDOWN:
+                            pressed = game_over_sign(event.pos[0], event.pos[1])
+    
+                            if pressed == 0:
+                                board, turn, game_over, state = clear_board()
+                                draw_board(screen, board)
+                                pygame.display.update()
+                                
             
                     pygame.display.update()
