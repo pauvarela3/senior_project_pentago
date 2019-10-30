@@ -18,6 +18,7 @@ RED = (255,0,0)
 DARK_RED = (169,0,0)
 WHITE = (255,255,255)
 GRAY = (131,139,139)
+GREEN = (0,255,0)
 
 radius = int(indsqu/2 - 5)
 
@@ -270,6 +271,44 @@ def clear_board():
 
     return board, turn, game_over, state
 
+def draw_arrows(screen):
+    
+    x = 15
+    y = 70
+    pygame.draw.polygon(screen, BLUE, ((16+x,10+y),(16+x,50+y),(8+x,50+y),(23+x,75+y),(38+x,50+y),(30+x,50+y),(30+x,10+y)))
+     
+    x = 655
+    y = 70 
+    pygame.draw.polygon(screen, BLUE, ((16+x,10+y),(16+x,50+y),(8+x,50+y),(23+x,75+y),(38+x,50+y),(30+x,50+y),(30+x,10+y)))
+    
+    x = 70
+    y = 15
+    pygame.draw.polygon(screen, BLUE, ((10+x,16+y),(50+x,16+y),(50+x,8+y),(75+x,23+y),(50+x,38+y),(50+x,30+y),(10+x,30+y)))
+                        
+    x = 70
+    y = 655
+    pygame.draw.polygon(screen, BLUE, ((10+x,16+y),(50+x,16+y),(50+x,8+y),(75+x,23+y),(50+x,38+y),(50+x,30+y),(10+x,30+y)))
+
+    x = 655
+    y = 570
+    pygame.draw.polygon(screen, BLUE, ((16+x,75+y),(16+x,35+y),(8+x,35+y),(23+x,10+y),(38+x, 35+y),(30+x,35+y),(30+x,75+y)))
+
+    x = 15
+    y = 570
+    pygame.draw.polygon(screen, BLUE, ((16+x,75+y),(16+x,35+y),(8+x,35+y),(23+x,10+y),(38+x,35+y),(30+x,35+y),(30+x,75+y)))
+
+
+    x = 570
+    y = 15
+    pygame.draw.polygon(screen, BLUE, ((10+x,23+y),
+                                        (35+x,8+y),(35+x,16+y),(75+x,16+y),(75+x,30+y),(35+x,30+y),(35+x,38+y)))
+    
+    x = 570
+    y = 655
+    pygame.draw.polygon(screen, BLUE, ((10+x,23+y),(35+x,8+y),(35+x,16+y),(75+x,16+y),(75+x,30+y),(35+x,30+y),(35+x,38+y)))
+
+
+
 def game_menu(screen, event):
     default_font = pygame.font.get_default_font()
     font_renderer = pygame.font.Font(default_font, 80)
@@ -294,23 +333,39 @@ def game_menu(screen, event):
     screen.blit(label2, (265, 420))
     screen.blit(label22, (270, 450))
     
+    draw_arrows(screen)
+        
     pygame.display.update()
     
     if event.type == MOUSEBUTTONDOWN:
         pressed = check_pressed(event.pos[0], event.pos[1])
         if pressed == -1:
-            game_menu(screen, event)
+            pass
         elif pressed == 0:
             return pressed
         elif pressed == 1:
             return pressed
         else:
-            game_menu(screen, event)
+            pass
 def game_over_sign(x,y):
     pressed = 1
     return pressed
-    pass
 
+
+def pushMove(chipMoves, rotationMoves, piece, rotation):
+    chipMoves.append(piece)
+    rotationMoves.append(rotation)
+
+def popMove(chipMoves, rotationMoves, state):
+    if state == 0:
+        #remove just the piece that was placed
+        return chipMoves.pop()
+    elif state == 1:
+        #remove the piece AND the rotation
+        return chipMoves.pop(), rotationMoves.pop()
+    else:
+        pass
+           
             
 while running:
     for event in pygame.event.get():
