@@ -145,8 +145,8 @@ def rotate_1(quadrant, array):
 
 
 rotate_1("0", monomials)
-print("this is the number of monomials with duplicates")
-print(len(empty))
+#print("this is the number of monomials with duplicates")
+#print(len(empty))
 
 
 empty_1 = []
@@ -154,10 +154,24 @@ for i in empty:
     if i not in empty_1:
         empty_1.append(i)
 
-print("Should have the duplicates cleaned off")
-pprint(empty_1)
-print("length of clean empty:")
-print(len(empty_1))
+#print("Should have the duplicates cleaned off")
+#pprint(empty_1)
+#print("length of clean empty:")
+#print(len(empty_1))
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+#This is the start of making the diffrent variable classes  6
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
