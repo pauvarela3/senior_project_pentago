@@ -19,6 +19,7 @@ DARK_RED = (169,0,0)
 WHITE = (255,255,255)
 GRAY = (131,139,139)
 GREEN = (0,255,0)
+YELLOW = (0, 127,127)
 
 radius = int(indsqu/2 - 5)
 
@@ -271,41 +272,71 @@ def clear_board():
 
     return board, turn, game_over, state
 
-def draw_arrows(screen):
+def checkrange(x,y):
+    if (80 < x and x < 145) and (23 < y and y < 45): 
+        quad = 0
+        rotation = 0
+    elif (23 < x and x < 53) and (80 < y and y < 145):
+        quad=0
+        rotation=1
+    elif (663 < x and x < 693) and (80 < y and y < 145): # green
+        quad=1
+        rotation=0
+    elif (580 < x and x < 645) and (23 < y and y < 53): #gray
+        quad = 1
+        rotation= 1
+    elif (23 < x and x < 53) and (580 < y and y < 645): #"yellow"
+        quad = 2
+        rotation = 0
+    elif (80 < x and x < 145) and (663 < y and y < 693): #red
+        quad = 2
+        rotation = 1
+    elif (663 < x and x < 693) and (580 < y and y < 645): #dark red
+        quad = 3
+        rotation = 1
+    elif (580 < x and x < 645) and (663 < y and y < 693): #blue
+        quad = 3
+        rotation = 0
+    else:
+        quad = 5
+        rotation = 5
+    return quad, rotation
+
+
+def draw_arrows(screen, color):
     
     x = 15
     y = 70
-    pygame.draw.polygon(screen, BLUE, ((16+x,10+y),(16+x,50+y),(8+x,50+y),(23+x,75+y),(38+x,50+y),(30+x,50+y),(30+x,10+y)))
+    pygame.draw.polygon(screen, color, ((16+x,10+y),(16+x,50+y),(8+x,50+y),(23+x,75+y),(38+x,50+y),(30+x,50+y),(30+x,10+y)))
      
     x = 655
     y = 70 
-    pygame.draw.polygon(screen, BLUE, ((16+x,10+y),(16+x,50+y),(8+x,50+y),(23+x,75+y),(38+x,50+y),(30+x,50+y),(30+x,10+y)))
+    pygame.draw.polygon(screen, color, ((16+x,10+y),(16+x,50+y),(8+x,50+y),(23+x,75+y),(38+x,50+y),(30+x,50+y),(30+x,10+y)))
     
     x = 70
     y = 15
-    pygame.draw.polygon(screen, BLUE, ((10+x,16+y),(50+x,16+y),(50+x,8+y),(75+x,23+y),(50+x,38+y),(50+x,30+y),(10+x,30+y)))
+    pygame.draw.polygon(screen, color, ((10+x,16+y),(50+x,16+y),(50+x,8+y),(75+x,23+y),(50+x,38+y),(50+x,30+y),(10+x,30+y)))
                         
     x = 70
     y = 655
-    pygame.draw.polygon(screen, BLUE, ((10+x,16+y),(50+x,16+y),(50+x,8+y),(75+x,23+y),(50+x,38+y),(50+x,30+y),(10+x,30+y)))
+    pygame.draw.polygon(screen, color, ((10+x,16+y),(50+x,16+y),(50+x,8+y),(75+x,23+y),(50+x,38+y),(50+x,30+y),(10+x,30+y)))
 
     x = 655
     y = 570
-    pygame.draw.polygon(screen, BLUE, ((16+x,75+y),(16+x,35+y),(8+x,35+y),(23+x,10+y),(38+x, 35+y),(30+x,35+y),(30+x,75+y)))
+    pygame.draw.polygon(screen, color, ((16+x,75+y),(16+x,35+y),(8+x,35+y),(23+x,10+y),(38+x, 35+y),(30+x,35+y),(30+x,75+y)))
 
     x = 15
     y = 570
-    pygame.draw.polygon(screen, BLUE, ((16+x,75+y),(16+x,35+y),(8+x,35+y),(23+x,10+y),(38+x,35+y),(30+x,35+y),(30+x,75+y)))
+    pygame.draw.polygon(screen, color, ((16+x,75+y),(16+x,35+y),(8+x,35+y),(23+x,10+y),(38+x,35+y),(30+x,35+y),(30+x,75+y)))
 
 
     x = 570
     y = 15
-    pygame.draw.polygon(screen, BLUE, ((10+x,23+y),
-                                        (35+x,8+y),(35+x,16+y),(75+x,16+y),(75+x,30+y),(35+x,30+y),(35+x,38+y)))
+    pygame.draw.polygon(screen, color, ((10+x,23+y),(35+x,8+y),(35+x,16+y),(75+x,16+y),(75+x,30+y),(35+x,30+y),(35+x,38+y)))
     
     x = 570
     y = 655
-    pygame.draw.polygon(screen, BLUE, ((10+x,23+y),(35+x,8+y),(35+x,16+y),(75+x,16+y),(75+x,30+y),(35+x,30+y),(35+x,38+y)))
+    pygame.draw.polygon(screen, color, ((10+x,23+y),(35+x,8+y),(35+x,16+y),(75+x,16+y),(75+x,30+y),(35+x,30+y),(35+x,38+y)))
 
 
 
@@ -332,9 +363,7 @@ def game_menu(screen, event):
     screen.blit(label12, (270, 310))
     screen.blit(label2, (265, 420))
     screen.blit(label22, (270, 450))
-    
-    draw_arrows(screen)
-        
+            
     pygame.display.update()
     
     if event.type == MOUSEBUTTONDOWN:
@@ -398,7 +427,6 @@ while running:
             
             pygame.display.update()
             if state == 0:
-                
                 if event.type == pygame.MOUSEBUTTONDOWN:
                    
                     x = event.pos[0]
@@ -436,46 +464,58 @@ while running:
                                 pygame.display.update()
     
             else:
+                draw_arrows(screen, BLUE)
+                pygame.display.update()
+
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     x = event.pos[0]
                     y = event.pos[1]
                     
                     
-                    quad = check_quad(x, y)
-                    if quad == 5:
-                        quad_done = False
+#                     quad = check_quad(x, y)
+#                     if quad == 5:
+#                         quad_done = False
+#                     else:
+#                         quad_done = True
+#                     
+#                     
+#                 if event.type == pygame.KEYDOWN and quad_done == True:
+#                     if event.key == pygame.K_LEFT:
+#                         rotation = 1
+#                     if event.key == pygame.K_RIGHT:
+#                         rotation = 0
+                    
+                    print(x, y)
+                    quad, rotation = checkrange(x, y)
+                    print(quad, rotation)
+                    
+                                                
+                    if quad == 5 and rotation == 5:
+                        pass
                     else:
-                        quad_done = True
-                    
-                    
-                if event.type == pygame.KEYDOWN and quad_done == True:
-                    if event.key == pygame.K_LEFT:
-                        rotation = 1
-                    if event.key == pygame.K_RIGHT:
-                        rotation = 0
-                    
-                            
-                    board, game_over = rotate_quad(board, quad, rotation, piece)
-                    
-                    
-                    turn = new  
-                    state += 1
-                    state = state % 2
-                    quad_done = False
-                    
-                    if game_over:
-                        draw_board(screen, board)
-                        label = font_gameover.render(f"Game Over: Player {turn + 1} Won!", 1, RED, BLACK)
-                        screen.blit(label, (65,340))
+                        
+                        board, game_over = rotate_quad(board, quad, rotation, piece)
+                        draw_arrows(screen, BLACK)
                         pygame.display.update()
-                        print("here")
-                        if event.type == MOUSEBUTTONDOWN:
-                            pressed = game_over_sign(event.pos[0], event.pos[1])
-    
-                            if pressed == 0:
-                                board, turn, game_over, state = clear_board()
-                                draw_board(screen, board)
-                                pygame.display.update()
-                                
+
+                        turn = new  
+                        state += 1
+                        state = state % 2
+                        quad_done = False
+                        
+                        if game_over:
+                            draw_board(screen, board)
+                            label = font_gameover.render(f"Game Over: Player {turn + 1} Won!", 1, RED, BLACK)
+                            screen.blit(label, (65,340))
+                            pygame.display.update()
+                            print("here")
+                            if event.type == MOUSEBUTTONDOWN:
+                                pressed = game_over_sign(event.pos[0], event.pos[1])
+        
+                                if pressed == 0:
+                                    board, turn, game_over, state = clear_board()
+                                    draw_board(screen, board)
+                                    pygame.display.update()
+                                    
             
                     pygame.display.update()
