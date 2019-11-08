@@ -279,22 +279,22 @@ def checkrange(x,y):
     elif (23 < x and x < 53) and (80 < y and y < 145):
         quad=0
         rotation=1
-    elif (663 < x and x < 693) and (80 < y and y < 145): # green
+    elif (663 < x and x < 693) and (80 < y and y < 145):
         quad=1
         rotation=0
-    elif (580 < x and x < 645) and (23 < y and y < 53): #gray
+    elif (580 < x and x < 645) and (23 < y and y < 53): 
         quad = 1
         rotation= 1
-    elif (23 < x and x < 53) and (580 < y and y < 645): #"yellow"
+    elif (23 < x and x < 53) and (580 < y and y < 645):
         quad = 2
         rotation = 0
-    elif (80 < x and x < 145) and (663 < y and y < 693): #red
+    elif (80 < x and x < 145) and (663 < y and y < 693):
         quad = 2
         rotation = 1
-    elif (663 < x and x < 693) and (580 < y and y < 645): #dark red
+    elif (663 < x and x < 693) and (580 < y and y < 645):
         quad = 3
         rotation = 1
-    elif (580 < x and x < 645) and (663 < y and y < 693): #blue
+    elif (580 < x and x < 645) and (663 < y and y < 693):
         quad = 3
         rotation = 0
     else:
@@ -380,6 +380,17 @@ def game_over_sign(x,y):
     pressed = 1
     return pressed
 
+def board_full(board):
+    for i in range(len(board)):
+        for j in range(len(board[0])):
+            for k in range(len(board[0][0])):
+                if board[i][j][k] == 0:
+                    game_over = False
+                    return False, game_over
+                
+    game_over = True
+    return True, game_over
+
 
 def pushMove(chipMoves, rotationMoves, piece, rotation):
     chipMoves.append(piece)
@@ -404,11 +415,19 @@ while running:
         default_font = pygame.font.get_default_font()
         font_renderer = pygame.font.Font(default_font, 32)
         font_gameover = pygame.font.Font(default_font, 45)
-        if event.type == MOUSEBUTTONDOWN and in_range(event.pos[0], event.pos[1]):
+        boardfull, game_over = board_full(board)
+        if boardfull == True:
+            label = font_gameover.render(f"Game Over: Draw", 1, RED, BLACK)
+            screen.blit(label, (65,340))
+            pygame.display.update()
+            state = -2
+        elif event.type == MOUSEBUTTONDOWN and in_range(event.pos[0], event.pos[1]):
             board, turn, game_over, state = clear_board()
             draw_board(screen, board)
             pygame.display.update()
-        if state == -1:
+        elif state == -2:
+            pass
+        elif state == -1:
             pressed = game_menu(screen, event)
             if pressed == 0: #one player
                 state = 0
@@ -417,13 +436,14 @@ while running:
                 
         else: 
             if not game_over:
-                label = font_gameover.render(f"Game Over: Player {turn + 1} Won!", 1, BLACK, BLACK)
+                label = font_gameover.render(f"Game Over:  Player {turn + 1} Won!", 1, BLACK, BLACK)
                 screen.blit(label, (65,340))
                 draw_board(screen, board)
                 label = font_renderer.render(f"Turn: Player {turn + 1}", 1, WHITE, BLACK)
                 screen.blit(label, (245,670))
                 label = font_renderer.render("  Start Over  ", 1, WHITE, GRAY)
                 screen.blit(label, (65, 710))
+
             
             pygame.display.update()
             if state == 0:
@@ -443,7 +463,10 @@ while running:
                         else:
                             piece = 2
                             new, game_over = drop_piece(row, col, board, turn, piece)
-                            
+                    
+                    
+                    draw_board(screen, board)
+                    pygame.display.update()        
                     
                     if  state_pass == 1:
                         state += 1
@@ -451,10 +474,11 @@ while running:
                         state = 0
                     if game_over:
                         draw_board(screen, board)
-                        label = font_gameover.render(f"Game Over: Player {turn + 1} Won!", 1, RED, BLACK)
+                        label = font_gameover.render(f"Game Over:  Player {turn + 1} Won!", 1, RED, BLACK)
                         screen.blit(label, (65,340))
                         pygame.display.update()
                         print("here")
+                        state = -2
                         if event.type == MOUSEBUTTONDOWN:
                             pressed = game_over_sign(event.pos[0], event.pos[1])
     
@@ -464,7 +488,7 @@ while running:
                                 pygame.display.update()
     
             else:
-                draw_arrows(screen, BLUE)
+                draw_arrows(screen, GRAY)
                 pygame.display.update()
 
                 if event.type == pygame.MOUSEBUTTONDOWN:
@@ -503,12 +527,14 @@ while running:
                         state = state % 2
                         quad_done = False
                         
+                        
                         if game_over:
                             draw_board(screen, board)
-                            label = font_gameover.render(f"Game Over: Player {turn + 1} Won!", 1, RED, BLACK)
+                            label = font_gameover.render(f"Game Over:  Player {turn + 1} Won!", 1, RED, BLACK)
                             screen.blit(label, (65,340))
                             pygame.display.update()
                             print("here")
+                            state = -2
                             if event.type == MOUSEBUTTONDOWN:
                                 pressed = game_over_sign(event.pos[0], event.pos[1])
         
