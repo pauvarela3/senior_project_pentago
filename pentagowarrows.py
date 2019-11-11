@@ -1,7 +1,6 @@
 import numpy as np
 import pygame 
 import sys
-import AI
 from pygame.constants import MOUSEBUTTONDOWN
 
 pygame.init()
@@ -27,10 +26,7 @@ radius = int(indsqu/2 - 5)
 squares = 4
 rows = 3 
 columns = 3 
-quad_0_rotation = 0
-quad_1_rotation = 0
-quad_2_rotation = 0
-quad_3_rotation = 0
+
 turn = 0
 state = -1
 
@@ -151,108 +147,24 @@ def draw_board(screen, board):
 
 def drop_piece(row, col, board, turn, piece):
     game_over = False
-    variable_number = 0
+
     if row > 3 and col > 3:
         quad = 3
         row = row - 4
         col = col - 4
-        if col == 0:
-            if row == 0:
-                variable_number = 21
-            elif row == 1:
-                variable_number = 27
-            else:
-                variable_number = 33
-        elif col == 1:
-            if row == 0:
-                variable_number = 22
-            elif row == 1:
-                variable_number = 28
-            else:
-                variable_number = 34
-        else:
-            if row == 0:
-                variable_number = 23
-            elif row == 1:
-                variable_number = 29
-            else:
-                variable_number = 35    
     elif col > 3:
         quad = 1
         col = col - 4
         row = row - 1
-        if col == 0:
-            if row == 0:
-                variable_number = 3
-            elif row == 1:
-                variable_number = 9
-            else:
-                variable_number = 15
-        elif col == 1:
-            if row == 0:
-                variable_number = 4
-            elif row == 1:
-                variable_number = 10
-            else:
-                variable_number = 16
-        else:
-            if row == 0:
-                variable_number = 5
-            elif row == 1:
-                variable_number = 11
-            else:
-                variable_number = 17
     elif row > 3:
         quad = 2
         col = col - 1
         row = row - 4
-        if col == 0:
-            if row == 0:
-                variable_number = 18
-            elif row == 1:
-                variable_number = 24
-            else:
-                variable_number = 30
-        elif col == 1:
-            if row == 0:
-                variable_number = 19
-            elif row == 1:
-                variable_number = 25
-            else:
-                variable_number = 31
-        else:
-            if row == 0:
-                variable_number = 20
-            elif row == 1:
-                variable_number = 26
-            else:
-                variable_number = 32
     else:
         quad = 0
         row = row - 1
         col = col - 1
-        if col == 0:
-            if row == 0:
-                variable_number = 0
-            elif row == 1:
-                variable_number = 6
-            else:
-                variable_number = 12
-        elif col == 1:
-            if row == 0:
-                variable_number = 1
-            elif row == 1:
-                variable_number = 7
-            else:
-                variable_number = 13
-        else:
-            if row == 0:
-                variable_number = 2
-            elif row == 1:
-                variable_number = 8
-            else:
-                variable_number = 14
-    AI.score_taking(variable_number,turn)
+        
     if turn ==0:
         piece = 1
     else:
@@ -285,10 +197,6 @@ def valid_move(row, col, quad):
         return False
 
 def rotate_quad(board, quad, rotation, piece):
-    global quad_0_rotation
-    global quad_1_rotation
-    global quad_2_rotation
-    global quad_3_rotation
     left = 1
     right = 0
     game_over = False
@@ -297,42 +205,9 @@ def rotate_quad(board, quad, rotation, piece):
         board[quad] = list(zip(*reversed(board[quad])))
         board[quad] = list(zip(*reversed(board[quad])))
         board[quad] = list(zip(*reversed(board[quad])))
-        if quad == 0:
-            quad_0_rotation = quad_0_rotation - 1
-        elif quad == 1:
-            quad_1_rotation = quad_1_rotation - 1
-        elif quad == 2:
-            quad_2_rotation = quad_1_rotation - 1
-        else:
-            quad_3_rotation = quad_3_rotation - 1
     elif rotation == right:
         board[quad] = list(zip(*reversed(board[quad])))
-        if quad == 0:
-            quad_0_rotation = quad_0_rotation - 1
-        elif quad == 1:
-            quad_1_rotation = quad_1_rotation - 1
-        elif quad == 2:
-            quad_2_rotation = quad_1_rotation - 1
-        else:
-            quad_3_rotation = quad_3_rotation - 1
-    if quad_0_rotation == 4:
-        quad_0_rotation = 0
-    elif quad_0_rotation == -1:
-        quad_0_rotation = 3
-    if quad_1_rotation == 4:
-        quad_1_rotation = 0
-    elif quad_1_rotation == -1:
-        quad_1_rotation = 3
-    if quad_2_rotation == 4:
-        quad_2_rotation = 0
-    elif quad_2_rotation == -1:
-        quad_2_rotation = 3
-    if quad_3_rotation == 4:
-        quad_3_rotation = 0
-    elif quad_3_rotation == -1:
-        quad_3_rotation = 3
-    AI.score_taking_rotations(quad_0_rotation, quad_1_rotation, quad_2_rotation, quad_3_rotation)    
-    
+        
     if winning_move(board, piece):
         game_over = True
         print(f'Congrats Player {piece}, you have won the game!')
@@ -404,22 +279,22 @@ def checkrange(x,y):
     elif (23 < x and x < 53) and (80 < y and y < 145):
         quad=0
         rotation=1
-    elif (663 < x and x < 693) and (80 < y and y < 145):
+    elif (663 < x and x < 693) and (80 < y and y < 145): # green
         quad=1
         rotation=0
-    elif (580 < x and x < 645) and (23 < y and y < 53): 
+    elif (580 < x and x < 645) and (23 < y and y < 53): #gray
         quad = 1
         rotation= 1
-    elif (23 < x and x < 53) and (580 < y and y < 645):
+    elif (23 < x and x < 53) and (580 < y and y < 645): #"yellow"
         quad = 2
         rotation = 0
-    elif (80 < x and x < 145) and (663 < y and y < 693):
+    elif (80 < x and x < 145) and (663 < y and y < 693): #red
         quad = 2
         rotation = 1
-    elif (663 < x and x < 693) and (580 < y and y < 645):
+    elif (663 < x and x < 693) and (580 < y and y < 645): #dark red
         quad = 3
         rotation = 1
-    elif (580 < x and x < 645) and (663 < y and y < 693):
+    elif (580 < x and x < 645) and (663 < y and y < 693): #blue
         quad = 3
         rotation = 0
     else:
@@ -505,17 +380,6 @@ def game_over_sign(x,y):
     pressed = 1
     return pressed
 
-def board_full(board):
-    for i in range(len(board)):
-        for j in range(len(board[0])):
-            for k in range(len(board[0][0])):
-                if board[i][j][k] == 0:
-                    game_over = False
-                    return False, game_over
-                
-    game_over = True
-    return True, game_over
-
 
 def pushMove(chipMoves, rotationMoves, piece, rotation):
     chipMoves.append(piece)
@@ -540,19 +404,11 @@ while running:
         default_font = pygame.font.get_default_font()
         font_renderer = pygame.font.Font(default_font, 32)
         font_gameover = pygame.font.Font(default_font, 45)
-        boardfull, game_over = board_full(board)
-        if boardfull == True:
-            label = font_gameover.render(f"Game Over: Draw", 1, RED, BLACK)
-            screen.blit(label, (65,340))
-            pygame.display.update()
-            state = -2
-        elif event.type == MOUSEBUTTONDOWN and in_range(event.pos[0], event.pos[1]):
+        if event.type == MOUSEBUTTONDOWN and in_range(event.pos[0], event.pos[1]):
             board, turn, game_over, state = clear_board()
             draw_board(screen, board)
             pygame.display.update()
-        elif state == -2:
-            pass
-        elif state == -1:
+        if state == -1:
             pressed = game_menu(screen, event)
             if pressed == 0: #one player
                 state = 0
@@ -561,14 +417,13 @@ while running:
                 
         else: 
             if not game_over:
-                label = font_gameover.render(f"Game Over:  Player {turn + 1} Won!", 1, BLACK, BLACK)
+                label = font_gameover.render(f"Game Over: Player {turn + 1} Won!", 1, BLACK, BLACK)
                 screen.blit(label, (65,340))
                 draw_board(screen, board)
                 label = font_renderer.render(f"Turn: Player {turn + 1}", 1, WHITE, BLACK)
                 screen.blit(label, (245,670))
                 label = font_renderer.render("  Start Over  ", 1, WHITE, GRAY)
                 screen.blit(label, (65, 710))
-
             
             pygame.display.update()
             if state == 0:
@@ -588,10 +443,7 @@ while running:
                         else:
                             piece = 2
                             new, game_over = drop_piece(row, col, board, turn, piece)
-                    
-                    
-                    draw_board(screen, board)
-                    pygame.display.update()        
+                            
                     
                     if  state_pass == 1:
                         state += 1
@@ -599,11 +451,10 @@ while running:
                         state = 0
                     if game_over:
                         draw_board(screen, board)
-                        label = font_gameover.render(f"Game Over:  Player {turn + 1} Won!", 1, RED, BLACK)
+                        label = font_gameover.render(f"Game Over: Player {turn + 1} Won!", 1, RED, BLACK)
                         screen.blit(label, (65,340))
                         pygame.display.update()
                         print("here")
-                        state = -2
                         if event.type == MOUSEBUTTONDOWN:
                             pressed = game_over_sign(event.pos[0], event.pos[1])
     
@@ -613,7 +464,7 @@ while running:
                                 pygame.display.update()
     
             else:
-                draw_arrows(screen, GRAY)
+                draw_arrows(screen, BLUE)
                 pygame.display.update()
 
                 if event.type == pygame.MOUSEBUTTONDOWN:
@@ -652,14 +503,12 @@ while running:
                         state = state % 2
                         quad_done = False
                         
-                        
                         if game_over:
                             draw_board(screen, board)
-                            label = font_gameover.render(f"Game Over:  Player {turn + 1} Won!", 1, RED, BLACK)
+                            label = font_gameover.render(f"Game Over: Player {turn + 1} Won!", 1, RED, BLACK)
                             screen.blit(label, (65,340))
                             pygame.display.update()
                             print("here")
-                            state = -2
                             if event.type == MOUSEBUTTONDOWN:
                                 pressed = game_over_sign(event.pos[0], event.pos[1])
         
