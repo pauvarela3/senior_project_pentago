@@ -1,6 +1,7 @@
 import numpy as np
 import pygame 
 import sys
+import AI
 from pygame.constants import MOUSEBUTTONDOWN
 
 pygame.init()
@@ -25,7 +26,10 @@ radius = int(indsqu/2 - 5)
 squares = 4
 rows = 3 
 columns = 3 
-
+quad_0_rotation = 0
+quad_1_rotation = 0
+quad_2_rotation = 0
+quad_3_rotation = 0
 turn = 0
 state = -1
 
@@ -146,24 +150,108 @@ def draw_board(screen, board):
 
 def drop_piece(row, col, board, turn, piece):
     game_over = False
-
+    variable_number = 0
     if row > 3 and col > 3:
         quad = 3
         row = row - 4
         col = col - 4
+        if col == 0:
+            if row == 0:
+                variable_number = 21
+            elif row == 1:
+                variable_number = 27
+            else:
+                variable_number = 33
+        elif col == 1:
+            if row == 0:
+                variable_number = 22
+            elif row == 1:
+                variable_number = 28
+            else:
+                variable_number = 34
+        else:
+            if row == 0:
+                variable_number = 23
+            elif row == 1:
+                variable_number = 29
+            else:
+                variable_number = 35    
     elif col > 3:
         quad = 1
         col = col - 4
         row = row - 1
+        if col == 0:
+            if row == 0:
+                variable_number = 3
+            elif row == 1:
+                variable_number = 9
+            else:
+                variable_number = 15
+        elif col == 1:
+            if row == 0:
+                variable_number = 4
+            elif row == 1:
+                variable_number = 10
+            else:
+                variable_number = 16
+        else:
+            if row == 0:
+                variable_number = 5
+            elif row == 1:
+                variable_number = 11
+            else:
+                variable_number = 17
     elif row > 3:
         quad = 2
         col = col - 1
         row = row - 4
+        if col == 0:
+            if row == 0:
+                variable_number = 18
+            elif row == 1:
+                variable_number = 24
+            else:
+                variable_number = 30
+        elif col == 1:
+            if row == 0:
+                variable_number = 19
+            elif row == 1:
+                variable_number = 25
+            else:
+                variable_number = 31
+        else:
+            if row == 0:
+                variable_number = 20
+            elif row == 1:
+                variable_number = 26
+            else:
+                variable_number = 32
     else:
         quad = 0
         row = row - 1
         col = col - 1
-        
+        if col == 0:
+            if row == 0:
+                variable_number = 0
+            elif row == 1:
+                variable_number = 6
+            else:
+                variable_number = 12
+        elif col == 1:
+            if row == 0:
+                variable_number = 1
+            elif row == 1:
+                variable_number = 7
+            else:
+                variable_number = 13
+        else:
+            if row == 0:
+                variable_number = 2
+            elif row == 1:
+                variable_number = 8
+            else:
+                variable_number = 14
+    AI.score_taking(variable_number,turn)
     if turn ==0:
         piece = 1
     else:
@@ -196,6 +284,10 @@ def valid_move(row, col, quad):
         return False
 
 def rotate_quad(board, quad, rotation, piece):
+    global quad_0_rotation
+    global quad_1_rotation
+    global quad_2_rotation
+    global quad_3_rotation
     left = 1
     right = 0
     game_over = False
@@ -204,9 +296,42 @@ def rotate_quad(board, quad, rotation, piece):
         board[quad] = list(zip(*reversed(board[quad])))
         board[quad] = list(zip(*reversed(board[quad])))
         board[quad] = list(zip(*reversed(board[quad])))
+        if quad == 0:
+            quad_0_rotation = quad_0_rotation - 1
+        elif quad == 1:
+            quad_1_rotation = quad_1_rotation - 1
+        elif quad == 2:
+            quad_2_rotation = quad_1_rotation - 1
+        else:
+            quad_3_rotation = quad_3_rotation - 1
     elif rotation == right:
         board[quad] = list(zip(*reversed(board[quad])))
-        
+        if quad == 0:
+            quad_0_rotation = quad_0_rotation - 1
+        elif quad == 1:
+            quad_1_rotation = quad_1_rotation - 1
+        elif quad == 2:
+            quad_2_rotation = quad_1_rotation - 1
+        else:
+            quad_3_rotation = quad_3_rotation - 1
+    if quad_0_rotation == 4:
+        quad_0_rotation = 0
+    elif quad_0_rotation == -1:
+        quad_0_rotation = 3
+    if quad_1_rotation == 4:
+        quad_1_rotation = 0
+    elif quad_1_rotation == -1:
+        quad_1_rotation = 3
+    if quad_2_rotation == 4:
+        quad_2_rotation = 0
+    elif quad_2_rotation == -1:
+        quad_2_rotation = 3
+    if quad_3_rotation == 4:
+        quad_3_rotation = 0
+    elif quad_3_rotation == -1:
+        quad_3_rotation = 3
+    AI.score_taking_rotations(quad_0_rotation, quad_1_rotation, quad_2_rotation, quad_3_rotation)    
+    
     if winning_move(board, piece):
         game_over = True
         print(f'Congrats Player {piece}, you have won the game!')

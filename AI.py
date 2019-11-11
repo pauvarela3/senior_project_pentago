@@ -8,14 +8,29 @@ monomial_objects = []
 class monomial:
     __monomial = []
     __score = 1
-    def __init__(self,monomial = 0, score =1):
+    __passed = False
+    def __init__(self,monomial = 0, score =1,passed = False):
         self.__monomial = monomial
         self.__score = score
+        self.__passed = passed
     def monomial_score_update(self, taken):
-        if taken == 1:
+        if taken == 0:
             self.__score = self.__score*2
-        elif taken == 2:
+        elif taken == 1:
             self.__score = self.__score*0
+    def monomial_score_rotation_update(self, rotations_away):   
+        if self.__passed == False:
+            if rotations_away >= 2:
+                self.__score = self.__score*1
+            elif rotations_away == 1:
+                self.__score = self.__score*2
+            elif rotations_away == 0:
+                self.__score = self.__score*2
+        self.__passed = True
+    def reset_passed(self):
+        self.__passed = False
+    def return_passed(self):
+        return self.__passed
     def return_monomial(self):
         return self.__monomial
     def return_score(self):
@@ -31,9 +46,9 @@ class node:
     __rotation = 0
     __string = ""
     __monomials = []
-    __taken = 0
+    __taken = 2
     #constructor
-    def __init__(self,quad = 0, col = 0, row = 0, rotations = 0, string = "", monomials = [], taken = 0):
+    def __init__(self,quad = 0, col = 0, row = 0, rotations = 0, string = "", monomials = [], taken = 2):
         self.__quad = quad
         self.__col = col
         self.__row = row
@@ -64,6 +79,7 @@ class node:
 def defining_backboard():
     global nodes
     global nodes_1
+    positions = ""
     quad = 0
     col = 0
     row = 0
@@ -73,22 +89,285 @@ def defining_backboard():
     row_based_on_quad = 0
     string = ""
     monomials_1 = []
-    taken = 0
+    taken = 2
     monomial_constructor(score)
     #############################################################################
     #In this for loop, we construct the 36 nodes in the game board
     for i in range(36):
-        string = str(quad) + str(col_based_on_quad) + str(row_based_on_quad) + str(rotation)
+        string = str(quad) + str(row_based_on_quad) + str(col_based_on_quad) + str(rotation)
         #########################################################################
         #In here we connect the node objects with monomial objects
+        positions = string[1] + string[2]
         for rotations in range(4):
             string = string[:-1] + str(rotations)
-            #pprint(string)
-            for j in monomial_objects:
-                for k in j.return_monomial():
-                    if string == k:
-                        monomials_1.append(j)
-                        break
+            if positions == "00":
+                if rotations == 0:
+                    for j in monomial_objects:
+                        for k in j.return_monomial():
+                            if string == k:
+                                monomials_1.append(j)
+                                break
+                elif rotations == 1:
+                    string = string[:-3] + "021"
+                    for j in monomial_objects:
+                        for k in j.return_monomial():
+                            if string == k:
+                                monomials_1.append(j)
+                                break
+                elif rotations == 2:
+                    string = string[:-3] + "222"
+                    for j in monomial_objects:
+                        for k in j.return_monomial():
+                            if string == k:
+                                monomials_1.append(j)
+                                break
+                elif rotations == 3:
+                    string = string[:-3] + "203"
+                    for j in monomial_objects:
+                        for k in j.return_monomial():
+                            if string == k:
+                                monomials_1.append(j)
+                                break
+##################################################################################
+#In here it's the 2nd col in the 1st row
+            elif positions == "01":
+                if rotations == 0:
+                    for j in monomial_objects:
+                        for k in j.return_monomial():
+                            if string == k:
+                                monomials_1.append(j)
+                                break
+                elif rotations == 1:
+                    string = string[:-3] + "121"
+                    for j in monomial_objects:
+                        for k in j.return_monomial():
+                            if string == k:
+                                monomials_1.append(j)
+                                break
+                elif rotations == 2:
+                    string = string[:-3] + "212"
+                    for j in monomial_objects:
+                        for k in j.return_monomial():
+                            if string == k:
+                                monomials_1.append(j)
+                                break
+                elif rotations == 3:
+                    string = string[:-3] + "103"
+                    for j in monomial_objects:
+                        for k in j.return_monomial():
+                            if string == k:
+                                monomials_1.append(j)
+                                break
+##################################################################################
+#In here it's the 3rd col in the 1st row
+            elif positions == "02":
+                if rotations == 0:
+                    for j in monomial_objects:
+                        for k in j.return_monomial():
+                            if string == k:
+                                monomials_1.append(j)
+                                break
+                elif rotations == 1:
+                    string = string[:-3] + "221"
+                    for j in monomial_objects:
+                        for k in j.return_monomial():
+                            if string == k:
+                                monomials_1.append(j)
+                                break
+                elif rotations == 2:
+                    string = string[:-3] + "202"
+                    for j in monomial_objects:
+                        for k in j.return_monomial():
+                            if string == k:
+                                monomials_1.append(j)
+                                break
+                elif rotations == 3:
+                    string = string[:-3] + "003"
+                    for j in monomial_objects:
+                        for k in j.return_monomial():
+                            if string == k:
+                                monomials_1.append(j)
+                                break        
+##################################################################################
+#In here it's the 1st col in the 2nd row
+            elif positions == "10":
+                if rotations == 0:
+                    for j in monomial_objects:
+                        for k in j.return_monomial():
+                            if string == k:
+                                monomials_1.append(j)
+                                break
+                elif rotations == 1:
+                    string = string[:-3] + "011"
+                    for j in monomial_objects:
+                        for k in j.return_monomial():
+                            if string == k:
+                                monomials_1.append(j)
+                                break
+                elif rotations == 2:
+                    string = string[:-3] + "122"
+                    for j in monomial_objects:
+                        for k in j.return_monomial():
+                            if string == k:
+                                monomials_1.append(j)
+                                break
+                elif rotations == 3:
+                    string = string[:-3] + "213"
+                    for j in monomial_objects:
+                        for k in j.return_monomial():
+                            if string == k:
+                                monomials_1.append(j)
+                                break
+##################################################################################
+#In here it's the 2nd col in the 2nd row
+            elif positions == "11":
+                if rotations == 0:
+                    for j in monomial_objects:
+                        for k in j.return_monomial():
+                            if string == k:
+                                monomials_1.append(j)
+                                break
+                elif rotations == 1:
+                    #string = string[:-3] + "101"
+                    for j in monomial_objects:
+                        for k in j.return_monomial():
+                            if string == k:
+                                monomials_1.append(j)
+                                break
+                elif rotations == 2:
+                    #string = string[:-3] + "212"
+                    for j in monomial_objects:
+                        for k in j.return_monomial():
+                            if string == k:
+                                monomials_1.append(j)
+                                break
+                elif rotations == 3:
+                    #string = string[:-3] + "123"
+                    for j in monomial_objects:
+                        for k in j.return_monomial():
+                            if string == k:
+                                monomials_1.append(j)
+                                break
+##################################################################################
+#In here it's the 3rd col in the 2nd row
+            elif positions == "12":
+                if rotations == 0:
+                    for j in monomial_objects:
+                        for k in j.return_monomial():
+                            if string == k:
+                                monomials_1.append(j)
+                                break
+                elif rotations == 1:
+                    string = string[:-3] + "211"
+                    for j in monomial_objects:
+                        for k in j.return_monomial():
+                            if string == k:
+                                monomials_1.append(j)
+                                break
+                elif rotations == 2:
+                    string = string[:-3] + "102"
+                    for j in monomial_objects:
+                        for k in j.return_monomial():
+                            if string == k:
+                                monomials_1.append(j)
+                                break
+                elif rotations == 3:
+                    string = string[:-3] + "013"
+                    for j in monomial_objects:
+                        for k in j.return_monomial():
+                            if string == k:
+                                monomials_1.append(j)
+                                break
+##################################################################################
+#In here it's the 1st col in the 3rd row
+            elif positions == "20":
+                if rotations == 0:
+                    for j in monomial_objects:
+                        for k in j.return_monomial():
+                            if string == k:
+                                monomials_1.append(j)
+                                break
+                elif rotations == 1:
+                    string = string[:-3] + "001"
+                    for j in monomial_objects:
+                        for k in j.return_monomial():
+                            if string == k:
+                                monomials_1.append(j)
+                                break
+                elif rotations == 2:
+                    string = string[:-3] + "022"
+                    for j in monomial_objects:
+                        for k in j.return_monomial():
+                            if string == k:
+                                monomials_1.append(j)
+                                break
+                elif rotations == 3:
+                    string = string[:-3] + "223"
+                    for j in monomial_objects:
+                        for k in j.return_monomial():
+                            if string == k:
+                                monomials_1.append(j)
+                                break
+##################################################################################
+#In here it's the 2nd col in the 3rd row
+            elif positions == "21":
+                if rotations == 0:
+                    for j in monomial_objects:
+                        for k in j.return_monomial():
+                            if string == k:
+                                monomials_1.append(j)
+                                break
+                elif rotations == 1:
+                    string = string[:-3] + "101"
+                    for j in monomial_objects:
+                        for k in j.return_monomial():
+                            if string == k:
+                                monomials_1.append(j)
+                                break
+                elif rotations == 2:
+                    string = string[:-3] + "012"
+                    for j in monomial_objects:
+                        for k in j.return_monomial():
+                            if string == k:
+                                monomials_1.append(j)
+                                break
+                elif rotations == 3:
+                    string = string[:-3] + "123"
+                    for j in monomial_objects:
+                        for k in j.return_monomial():
+                            if string == k:
+                                monomials_1.append(j)
+                                break
+##################################################################################
+#In here it's the 3rd col in the 3rd row
+            elif positions == "22":
+                if rotations == 0:
+                    for j in monomial_objects:
+                        for k in j.return_monomial():
+                            if string == k:
+                                monomials_1.append(j)
+                                break
+                elif rotations == 1:
+                    string = string[:-3] + "201"
+                    for j in monomial_objects:
+                        for k in j.return_monomial():
+                            if string == k:
+                                monomials_1.append(j)
+                                break
+                elif rotations == 2:
+                    string = string[:-3] + "002"
+                    for j in monomial_objects:
+                        for k in j.return_monomial():
+                            if string == k:
+                                monomials_1.append(j)
+                                break
+                elif rotations == 3:
+                    string = string[:-3] + "023"
+                    for j in monomial_objects:
+                        for k in j.return_monomial():
+                            if string == k:
+                                monomials_1.append(j)
+                                break 
         #########################################################################
         nodes.append(node(quad, col, row, rotation, string, monomials_1, taken))
         monomials_1 = []#here you reset the monomials_1 list to get the other node monomials
@@ -118,17 +397,85 @@ def defining_backboard():
 #This construct the list of monomial objects
 def monomial_constructor(score):
     global monomial_objects
+    passed = False
     for i in monomials.empty_1:
-        monomial_objects.append(monomial(i, score))
+        monomial_objects.append(monomial(i, score, passed))
 
 def score_taking(variable_number,turn):
-    global monmial_objects
     global nodes
     for i in range(36):
         if i == variable_number:
+            #pprint (nodes[i].return_string())
+            #print (i)
             nodes[i].update_taken_state = turn
             for j in range (len(nodes[i].return_monomials())):
                 nodes[i].return_monomials()[j].monomial_score_update(turn)
+                #pprint(nodes[i].return_monomials()[j].return_monomial())
+                #pprint(nodes[i].return_monomials()[j].return_score())
+    #for i in range(36):
+        #print(i)
+        #for j in range(len(nodes[i].return_monomials())):
+            #pprint(nodes[i].return_monomials()[j].return_monomial())
+            #pprint(nodes[i].return_monomials()[j].return_score())
+def score_taking_rotations(rotation_0,rotation_1,rotation_2,rotation_3):
+    global monomial_objects
+    global nodes
+    quad_0_passed = False
+    quad_1_passed = False
+    quad_2_passed = False
+    quad_3_passed = False
+    rotations_away = 0
+    rotations_away_total = 0
+    rotation_character = ''
+    quad_character = ''
+    for i in range(36):
+        for j in range (len(nodes[i].return_monomials())):
+            for k in nodes[i].return_monomials()[j].return_monomial():
+                #pprint(k)
+                rotation_character = k[3]
+                quad_character = k[0]
+                if quad_character == '0' and quad_0_passed == False:
+                    rotations_away = abs(int(rotation_character) - int(rotation_0))
+                    if rotations_away == 3:
+                        rotations_away = 1
+                    rotations_away_total += rotations_away
+                    quad_0_passed = True
+                elif quad_character == '1' and quad_1_passed == False:
+                    rotations_away = abs(int(rotation_character) - int(rotation_1))
+                    if rotations_away == 3:
+                        rotations_away = 1
+                    rotations_away_total += rotations_away
+                    quad_1_passed = True
+                elif quad_character == '2' and quad_2_passed == False:
+                    rotations_away = abs(int(rotation_character) - int(rotation_2))
+                    if rotations_away == 3:
+                        rotations_away = 1
+                    rotations_away_total += rotations_away
+                    quad_2_passed = True
+                elif quad_character == '3' and quad_3_passed == False:
+                    rotations_away = abs(int(rotation_character) - int(rotation_3))
+                    if rotations_away == 3:
+                        rotations_away = 1
+                    rotations_away_total += rotations_away
+                    quad_3_passed = True
+            
+            quad_0_passed = False
+            quad_1_passed = False
+            quad_2_passed = False
+            quad_3_passed = False
+            nodes[i].return_monomials()[j].monomial_score_rotation_update(rotations_away_total)
+            #pprint(rotations_away_total)
+            #pprint(nodes[i].return_monomials()[j].return_monomial())
+            #pprint(nodes[i].return_monomials()[j].return_score())
+            rotations_away = 0
+            rotations_away_total = 0
+    for i in range(36):
+        for j in range(len(nodes[i].return_monomials())):
+            nodes[i].return_monomials()[j].reset_passed()
+            #print(i)
+            #print(j)
+            #pprint(nodes[i].return_monomials()[j].return_monomial())
+            #pprint(nodes[i].return_monomials()[j].return_score())
 
 
 #IGNORE COMMMENTED OUT STUFF
@@ -147,10 +494,11 @@ def score_taking(variable_number,turn):
                     #print ("----------------------------------------------")
                     #i.monomials_constructor(j)
                     #break
-        
 
 
 defining_backboard()
+#score_taking(0,0)
+#score_taking_rotations(0,0,0,0)
 #for i in range(36):
     #pprint(nodes_1[i].return_string())
     #pprint(str(i) + " " + nodes[i].return_string())
@@ -162,12 +510,12 @@ defining_backboard()
 ##########                      Printing the monomials                  ##########
 ##########                                                              ##########
 ##################################################################################
-score_taking(0,1)
-for i in range(36):
+#score_taking(0,1)
+#for i in range(36):
     #print(str(i))
-    for j in range(len(nodes[i].return_monomials())):
-        pprint(nodes[i].return_monomials()[j].return_monomial())
-        pprint(nodes[i].return_monomials()[j].return_score())
+    #for j in range(len(nodes[i].return_monomials())):
+        #pprint(nodes[i].return_monomials()[j].return_monomial())
+        #pprint(nodes[i].return_monomials()[j].return_score())
 
 
 
