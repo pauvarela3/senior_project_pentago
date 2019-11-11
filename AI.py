@@ -410,14 +410,16 @@ def score_taking(variable_number,turn):
             nodes[i].update_taken_state = turn
             for j in range (len(nodes[i].return_monomials())):
                 nodes[i].return_monomials()[j].monomial_score_update(turn)
-                #pprint(nodes[i].return_monomials()[j].return_monomial())
-                #pprint(nodes[i].return_monomials()[j].return_score())
+                pprint(nodes[i].return_monomials()[j].return_monomial())
+                pprint(nodes[i].return_monomials()[j].return_score())
     #for i in range(36):
         #print(i)
         #for j in range(len(nodes[i].return_monomials())):
             #pprint(nodes[i].return_monomials()[j].return_monomial())
             #pprint(nodes[i].return_monomials()[j].return_score())
 def score_taking_rotations(rotation_0,rotation_1,rotation_2,rotation_3):
+    #print(rotation_0)
+    #print(rotation_1)
     global monomial_objects
     global nodes
     quad_0_passed = False

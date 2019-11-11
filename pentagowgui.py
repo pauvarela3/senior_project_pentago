@@ -308,13 +308,13 @@ def rotate_quad(board, quad, rotation, piece):
     elif rotation == right:
         board[quad] = list(zip(*reversed(board[quad])))
         if quad == 0:
-            quad_0_rotation = quad_0_rotation - 1
+            quad_0_rotation = quad_0_rotation + 1
         elif quad == 1:
-            quad_1_rotation = quad_1_rotation - 1
+            quad_1_rotation = quad_1_rotation + 1
         elif quad == 2:
-            quad_2_rotation = quad_1_rotation - 1
+            quad_2_rotation = quad_1_rotation + 1
         else:
-            quad_3_rotation = quad_3_rotation - 1
+            quad_3_rotation = quad_3_rotation + 1
     if quad_0_rotation == 4:
         quad_0_rotation = 0
     elif quad_0_rotation == -1:
@@ -331,6 +331,7 @@ def rotate_quad(board, quad, rotation, piece):
         quad_3_rotation = 0
     elif quad_3_rotation == -1:
         quad_3_rotation = 3
+    #print (quad_0_rotation)
     AI.score_taking_rotations(quad_0_rotation, quad_1_rotation, quad_2_rotation, quad_3_rotation)    
     
     if winning_move(board, piece):
@@ -634,9 +635,9 @@ while running:
 #                     if event.key == pygame.K_RIGHT:
 #                         rotation = 0
                     
-                    print(x, y)
+                    #print(x, y)
                     quad, rotation = checkrange(x, y)
-                    print(quad, rotation)
+                    #print(quad, rotation)
                     
                                                 
                     if quad == 5 and rotation == 5:
