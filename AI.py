@@ -16,7 +16,7 @@ class monomial:
         self.__passed = passed
         self.__passing = passing
     def monomial_score_update(self, taken):
-        if taken == 0:
+        if taken == 1:
             if (self.__score <= 2):
                 self.__score = self.__score*2
             elif (self.__score <= 4):
@@ -25,7 +25,7 @@ class monomial:
                 self.__score = self.__score*8
             elif (self.__score <= 128):
                 self.__score = self.__score * 16
-        elif taken == 1:
+        elif taken == 0:
             self.__score = self.__score*0
     def monomial_score_rotation_update(self, rotations_away):   
         if self.__passed == False:
@@ -452,6 +452,7 @@ def score_taking_rotations(rotation_0,rotation_1,rotation_2,rotation_3):
     quad_1_passed = False
     quad_2_passed = False
     quad_3_passed = False
+    highest_score = 0
     rotations_away = 0
     rotations_away_total = 0
     rotation_character = ''
@@ -492,12 +493,15 @@ def score_taking_rotations(rotation_0,rotation_1,rotation_2,rotation_3):
             quad_2_passed = False
             quad_3_passed = False
             nodes[i].return_monomials()[j].monomial_score_rotation_update(rotations_away_total)
+            if (nodes[i].return_monomials()[j].return_score() > highest_score):
+                highest_score = nodes[i].return_monomials()[j].return_score()
             #pprint(rotations_away_total)
             #pprint(nodes[i].return_monomials()[j].return_monomial())
             #pprint(nodes[i].return_monomials()[j].return_score())
             rotations_away = 0
             rotations_away_total = 0
     adding_scores()
+    return highest_score
     for i in range(36):
         for j in range(len(nodes[i].return_monomials())):
             nodes[i].return_monomials()[j].reset_passed()

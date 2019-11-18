@@ -554,15 +554,15 @@ def drop_piece(row, col, board, turn, piece):
         print("Space is already occupied, select another place")
         return turn, game_over
     else:
-        turn += 1
-        turn = turn % 2
+        #turn += 1
+        #turn = turn % 2
         board[quad][row][col] = piece
         
         if winning_move(board, piece):
             game_over = True
             print(f'Congrats Player {piece}, you have won the game!')
 
-        return turn, game_over
+        return game_over
 
 
 def valid_move(row, col, quad):
@@ -885,7 +885,7 @@ while running:
                             continue
                         else:
                             piece = 1
-                            new, game_over = drop_piece(row, col, board, turn, piece)
+                            game_over = drop_piece(row, col, board, turn, piece)
                             
                         
                         draw_board(screen, board)
@@ -916,115 +916,478 @@ while running:
                     #Pieces are 2 for opponent
                     piece = 2
                     #Get the row and col based on the Node the AI chose.
-                    if node_for_highest_score == 0:
-                        row = 1
-                        col = 1
-                    elif node_for_highest_score == 1:
-                        row = 1
-                        col = 2
-                    elif node_for_highest_score == 2:
-                        row = 1
-                        col = 3
-                    elif node_for_highest_score == 3:
-                        row = 1
-                        col = 4
-                    elif node_for_highest_score == 4:
-                        row = 1
-                        col = 5
-                    elif node_for_highest_score == 5:
-                        row = 1
-                        col = 6
-                    elif node_for_highest_score == 6:
-                        row = 2
-                        col = 1
-                    elif node_for_highest_score == 7:
-                        row = 2
-                        col = 2
-                    elif node_for_highest_score == 8:
-                        row = 2
-                        col = 3
-                    elif node_for_highest_score == 9:
-                        row = 2
-                        col = 4
-                    elif node_for_highest_score == 10:
-                        row = 2
-                        col = 5
-                    elif node_for_highest_score == 11:
-                        row = 2
-                        col = 6
-                    elif node_for_highest_score == 12:
-                        row = 3
-                        col = 1
-                    elif node_for_highest_score == 13:
-                        row = 3
-                        col = 2
-                    elif node_for_highest_score == 14:
-                        row = 3
-                        col = 3
-                    elif node_for_highest_score == 15:
-                        row = 3
-                        col = 4
-                    elif node_for_highest_score == 16:
-                        row = 3
-                        col = 5
-                    elif node_for_highest_score == 17:
-                        row = 3
-                        col = 6
-                    elif node_for_highest_score == 18:
-                        row = 4
-                        col = 1
-                    elif node_for_highest_score == 19:
-                        row = 4
-                        col = 2
-                    elif node_for_highest_score == 20:
-                        row = 4
-                        col = 3
-                    elif node_for_highest_score == 21:
-                        row = 4
-                        col = 4
-                    elif node_for_highest_score == 22:
-                        row = 4
-                        col = 5
-                    elif node_for_highest_score == 23:
-                        row = 4
-                        col = 6
-                    elif node_for_highest_score == 24:
-                        row = 5
-                        col = 1
-                    elif node_for_highest_score == 25:
-                        row = 5
-                        col = 2
-                    elif node_for_highest_score == 26:
-                        row = 5
-                        col = 3
-                    elif node_for_highest_score == 27:
-                        row = 5
-                        col = 4
-                    elif node_for_highest_score == 28:
-                        row = 5
-                        col = 5
-                    elif node_for_highest_score == 29:
-                        row = 5
-                        col = 6
-                    elif node_for_highest_score == 30:
-                        row = 6
-                        col = 1
-                    elif node_for_highest_score == 31:
-                        row = 6
-                        col = 2
-                    elif node_for_highest_score == 32:
-                        row = 6
-                        col = 3
-                    elif node_for_highest_score == 33:
-                        row = 6
-                        col = 4
-                    elif node_for_highest_score == 34:
-                        row = 6
-                        col = 5
-                    elif node_for_highest_score == 35:
-                        row = 6
-                        col = 6
-                    new, game_over = drop_piece(row,col,board,turn,piece)
+                    if quad_0_rotation == 0:
+                        if node_for_highest_score == 0:
+                            row = 1
+                            col = 1
+                        elif node_for_highest_score == 1:
+                            row = 1
+                            col = 2
+                        elif node_for_highest_score == 2:
+                            row = 1
+                            col = 3
+                        elif node_for_highest_score == 6:
+                            row = 2
+                            col = 1
+                        elif node_for_highest_score == 7:
+                            row = 2
+                            col = 2
+                        elif node_for_highest_score == 8:
+                            row = 2
+                            col = 3
+                        elif node_for_highest_score == 12:
+                            row = 3
+                            col = 1
+                        elif node_for_highest_score == 13:
+                            row = 3
+                            col = 2
+                        elif node_for_highest_score == 14:
+                            row = 3
+                            col = 3
+#######################################################################################################################################################################
+                    elif quad_0_rotation == 1:
+                        if node_for_highest_score == 0:
+                            row = 1
+                            col = 3
+                        elif node_for_highest_score == 1:
+                            row = 2
+                            col = 3
+                        elif node_for_highest_score == 2:
+                            row = 3
+                            col = 3
+                        elif node_for_highest_score == 6:
+                            row = 1
+                            col = 2
+                        elif node_for_highest_score == 7:
+                            row = 2
+                            col = 2
+                        elif node_for_highest_score == 8:
+                            row = 3
+                            col = 2
+                        elif node_for_highest_score == 12:
+                            row = 1
+                            col = 1
+                        elif node_for_highest_score == 13:
+                            row = 2
+                            col = 1
+                        elif node_for_highest_score == 14:
+                            row = 3
+                            col = 1
+#################################################################################################################################################################
+                    elif quad_0_rotation == 2:
+                        if node_for_highest_score == 0:
+                            row = 3
+                            col = 3
+                        elif node_for_highest_score == 1:
+                            row = 3
+                            col = 2
+                        elif node_for_highest_score == 2:
+                            row = 3
+                            col = 1
+                        elif node_for_highest_score == 6:
+                            row = 2
+                            col = 3
+                        elif node_for_highest_score == 7:
+                            row = 2
+                            col = 2
+                        elif node_for_highest_score == 8:
+                            row = 2
+                            col = 1
+                        elif node_for_highest_score == 12:
+                            row = 1
+                            col = 3
+                        elif node_for_highest_score == 13:
+                            row = 1
+                            col = 2
+                        elif node_for_highest_score == 14:
+                            row = 1
+                            col = 1
+#################################################################################################################################################################
+                    elif quad_0_rotation == 3:
+                        if node_for_highest_score == 0:
+                            row = 3
+                            col = 1
+                        elif node_for_highest_score == 1:
+                            row = 2
+                            col = 1
+                        elif node_for_highest_score == 2:
+                            row = 1
+                            col = 1
+                        elif node_for_highest_score == 6:
+                            row = 3
+                            col = 2
+                        elif node_for_highest_score == 7:
+                            row = 2
+                            col = 2
+                        elif node_for_highest_score == 8:
+                            row = 1
+                            col = 2
+                        elif node_for_highest_score == 12:
+                            row = 3
+                            col = 3
+                        elif node_for_highest_score == 13:
+                            row = 2
+                            col = 3
+                        elif node_for_highest_score == 14:
+                            row = 1
+                            col = 3
+#/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                    if quad_1_rotation == 0:    
+                        if node_for_highest_score == 3:
+                            row = 1
+                            col = 4
+                        elif node_for_highest_score == 4:
+                            row = 1
+                            col = 5
+                        elif node_for_highest_score == 5:
+                            row = 1
+                            col = 6
+                        elif node_for_highest_score == 9:
+                            row = 2
+                            col = 4
+                        elif node_for_highest_score == 10:
+                            row = 2
+                            col = 5
+                        elif node_for_highest_score == 11:
+                            row = 2
+                            col = 6
+                        elif node_for_highest_score == 15:
+                            row = 3
+                            col = 4
+                        elif node_for_highest_score == 16:
+                            row = 3
+                            col = 5
+                        elif node_for_highest_score == 17:
+                            row = 3
+                            col = 6
+##############################################################################################
+                    elif quad_1_rotation == 1:    
+                        if node_for_highest_score == 3:
+                            row = 1
+                            col = 6
+                        elif node_for_highest_score == 4:
+                            row = 2
+                            col = 6
+                        elif node_for_highest_score == 5:
+                            row = 3
+                            col = 6
+                        elif node_for_highest_score == 9:
+                            row = 1
+                            col = 5
+                        elif node_for_highest_score == 10:
+                            row = 2
+                            col = 5
+                        elif node_for_highest_score == 11:
+                            row = 3
+                            col = 5
+                        elif node_for_highest_score == 15:
+                            row = 1
+                            col = 4
+                        elif node_for_highest_score == 16:
+                            row = 2
+                            col = 4
+                        elif node_for_highest_score == 17:
+                            row = 3
+                            col = 4
+##############################################################################################
+                    elif quad_1_rotation == 2:    
+                        if node_for_highest_score == 3:
+                            row = 3
+                            col = 6
+                        elif node_for_highest_score == 4:
+                            row = 3
+                            col = 5
+                        elif node_for_highest_score == 5:
+                            row = 3
+                            col = 4
+                        elif node_for_highest_score == 9:
+                            row = 2
+                            col = 6
+                        elif node_for_highest_score == 10:
+                            row = 2
+                            col = 5
+                        elif node_for_highest_score == 11:
+                            row = 2
+                            col = 4
+                        elif node_for_highest_score == 15:
+                            row = 1
+                            col = 6
+                        elif node_for_highest_score == 16:
+                            row = 1
+                            col = 5
+                        elif node_for_highest_score == 17:
+                            row = 1
+                            col = 4
+##############################################################################################
+                    elif quad_1_rotation == 3:    
+                        if node_for_highest_score == 3:
+                            row = 3
+                            col = 4
+                        elif node_for_highest_score == 4:
+                            row = 2
+                            col = 4
+                        elif node_for_highest_score == 5:
+                            row = 1
+                            col = 4
+                        elif node_for_highest_score == 9:
+                            row = 3
+                            col = 5
+                        elif node_for_highest_score == 10:
+                            row = 2
+                            col = 5
+                        elif node_for_highest_score == 11:
+                            row = 1
+                            col = 5
+                        elif node_for_highest_score == 15:
+                            row = 3
+                            col = 6
+                        elif node_for_highest_score == 16:
+                            row = 2
+                            col = 6
+                        elif node_for_highest_score == 17:
+                            row = 1
+                            col = 6
+#/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                    if quad_2_rotation == 0:        
+                        if node_for_highest_score == 18:
+                            row = 4
+                            col = 1
+                        elif node_for_highest_score == 19:
+                            row = 4
+                            col = 2
+                        elif node_for_highest_score == 20:
+                            row = 4
+                            col = 3
+                        elif node_for_highest_score == 24:
+                            row = 5
+                            col = 1
+                        elif node_for_highest_score == 25:
+                            row = 5
+                            col = 2
+                        elif node_for_highest_score == 26:
+                            row = 5
+                            col = 3
+                        elif node_for_highest_score == 30:
+                            row = 6
+                            col = 1
+                        elif node_for_highest_score == 31:
+                            row = 6
+                            col = 2
+                        elif node_for_highest_score == 32:
+                            row = 6
+                            col = 3
+################################################################################################
+                    elif quad_2_rotation == 1:        
+                        if node_for_highest_score == 18:
+                            row = 4
+                            col = 3
+                        elif node_for_highest_score == 19:
+                            row = 5
+                            col = 3
+                        elif node_for_highest_score == 20:
+                            row = 6
+                            col = 3
+                        elif node_for_highest_score == 24:
+                            row = 4
+                            col = 2
+                        elif node_for_highest_score == 25:
+                            row = 5
+                            col = 2
+                        elif node_for_highest_score == 26:
+                            row = 6
+                            col = 2
+                        elif node_for_highest_score == 30:
+                            row = 4
+                            col = 1
+                        elif node_for_highest_score == 31:
+                            row = 5
+                            col = 1
+                        elif node_for_highest_score == 32:
+                            row = 6
+                            col = 1
+################################################################################################
+                    elif quad_2_rotation == 2:        
+                        if node_for_highest_score == 18:
+                            row = 6
+                            col = 3
+                        elif node_for_highest_score == 19:
+                            row = 6
+                            col = 2
+                        elif node_for_highest_score == 20:
+                            row = 6
+                            col = 1
+                        elif node_for_highest_score == 24:
+                            row = 5
+                            col = 3
+                        elif node_for_highest_score == 25:
+                            row = 5
+                            col = 2
+                        elif node_for_highest_score == 26:
+                            row = 5
+                            col = 1
+                        elif node_for_highest_score == 30:
+                            row = 4
+                            col = 3
+                        elif node_for_highest_score == 31:
+                            row = 4
+                            col = 2
+                        elif node_for_highest_score == 32:
+                            row = 4
+                            col = 1
+################################################################################################
+                    elif quad_2_rotation == 3:        
+                        if node_for_highest_score == 18:
+                            row = 6
+                            col = 1
+                        elif node_for_highest_score == 19:
+                            row = 5
+                            col = 1
+                        elif node_for_highest_score == 20:
+                            row = 4
+                            col = 1
+                        elif node_for_highest_score == 24:
+                            row = 6
+                            col = 2
+                        elif node_for_highest_score == 25:
+                            row = 5
+                            col = 2
+                        elif node_for_highest_score == 26:
+                            row = 4
+                            col = 2
+                        elif node_for_highest_score == 30:
+                            row = 6
+                            col = 3
+                        elif node_for_highest_score == 31:
+                            row = 5
+                            col = 3
+                        elif node_for_highest_score == 32:
+                            row = 4
+                            col = 3
+#/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                    if quad_3_rotation == 0:           
+                        if node_for_highest_score == 21:
+                            row = 4
+                            col = 4
+                        elif node_for_highest_score == 22:
+                            row = 4
+                            col = 5
+                        elif node_for_highest_score == 23:
+                            row = 4
+                            col = 6
+                        elif node_for_highest_score == 27:
+                            row = 5
+                            col = 4
+                        elif node_for_highest_score == 28:
+                            row = 5
+                            col = 5
+                        elif node_for_highest_score == 29:
+                            row = 5
+                            col = 6 
+                        elif node_for_highest_score == 33:
+                            row = 6
+                            col = 4
+                        elif node_for_highest_score == 34:
+                            row = 6
+                            col = 5
+                        elif node_for_highest_score == 35:
+                            row = 6
+                            col = 6
+#################################################################################################
+                    elif quad_3_rotation == 1:           
+                        if node_for_highest_score == 21:
+                            row = 4
+                            col = 6
+                        elif node_for_highest_score == 22:
+                            row = 5
+                            col = 6
+                        elif node_for_highest_score == 23:
+                            row = 6
+                            col = 6
+                        elif node_for_highest_score == 27:
+                            row = 4
+                            col = 5
+                        elif node_for_highest_score == 28:
+                            row = 5
+                            col = 5
+                        elif node_for_highest_score == 29:
+                            row = 6
+                            col = 5 
+                        elif node_for_highest_score == 33:
+                            row = 4
+                            col = 4
+                        elif node_for_highest_score == 34:
+                            row = 5
+                            col = 4
+                        elif node_for_highest_score == 35:
+                            row = 6
+                            col = 4
+#################################################################################################
+                    elif quad_3_rotation == 2:           
+                        if node_for_highest_score == 21:
+                            row = 6
+                            col = 6
+                        elif node_for_highest_score == 22:
+                            row = 6
+                            col = 5
+                        elif node_for_highest_score == 23:
+                            row = 6
+                            col = 4
+                        elif node_for_highest_score == 27:
+                            row = 5
+                            col = 6
+                        elif node_for_highest_score == 28:
+                            row = 5
+                            col = 5
+                        elif node_for_highest_score == 29:
+                            row = 5
+                            col = 4 
+                        elif node_for_highest_score == 33:
+                            row = 4
+                            col = 6
+                        elif node_for_highest_score == 34:
+                            row = 4
+                            col = 5
+                        elif node_for_highest_score == 35:
+                            row = 4
+                            col = 4
+#################################################################################################
+                    elif quad_3_rotation == 3:           
+                        if node_for_highest_score == 21:
+                            row = 6
+                            col = 4
+                        elif node_for_highest_score == 22:
+                            row = 5
+                            col = 4
+                        elif node_for_highest_score == 23:
+                            row = 4
+                            col = 4
+                        elif node_for_highest_score == 27:
+                            row = 6
+                            col = 5
+                        elif node_for_highest_score == 28:
+                            row = 5
+                            col = 5
+                        elif node_for_highest_score == 29:
+                            row = 4
+                            col = 5 
+                        elif node_for_highest_score == 33:
+                            row = 6
+                            col = 6
+                        elif node_for_highest_score == 34:
+                            row = 5
+                            col = 6
+                        elif node_for_highest_score == 35:
+                            row = 4
+                            col = 6
+                    print (node_for_highest_score)
+                    game_over = drop_piece(row,col,board,turn,piece)
+                    draw_board(screen, board)
+                    pygame.display.update()
+                    node_for_highest_score = 0
+                    if  state_pass == 1:
+                        state += 1
+                    else:
+                        state = 0
     
             else:
                 if turn == 0:
@@ -1062,7 +1425,7 @@ while running:
                             draw_arrows(screen, BLACK)
                             pygame.display.update()
 
-                            turn = new  
+                            turn += 1 
                             state += 1
                             state = state % 2
                             quad_done = False
@@ -1086,38 +1449,93 @@ while running:
                 
                         pygame.display.update()
                 else:
+                    quad_0_rotation_right = quad_0_rotation +1
+                    quad_1_rotation_right = quad_1_rotation +1
+                    quad_2_rotation_right = quad_2_rotation +1
+                    quad_3_rotation_right = quad_3_rotation +1
+                    quad_0_rotation_left = quad_0_rotation -1
+                    quad_1_rotation_left = quad_0_rotation -1
+                    quad_2_rotation_left = quad_0_rotation -1
+                    quad_3_rotation_left = quad_0_rotation -1
+                    high_score = 0
+                    right_0 = 0
+                    left_0 = 0
+                    right_1 = 0
+                    left_1 = 0
+                    right_2 = 0
+                    left_2 = 0
+                    right_3 = 0
+                    left_3 = 0
 
                     
-                    #quad, rotation = checkrange(x, y)
-                    if quad == 5 and rotation == 5:
-                            pass
-                        else:
-                            
-                            board, game_over = rotate_quad(board, quad, rotation, piece)
-                            draw_arrows(screen, BLACK)
-                            pygame.display.update()
+                    right_0 = AI.score_taking_rotations(quad_0_rotation_right, quad_1_rotation, quad_2_rotation, quad_3_rotation)
+                    left_0 = AI.score_taking_rotations(quad_0_rotation_left, quad_1_rotation, quad_2_rotation, quad_3_rotation)
+                    right_1 = AI.score_taking_rotations(quad_0_rotation, quad_1_rotation_right, quad_2_rotation, quad_3_rotation)
+                    left_1 = AI.score_taking_rotations(quad_0_rotation, quad_1_rotation_left, quad_2_rotation, quad_3_rotation)
+                    right_2 = AI.score_taking_rotations(quad_0_rotation, quad_1_rotation, quad_2_rotation_right, quad_3_rotation)
+                    left_2 = AI.score_taking_rotations(quad_0_rotation, quad_1_rotation, quad_2_rotation_left, quad_3_rotation)
+                    right_3 = AI.score_taking_rotations(quad_0_rotation, quad_1_rotation, quad_2_rotation, quad_3_rotation_right)
+                    left_3 = AI.score_taking_rotations(quad_0_rotation, quad_1_rotation, quad_2_rotation, quad_3_rotation_left)
 
-                            turn = new  
-                            state += 1
-                            state = state % 2
-                            quad_done = False
+                    if right_0 > high_score:
+                        high_score = right_0
+                        quad = 0
+                        rotation = 1
+                    if left_0 > high_score:
+                        high_score = left_0
+                        quad = 0
+                        rotation = 0
+                    if right_1 > high_score:
+                        high_score = right_1
+                        quad = 1
+                        rotation = 1
+                    if left_1 > high_score:
+                        high_score = left_1
+                        quad = 1
+                        rotation = 0
+                    if right_2 > high_score:
+                        high_score = right_2
+                        quad = 2
+                        rotation = 1
+                    if left_2 > high_score:
+                        high_score = left_2
+                        quad = 2
+                        rotation = 0
+                    if right_3 > high_score:
+                        high_score = right_3
+                        quad = 3
+                        rotation = 1
+                    if left_3 > high_score:
+                        high_score = left_3
+                        quad = 3
+                        rotation = 0
+                            
+                    board, game_over = rotate_quad(board, quad, rotation, piece)
+                    draw_arrows(screen, BLACK)
+                    pygame.display.update()
+
+                    turn += 1
+                    turn = turn % 2
+                    state += 1
+                    state = state % 2
+                    quad_done = False
                             
                             
-                            if game_over:
-                                draw_board(screen, board)
-                                label = font_gameover.render(f"Game Over:  Player {turn + 1} Won!", 1, RED, BLACK)
-                                screen.blit(label, (65,340))
-                                pygame.display.update()
-                                print("here")
-                                state = -2
-                                if event.type == MOUSEBUTTONDOWN:
-                                    pressed = game_over_sign(event.pos[0], event.pos[1])
+                    if game_over:
+                        draw_board(screen, board)
+                        label = font_gameover.render(f"Game Over:  Player {turn + 1} Won!", 1, RED, BLACK)
+                        screen.blit(label, (65,340))
+                        pygame.display.update()
+                        print("here")
+                        state = -2
+                        if event.type == MOUSEBUTTONDOWN:
+                            pressed = game_over_sign(event.pos[0], event.pos[1])
             
-                                    if pressed == 0:
-                                        board, turn, game_over, state = clear_board()
-                                        draw_board(screen, board)
-                                        pygame.display.update()
+                            if pressed == 0:
+                                board, turn, game_over, state = clear_board()
+                                draw_board(screen, board)
+                                pygame.display.update()
                                         
                 
-                        pygame.display.update()
+                    pygame.display.update()
                     
