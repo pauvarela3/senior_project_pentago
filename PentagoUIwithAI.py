@@ -873,87 +873,28 @@ while running:
             
             pygame.display.update()
             if state == 0:
-                if event.type == pygame.MOUSEBUTTONDOWN:
-                   
-                    x = event.pos[0]
-                    y = event.pos[1]
-                        
-                    col = check_range(x)
-                    row = check_range(y)
-                    if col == 0 or row == 0:
-                        continue
-                    else:
-                        if turn == 0:
+                if turn == 0:
+                    if event.type == pygame.MOUSEBUTTONDOWN:
+                       
+                        x = event.pos[0]
+                        y = event.pos[1]
+                            
+                        col = check_range(x)
+                        row = check_range(y)
+                        if col == 0 or row == 0:
+                            continue
+                        else:
                             piece = 1
                             new, game_over = drop_piece(row, col, board, turn, piece)
-                        else:
-                            piece = 2
-                            new, game_over = drop_piece(row, col, board, turn, piece)
-                    
-                    
-                    draw_board(screen, board)
-                    pygame.display.update()        
-                    
-                    if  state_pass == 1:
-                        state += 1
-                    else:
-                        state = 0
-                    if game_over:
+                            
+                        
                         draw_board(screen, board)
-                        label = font_gameover.render(f"Game Over:  Player {turn + 1} Won!", 1, RED, BLACK)
-                        screen.blit(label, (65,340))
-                        pygame.display.update()
-                        print("here")
-                        state = -2
-                        if event.type == MOUSEBUTTONDOWN:
-                            pressed = game_over_sign(event.pos[0], event.pos[1])
-    
-                            if pressed == 0:
-                                board, turn, game_over, state = clear_board()
-                                draw_board(screen, board)
-                                pygame.display.update()
-    
-            else:
-                draw_arrows(screen, GRAY)
-                pygame.display.update()
-
-                if event.type == pygame.MOUSEBUTTONDOWN:
-                    x = event.pos[0]
-                    y = event.pos[1]
-                    
-                    
-#                     quad = check_quad(x, y)
-#                     if quad == 5:
-#                         quad_done = False
-#                     else:
-#                         quad_done = True
-#                     
-#                     
-#                 if event.type == pygame.KEYDOWN and quad_done == True:
-#                     if event.key == pygame.K_LEFT:
-#                         rotation = 1
-#                     if event.key == pygame.K_RIGHT:
-#                         rotation = 0
-                    
-                    #print(x, y)
-                    quad, rotation = checkrange(x, y)
-                    #print(quad, rotation)
-                    
-                                                
-                    if quad == 5 and rotation == 5:
-                        pass
-                    else:
+                        pygame.display.update()        
                         
-                        board, game_over = rotate_quad(board, quad, rotation, piece)
-                        draw_arrows(screen, BLACK)
-                        pygame.display.update()
-
-                        turn = new  
-                        state += 1
-                        state = state % 2
-                        quad_done = False
-                        
-                        
+                        if  state_pass == 1:
+                            state += 1
+                        else:
+                            state = 0
                         if game_over:
                             draw_board(screen, board)
                             label = font_gameover.render(f"Game Over:  Player {turn + 1} Won!", 1, RED, BLACK)
@@ -968,6 +909,215 @@ while running:
                                     board, turn, game_over, state = clear_board()
                                     draw_board(screen, board)
                                     pygame.display.update()
-                                    
-            
+                else:
+                #If this is the AI's turn, then don't wait for a click event. instead,
+                #make sure the AI takes its turn.
+                    node_for_highest_score = AI.look_at_scores()
+                    #Pieces are 2 for opponent
+                    piece = 2
+                    #Get the row and col based on the Node the AI chose.
+                    if node_for_highest_score == 0:
+                        row = 1
+                        col = 1
+                    elif node_for_highest_score == 1:
+                        row = 1
+                        col = 2
+                    elif node_for_highest_score == 2:
+                        row = 1
+                        col = 3
+                    elif node_for_highest_score == 3:
+                        row = 1
+                        col = 4
+                    elif node_for_highest_score == 4:
+                        row = 1
+                        col = 5
+                    elif node_for_highest_score == 5:
+                        row = 1
+                        col = 6
+                    elif node_for_highest_score == 6:
+                        row = 2
+                        col = 1
+                    elif node_for_highest_score == 7:
+                        row = 2
+                        col = 2
+                    elif node_for_highest_score == 8:
+                        row = 2
+                        col = 3
+                    elif node_for_highest_score == 9:
+                        row = 2
+                        col = 4
+                    elif node_for_highest_score == 10:
+                        row = 2
+                        col = 5
+                    elif node_for_highest_score == 11:
+                        row = 2
+                        col = 6
+                    elif node_for_highest_score == 12:
+                        row = 3
+                        col = 1
+                    elif node_for_highest_score == 13:
+                        row = 3
+                        col = 2
+                    elif node_for_highest_score == 14:
+                        row = 3
+                        col = 3
+                    elif node_for_highest_score == 15:
+                        row = 3
+                        col = 4
+                    elif node_for_highest_score == 16:
+                        row = 3
+                        col = 5
+                    elif node_for_highest_score == 17:
+                        row = 3
+                        col = 6
+                    elif node_for_highest_score == 18:
+                        row = 4
+                        col = 1
+                    elif node_for_highest_score == 19:
+                        row = 4
+                        col = 2
+                    elif node_for_highest_score == 20:
+                        row = 4
+                        col = 3
+                    elif node_for_highest_score == 21:
+                        row = 4
+                        col = 4
+                    elif node_for_highest_score == 22:
+                        row = 4
+                        col = 5
+                    elif node_for_highest_score == 23:
+                        row = 4
+                        col = 6
+                    elif node_for_highest_score == 24:
+                        row = 5
+                        col = 1
+                    elif node_for_highest_score == 25:
+                        row = 5
+                        col = 2
+                    elif node_for_highest_score == 26:
+                        row = 5
+                        col = 3
+                    elif node_for_highest_score == 27:
+                        row = 5
+                        col = 4
+                    elif node_for_highest_score == 28:
+                        row = 5
+                        col = 5
+                    elif node_for_highest_score == 29:
+                        row = 5
+                        col = 6
+                    elif node_for_highest_score == 30:
+                        row = 6
+                        col = 1
+                    elif node_for_highest_score == 31:
+                        row = 6
+                        col = 2
+                    elif node_for_highest_score == 32:
+                        row = 6
+                        col = 3
+                    elif node_for_highest_score == 33:
+                        row = 6
+                        col = 4
+                    elif node_for_highest_score == 34:
+                        row = 6
+                        col = 5
+                    elif node_for_highest_score == 35:
+                        row = 6
+                        col = 6
+                    new, game_over = drop_piece(row,col,board,turn,piece)
+    
+            else:
+                if turn == 0:
+                    draw_arrows(screen, GRAY)
                     pygame.display.update()
+
+                    if event.type == pygame.MOUSEBUTTONDOWN:
+                        x = event.pos[0]
+                        y = event.pos[1]
+                        
+                        
+    #                     quad = check_quad(x, y)
+    #                     if quad == 5:
+    #                         quad_done = False
+    #                     else:
+    #                         quad_done = True
+    #                     
+    #                     
+    #                 if event.type == pygame.KEYDOWN and quad_done == True:
+    #                     if event.key == pygame.K_LEFT:
+    #                         rotation = 1
+    #                     if event.key == pygame.K_RIGHT:
+    #                         rotation = 0
+                        
+                        #print(x, y)
+                        quad, rotation = checkrange(x, y)
+                        #print(quad, rotation)
+                        
+                                                    
+                        if quad == 5 and rotation == 5:
+                            pass
+                        else:
+                            
+                            board, game_over = rotate_quad(board, quad, rotation, piece)
+                            draw_arrows(screen, BLACK)
+                            pygame.display.update()
+
+                            turn = new  
+                            state += 1
+                            state = state % 2
+                            quad_done = False
+                            
+                            
+                            if game_over:
+                                draw_board(screen, board)
+                                label = font_gameover.render(f"Game Over:  Player {turn + 1} Won!", 1, RED, BLACK)
+                                screen.blit(label, (65,340))
+                                pygame.display.update()
+                                print("here")
+                                state = -2
+                                if event.type == MOUSEBUTTONDOWN:
+                                    pressed = game_over_sign(event.pos[0], event.pos[1])
+            
+                                    if pressed == 0:
+                                        board, turn, game_over, state = clear_board()
+                                        draw_board(screen, board)
+                                        pygame.display.update()
+                                        
+                
+                        pygame.display.update()
+                else:
+
+                    
+                    #quad, rotation = checkrange(x, y)
+                    if quad == 5 and rotation == 5:
+                            pass
+                        else:
+                            
+                            board, game_over = rotate_quad(board, quad, rotation, piece)
+                            draw_arrows(screen, BLACK)
+                            pygame.display.update()
+
+                            turn = new  
+                            state += 1
+                            state = state % 2
+                            quad_done = False
+                            
+                            
+                            if game_over:
+                                draw_board(screen, board)
+                                label = font_gameover.render(f"Game Over:  Player {turn + 1} Won!", 1, RED, BLACK)
+                                screen.blit(label, (65,340))
+                                pygame.display.update()
+                                print("here")
+                                state = -2
+                                if event.type == MOUSEBUTTONDOWN:
+                                    pressed = game_over_sign(event.pos[0], event.pos[1])
+            
+                                    if pressed == 0:
+                                        board, turn, game_over, state = clear_board()
+                                        draw_board(screen, board)
+                                        pygame.display.update()
+                                        
+                
+                        pygame.display.update()
+                    
