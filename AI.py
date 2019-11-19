@@ -17,14 +17,16 @@ class monomial:
         self.__passing = passing
     def monomial_score_update(self, taken):
         if taken == 1:
-            if (self.__score <= 2):
-                self.__score = self.__score*2
-            elif (self.__score <= 4):
-                self.__score = self.__score*4
-            elif (self.__score <= 16):
-                self.__score = self.__score*8
-            elif (self.__score <= 128):
-                self.__score = self.__score * 16
+            #if (self.__score <= 3):
+            self.__score = self.__score*5
+            #elif (self.__score <= 6):
+                #self.__score = self.__score*4
+            #elif (self.__score <= 24):
+                #self.__score = self.__score*8
+            #elif (self.__score <= 192):
+                #self.__score = self.__score * 16
+            #elif (self.__score <= 3072):
+                #self.__score = self.__score * 32
         elif taken == 0:
             self.__score = self.__score*0
     def monomial_score_rotation_update(self, rotations_away):   
@@ -36,14 +38,14 @@ class monomial:
                 self.__score = int(self.__score/2)
                 self.__passing = 0
             elif rotations_away == 1 and self.__passing == 2:
-                self.__score = int(self.__score/3)
+                self.__score = int(self.__score/4)
                 self.__score = self.__score*2
                 self.__passing = 1
             elif rotations_away == 1 and self.__passing == 0:
                 self.__score = self.__score*2
                 self.__passing = 1
             elif rotations_away == 0 and self.__passing == 0:
-                self.__score = self.__score*3
+                self.__score = self.__score*4
                 self.__passing = 2
             elif rotations_away >= 2 and self.__passing == 0:
                 self.__score = self.__score*1
@@ -508,20 +510,21 @@ def score_taking_rotations(rotation_0,rotation_1,rotation_2,rotation_3):
         quad_3_passed = False
         #print(str(monomial_index) + ":rotations_away: " + str(rotations_away_total))
         monomial_objects[monomial_index].monomial_score_rotation_update(rotations_away_total)
-        if(monomial_objects[monomial_index].return_score() == 3 ):
-            pprint(monomial_objects[monomial_index].return_monomial())
-            print(monomial_objects[monomial_index].return_score())
+        #if(monomial_objects[monomial_index].return_score() == 3 ):
+            #pprint(monomial_objects[monomial_index].return_monomial())
+            #print(monomial_objects[monomial_index].return_score())
         if (monomial_objects[monomial_index].return_score() > highest_score):
             highest_score = monomial_objects[monomial_index].return_score()
+            print(monomial_objects[monomial_index].return_monomial())
             #print(nodes[i].return_monomials()[j].return_monomial())
             #print(highest_score)
-        monomial_index +=1
         #pprint(rotations_away_total)
-        #pprint(nodes[i].return_monomials()[j].return_monomial())
-        #pprint(nodes[i].return_monomials()[j].return_score())
+        #pprint(monomial_objects[monomial_index].return_monomial())
+        #pprint(monomial_objects[monomial_index].return_score())
+        monomial_index +=1
         rotations_away = 0
         rotations_away_total = 0
-        
+    print ("Highest_Score: " + str(highest_score))
     adding_scores()
     for i in range(36):
         for j in range(len(nodes[i].return_monomials())):
@@ -554,14 +557,15 @@ def adding_scores():
             #print(score)
             #print(nodes[i].return_score())
         score = 0
-    #for i in range(36):
-            #for j in range (len(nodes[i].return_monomials())):
-                #if i == 17:
-                    #print (str(i+1) + ":" + str(nodes[i].return_score()) + ":" + str(nodes[i].return_state()))
-                    #pprint(str(j) + ":" + str(nodes[i].return_monomials()[j].return_monomial()) + ":" + str(nodes[i].return_monomials()[j].return_score()))
-                #elif i == 22:
-                    #print (str(i+1) + ":" + str(nodes[i].return_score()) + ":" + str(nodes[i].return_state()))
-                    #pprint(str(j) + ":" + str(nodes[i].return_monomials()[j].return_monomial()) + ":" + str(nodes[i].return_monomials()[j].return_score()))
+    for i in range(36):
+        print (str(i+1) + ":" + str(nodes[i].return_score()) + ":" + str(nodes[i].return_state()))
+        #for j in range (len(nodes[i].return_monomials())):
+            #if i == 17:
+                #print (str(i+1) + ":" + str(nodes[i].return_score()) + ":" + str(nodes[i].return_state()))
+                #pprint(str(j) + ":" + str(nodes[i].return_monomials()[j].return_monomial()) + ":" + str(nodes[i].return_monomials()[j].return_score()))
+            #elif i == 22:
+                #print (str(i+1) + ":" + str(nodes[i].return_score()) + ":" + str(nodes[i].return_state()))
+                #pprint(str(j) + ":" + str(nodes[i].return_monomials()[j].return_monomial()) + ":" + str(nodes[i].return_monomials()[j].return_score()))
 def look_at_scores():
     global nodes
     highest_score = 0
@@ -570,8 +574,6 @@ def look_at_scores():
         if nodes[i].return_score() > highest_score:
             highest_score = nodes[i].return_score()
             node_for_highest_score = i
-        else:
-            continue
     return node_for_highest_score
         
         

@@ -1495,35 +1495,37 @@ while running:
                     if right_0 > high_score:
                         high_score = right_0
                         quad = 0
-                        rotation = 1
+                        rotation = 0
+                        print("here")
                     if left_0 > high_score:
                         high_score = left_0
                         quad = 0
-                        rotation = 0
+                        rotation = 1
+                        print("here")
                     if right_1 > high_score:
                         high_score = right_1
                         quad = 1
-                        rotation = 1
+                        rotation = 0
                     if left_1 > high_score:
                         high_score = left_1
                         quad = 1
-                        rotation = 0
+                        rotation = 1
                     if right_2 > high_score:
                         high_score = right_2
                         quad = 2
-                        rotation = 1
+                        rotation = 0
                     if left_2 > high_score:
                         high_score = left_2
                         quad = 2
-                        rotation = 0
+                        rotation = 1
                     if right_3 > high_score:
                         high_score = right_3
                         quad = 3
-                        rotation = 1
+                        rotation = 0
                     if left_3 > high_score:
                         high_score = left_3
                         quad = 3
-                        rotation = 0
+                        rotation = 1
                     print(high_score)
                             
                     board, game_over = rotate_quad(board, quad, rotation, piece)
