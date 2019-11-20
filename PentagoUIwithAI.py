@@ -873,7 +873,7 @@ while running:
             
             pygame.display.update()
             if state == 0:
-                if turn == 0:
+                if turn == 1:
                     if event.type == pygame.MOUSEBUTTONDOWN:
                        
                         x = event.pos[0]
@@ -912,6 +912,7 @@ while running:
                 else:
                 #If this is the AI's turn, then don't wait for a click event. instead,
                 #make sure the AI takes its turn.
+                    AI.score_taking_rotations(quad_0_rotation, quad_1_rotation, quad_2_rotation, quad_3_rotation)
                     node_for_highest_score = AI.look_at_scores()
                     #Pieces are 2 for opponent
                     piece = 2
@@ -1390,7 +1391,7 @@ while running:
                         state = 0
     
             else:
-                if turn == 0:
+                if turn == 1:
                     draw_arrows(screen, GRAY)
                     pygame.display.update()
 
@@ -1425,7 +1426,8 @@ while running:
                             draw_arrows(screen, BLACK)
                             pygame.display.update()
 
-                            turn += 1 
+                            turn += 1
+                            turn = turn % 2
                             state += 1
                             state = state % 2
                             quad_done = False
@@ -1533,7 +1535,7 @@ while running:
                     pygame.display.update()
 
                     turn += 1
-                    turn = turn % 2
+                    #turn = turn % 2
                     state += 1
                     state = state % 2
                     quad_done = False
