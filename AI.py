@@ -16,6 +16,7 @@ class monomial:
         self.__passed = passed
         self.__passing = passing
     def monomial_score_update(self, taken):
+        #CHANGE THIS TO 1 IF YOU WANT THE AI TO BE SECOND PLAYER
         if taken == 0:
             #if (self.__score <= 3):
             self.__score = self.__score*4
