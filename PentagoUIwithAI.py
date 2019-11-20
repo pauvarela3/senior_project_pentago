@@ -627,11 +627,11 @@ def rotate_quad(board, quad, rotation, piece):
         quad_3_rotation = 0
     elif quad_3_rotation == -1:
         quad_3_rotation = 3
-    print (quad_0_rotation)
-    print (quad_1_rotation)
-    print (quad_2_rotation)
-    print (quad_3_rotation)
-    print ("These were the rotations")
+    #print (quad_0_rotation)
+    #print (quad_1_rotation)
+    #print (quad_2_rotation)
+    #print (quad_3_rotation)
+    #print ("These were the rotations")
     AI.score_taking_rotations(quad_0_rotation, quad_1_rotation, quad_2_rotation, quad_3_rotation)    
     
     if winning_move(board, piece):
@@ -1454,9 +1454,9 @@ while running:
                     quad_2_rotation_right = quad_2_rotation +1
                     quad_3_rotation_right = quad_3_rotation +1
                     quad_0_rotation_left = quad_0_rotation -1
-                    quad_1_rotation_left = quad_0_rotation -1
-                    quad_2_rotation_left = quad_0_rotation -1
-                    quad_3_rotation_left = quad_0_rotation -1
+                    quad_1_rotation_left = quad_1_rotation -1
+                    quad_2_rotation_left = quad_2_rotation -1
+                    quad_3_rotation_left = quad_3_rotation -1
                     high_score = 0
                     right_0 = 0
                     left_0 = 0
@@ -1496,12 +1496,12 @@ while running:
                         high_score = right_0
                         quad = 0
                         rotation = 0
-                        print("here")
+                        #print("here")
                     if left_0 > high_score:
                         high_score = left_0
                         quad = 0
                         rotation = 1
-                        print("here")
+                        #print("here")
                     if right_1 > high_score:
                         high_score = right_1
                         quad = 1
@@ -1526,7 +1526,7 @@ while running:
                         high_score = left_3
                         quad = 3
                         rotation = 1
-                    print(high_score)
+                    #print(high_score)
                             
                     board, game_over = rotate_quad(board, quad, rotation, piece)
                     draw_arrows(screen, BLACK)
