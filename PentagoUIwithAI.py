@@ -2,6 +2,7 @@ import numpy as np
 import pygame 
 import sys
 import AI
+import AI_Defense
 from pygame.constants import MOUSEBUTTONDOWN
 
 pygame.init()
@@ -543,6 +544,7 @@ def drop_piece(row, col, board, turn, piece):
                 else:
                     variable_number = 12
     AI.score_taking(variable_number,turn)
+    AI_Defense.score_taking(variable_number,turn)
     if turn ==0:
         piece = 1
     else:
@@ -632,7 +634,9 @@ def rotate_quad(board, quad, rotation, piece):
     #print (quad_2_rotation)
     #print (quad_3_rotation)
     #print ("These were the rotations")
-    AI.score_taking_rotations(quad_0_rotation, quad_1_rotation, quad_2_rotation, quad_3_rotation)    
+    AI.score_taking_rotations(quad_0_rotation, quad_1_rotation, quad_2_rotation, quad_3_rotation)
+    AI_Defense.score_taking_rotations(quad_0_rotation, quad_1_rotation, quad_2_rotation, quad_3_rotation)    
+
     
     if winning_move(board, piece):
         game_over = True
@@ -912,8 +916,35 @@ while running:
                 else:
                 #If this is the AI's turn, then don't wait for a click event. instead,
                 #make sure the AI takes its turn.
+                    
                     AI.score_taking_rotations(quad_0_rotation, quad_1_rotation, quad_2_rotation, quad_3_rotation)
-                    node_for_highest_score = AI.look_at_scores()
+                    AI_Defense.score_taking_rotations(quad_0_rotation, quad_1_rotation, quad_2_rotation, quad_3_rotation)
+
+                    #node_for_highest_score = AI.look_at_scores()
+                    highest_score = -1
+                    node_list_offense = AI.look_at_scores()
+                    node_list_defense = AI_Defense.look_at_scores()
+                    
+                    #print(node_list_defense)
+                    #print(node_list_offense)
+                    
+                    for i in range(36):
+                        if node_list_offense[i] > highest_score:
+                            highest_score = node_list_offense[i]
+                            node_for_highest_score = i
+                        if node_list_defense[i] > highest_score:
+                            highest_score = node_list_defense[i]
+                            node_for_highest_score = i
+                            print("This was a defensive move!")
+                        
+                        #print (node_list_defense[i])
+                        #if abs(int(node_list_offense[i]) - int(node_list_defense[i])) > highest_score:
+                            #print (abs(node_list_offense[i] - node_list_defense[i]))
+                            #if node_list_offense[i] != 0:
+                                #highest_score = abs(int(node_list_offense[i]) - int(node_list_defense[i]))
+                                #print (highest_score)
+                                #node_for_highest_score = i
+                        
                     #Pieces are 2 for opponent
                     piece = 2
                     #Get the row and col based on the Node the AI chose.

@@ -17,7 +17,7 @@ class monomial:
         self.__passing = passing
     def monomial_score_update(self, taken):
         #CHANGE THIS TO 1 IF YOU WANT THE AI TO BE SECOND PLAYER
-        if taken == 0:
+        if taken == 1:
             #if (self.__score <= 3):
             self.__score = self.__score*4
             #elif (self.__score <= 6):
@@ -28,7 +28,7 @@ class monomial:
                 #self.__score = self.__score * 16
             #elif (self.__score <= 3072):
                 #self.__score = self.__score * 32
-        elif taken == 1:
+        elif taken == 0:
             self.__score = self.__score*0
     def monomial_score_rotation_update(self, rotations_away):   
         if self.__passed == False:

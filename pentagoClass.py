@@ -1,7 +1,8 @@
 import numpy as np
 import pygame
 import sys
-
+import AI
+import AI_Defense
 
 #colors used in game
 BLUE = (0,0,255)
@@ -13,6 +14,11 @@ GRAY = (131,139,139)
 GREEN = (0,255,0)
 YELLOW = (0, 127,127)
 
+#GLOBALS ADDED BY GEORGE
+quad_0_rotation = 0
+quad_1_rotation = 0
+quad_2_rotation = 0
+quad_3_rotation = 0
 class Pentago():
     def __init__(self):
         self.squares = 4
@@ -34,7 +40,11 @@ class Pentago():
                         self.draw = True
                         return False
         return True
-    def drop_piece(self, row, col):    
+    def drop_piece(self, row, col):
+        global quad_0_rotation
+        global quad_1_rotation
+        global quad_2_rotation
+        global quad_3_rotation
         if row > 3 and col > 3:
             quad = 3
             row = row - 4
