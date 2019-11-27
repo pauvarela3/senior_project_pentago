@@ -615,11 +615,11 @@ class Board():
         
         self.font_label = pygame.font.Font(self.default_font, 32)
         self.font_tiny = pygame.font.Font(self.default_font, 20)
-        self.font_gameover = pygame.font.Font(self.default_font, 45)
+        self.font_gameover = pygame.font.Font(self.default_font, 40)
         label1 = self.font_label.render("Start Game:", 1, RED)
-        label12 = self.font_tiny.render("One Player", 1, RED)
+        label12 = self.font_tiny.render("Player One", 1, RED)
         label2 = self.font_label.render("Start Game:", 1, RED)
-        label22 = self.font_tiny.render("Two Player", 1, RED)
+        label22 = self.font_tiny.render("Player Two", 1, RED)
         
         self.screen.blit(label1, (265, 280))
         self.screen.blit(label12, (300, 310))
@@ -639,7 +639,7 @@ class Board():
         
         pygame.draw.rect(self.screen, BLACK, (65, 65, (self.squaresize * 2) + 45, (self.squaresize * 2) + 45))
         label = self.font_gameover.render(f"Game Over:  Player {turn + 1} Won!", 1, BLACK, BLACK)
-        self.screen.blit(label, (65,340))
+        self.screen.blit(label, (100,337))
         label = self.font_label.render(f"Turn: Player {turn + 1}", 1, WHITE, BLACK)
         self.screen.blit(label, (245,670))
         label = self.font_label.render("  Start Over  ", 1, WHITE, GRAY)
@@ -814,7 +814,7 @@ def running():
                     pressed = board.gamemenuButton(event.pos[0], event.pos[1])
                 
                 if pressed == 0: #one player
-                    pentago.state = 0
+                    pentago.state = 1
                 if pressed == 1: #two player
                     pentago.state = 0
                 else:
@@ -823,11 +823,11 @@ def running():
 #               game won by one player
                 if pentago.player1:
                     label = board.font_gameover.render(f"Game Over:  Player 1 Won!", 1, RED, BLACK)
-                    board.screen.blit(label, (65,340))
+                    board.screen.blit(label, (100,337))
                     pygame.display.update()
                 if pentago.player2:
                     label = board.font_gameover.render(f"Game Over:  Player 2 Won!", 1, RED, BLACK)
-                    board.screen.blit(label, (65,340))
+                    board.screen.blit(label, (100,337))
                     pygame.display.update()
                 pentago.state = 2
             elif pentago.state == 3:
