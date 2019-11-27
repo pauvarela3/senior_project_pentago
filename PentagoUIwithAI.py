@@ -935,7 +935,6 @@ while running:
                         if node_list_defense[i] > highest_score:
                             highest_score = node_list_defense[i]
                             node_for_highest_score = i
-                            print("This was a defensive move!")
                         
                         #print (node_list_defense[i])
                         #if abs(int(node_list_offense[i]) - int(node_list_defense[i])) > highest_score:
