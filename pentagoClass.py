@@ -25,13 +25,15 @@ class Pentago():
         self.rows = 3
         self.columns = 3
         self.board = np.zeros((self.squares, self.rows, self.columns))
-        
+
         self.player1 = False
         self.player2 = False
         self.draw = False
-        
+
         self.turn = 0
-        self.state = -1  
+        self.state = -1
+        self.moves = np.zeros((36,6))
+        self.top = -1
     def board_full(self):
         for i in range(len(self.board)):
             for j in range(len(self.board[0])):
@@ -437,16 +439,21 @@ class Pentago():
             piece = 1
         else:
             piece = 2
-            
+
         #new = self.turn + 1
         #new = new % 2
-            
+
         if not self.valid_move(row, col, quad):
             print("Space is already occupied, select another place")
             return self.turn
         else:
             self.board[quad][row][col] = piece
-            
+            self.top += 1
+            self.moves[self.top][0] = self.turn + 1
+            self.moves[self.top][1] = quad
+            self.moves[self.top][2] = row
+            self.moves[self.top][3] = col
+
             if self.winning_move(1):
                 self.player1 = True
             if self.winning_move(2):
@@ -457,7 +464,7 @@ class Pentago():
             elif self.player1 or self.player2:
                 print(f'Congrats Player {piece}, you have won the game!')
                 self.state = 2
-                
+
     def valid_move(self, row, col, quad):
         if self.board[quad][row][col] == 0:
             self.state = 1
@@ -479,7 +486,7 @@ class Pentago():
                 return True
             elif self.board[quad][row][col+1] == piece and self.board[quad][row][col+2] == piece and self.board[quad+1][row][col] == piece and self.board[quad + 1][row][col+1] == piece and self.board[quad+1][row][col+2] == piece:
                 return True
-    
+
                 #vertical win
         for j in range(len(self.board[0]) * 2):
             quad = 0
@@ -494,7 +501,7 @@ class Pentago():
             elif self.board[quad][row+1][col] == piece and self.board[quad][row+2][col] == piece and self.board[quad+2][row][col] == piece and self.board[quad + 2][row+1][col] == piece and self.board[quad+2][row+2][col] == piece:
                 return True
             #diagonal wins
-    
+
         #middle diagonals
         if self.board[0][0][0] == piece and self.board[0][1][1] == piece and self.board[0][2][2] == piece and self.board[3][0][0] == piece and self.board[3][1][1] == piece:
             return True
@@ -521,6 +528,8 @@ class Pentago():
         global quad_3_rotation
         left = 1
         right = 0
+        self.moves[self.top][4] = quad
+        self.moves[self.top][5] = rotation
         #GEORGE STUFF
         #In here, I ended up adding code to make sure
         #That the quad_#_rotation get updated based on
@@ -566,7 +575,7 @@ class Pentago():
         #AI stuff to update scores based on the rotations
         AI.score_taking_rotations(quad_0_rotation, quad_1_rotation, quad_2_rotation, quad_3_rotation)
         AI_Defense.score_taking_rotations(quad_0_rotation, quad_1_rotation, quad_2_rotation, quad_3_rotation)
-            
+
         if self.winning_move(1):
             self.player1 = True
             piece = 1
@@ -585,19 +594,44 @@ class Pentago():
         self.player1 = False
         self.player2 = False
         self.state = 0
+        self.moves = np.zeros((36,6))
+    def undo(self):
+        if self.top == -1:
+            return
+
+        quad = int(self.moves[self.top][4])
+        rotation = int(self.moves[self.top][5])
+
+        left = 1
+        right = 0
+
+        if rotation == left:
+            self.board[quad] = list(zip(*reversed(self.board[quad])))
+        if rotation == right:
+            self.board[quad] = list(zip(*reversed(self.board[quad])))
+            self.board[quad] = list(zip(*reversed(self.board[quad])))
+            self.board[quad] = list(zip(*reversed(self.board[quad])))
+
+        row = int(self.moves[self.top][2])
+        col = int(self.moves[self.top][3])
+        movequad = int(self.moves[self.top][4])
+        self.board[movequad][row][col] = 0
+        for x in range(len(self.moves[self.top])):
+            self.moves[self.top][x] = 0
+        self.top -= 1
 
 class Board():
     def __init__(self):
-        
+
         #screen and board sizes
         self.indsquare = 90
         self.squaresize = self.indsquare * 3
         self.screensize = self.indsquare * 8
         self.ROW = 6
         self.COL = 6
-        
+
         self.radius = int(self.indsquare/2 - 5)
-        
+
         size = (self.screensize, self.screensize + 65)
         self.screen = pygame.display.set_mode(size)
         pygame.display.set_caption("Pentago")
@@ -612,82 +646,84 @@ class Board():
         pygame.draw.rect(self.screen, BLACK, button1)
         button3 = (220, 400, 280, 100)
         pygame.draw.rect(self.screen, BLACK, button3)
-        
+
         self.font_label = pygame.font.Font(self.default_font, 32)
         self.font_tiny = pygame.font.Font(self.default_font, 20)
-        self.font_gameover = pygame.font.Font(self.default_font, 40)
+        self.font_gameover = pygame.font.Font(self.default_font, 45)
         label1 = self.font_label.render("Start Game:", 1, RED)
-        label12 = self.font_tiny.render("Player One", 1, RED)
+        label12 = self.font_tiny.render("One Player", 1, RED)
         label2 = self.font_label.render("Start Game:", 1, RED)
-        label22 = self.font_tiny.render("Player Two", 1, RED)
-        
+        label22 = self.font_tiny.render("Two Player", 1, RED)
+
         self.screen.blit(label1, (265, 280))
         self.screen.blit(label12, (300, 310))
         self.screen.blit(label2, (265, 420))
         self.screen.blit(label22, (300, 450))
-                
-        pygame.display.update()   
+
+        pygame.display.update()
     def gamemenuButton(self, x,y):
         if( 219 < x and x < 501) and (259 < y and y < 359):
             return 0
-        
+
         elif (219 < x and x < 501) and (399 < y and y < 501):
             return 1
         else:
             return -1
     def draw_board(self, board, turn):
-        
+
         pygame.draw.rect(self.screen, BLACK, (65, 65, (self.squaresize * 2) + 45, (self.squaresize * 2) + 45))
         label = self.font_gameover.render(f"Game Over:  Player {turn + 1} Won!", 1, BLACK, BLACK)
-        self.screen.blit(label, (100,337))
+        self.screen.blit(label, (65,340))
         label = self.font_label.render(f"Turn: Player {turn + 1}", 1, WHITE, BLACK)
         self.screen.blit(label, (245,670))
         label = self.font_label.render("  Start Over  ", 1, WHITE, GRAY)
         self.screen.blit(label, (65, 710))
+        label = self.font_label.render("   Undo   ", 1, WHITE, GRAY)
+        self.screen.blit(label, (475, 710))
 
-        
+
         pygame.draw.rect(self.screen, RED, (65,65,self.squaresize, self.squaresize), 2)
         for c in range(3):
             for r in range(3):
                 pygame.draw.rect(self.screen,RED, ((c*self.indsquare)+65, (r*self.indsquare)+65, self.indsquare, self.indsquare))
-                
+
                 if board[0][r][c] == 0:
                     pygame.draw.circle(self.screen,DARK_RED, (int(c*self.indsquare+(self.indsquare/2))+65, int(r*self.indsquare+(self.indsquare/2))+65), self.radius)
                 if board[0][r][c] == 1:
                     pygame.draw.circle(self.screen,WHITE, (int(c*self.indsquare+(self.indsquare/2))+65, int(r*self.indsquare+(self.indsquare/2))+65), self.radius)
                 if board[0][r][c] == 2:
                     pygame.draw.circle(self.screen,BLACK, (int(c*self.indsquare+(self.indsquare/2))+65, int(r*self.indsquare+(self.indsquare/2))+65), self.radius)
-    
-    
+
+
         pygame.draw.rect(self.screen, RED, (self.squaresize + 110, 65, self.squaresize, self.squaresize), 2)
         for c in range(3):
             for r in range(3):
                 pygame.draw.rect(self.screen,RED, ((c*self.indsquare)+110 + self.squaresize, (r*self.indsquare)+65, self.indsquare, self.indsquare))
-                
+
                 if board[1][r][c] == 0:
                     pygame.draw.circle(self.screen,DARK_RED, (int(c*self.indsquare+(self.indsquare/2))+380, int(r*self.indsquare+(self.indsquare/2))+65), self.radius)
                 if board[1][r][c] == 1:
                     pygame.draw.circle(self.screen,WHITE, (int(c*self.indsquare+(self.indsquare/2))+380, int(r*self.indsquare+(self.indsquare/2))+65), self.radius)
                 if board[1][r][c] == 2:
                     pygame.draw.circle(self.screen,BLACK, (int(c*self.indsquare+(self.indsquare/2))+380, int(r*self.indsquare+(self.indsquare/2))+65), self.radius)
-    
+
         pygame.draw.rect(self.screen, RED, (65, 110 + self.squaresize, self.squaresize, self.squaresize), 2)
         for c in range(3):
             for r in range(3):
                 pygame.draw.rect(self.screen,RED, ((c*self.indsquare)+65, (r*self.indsquare)+110 + self.squaresize, self.indsquare, self.indsquare))
-                
+
                 if board[2][r][c] == 0:
                     pygame.draw.circle(self.screen,DARK_RED, (int(c*self.indsquare+(self.indsquare/2))+65, int(r*self.indsquare+(self.indsquare/2))+380), self.radius)
                 if board[2][r][c] == 1:
                     pygame.draw.circle(self.screen,WHITE, (int(c*self.indsquare+(self.indsquare/2))+65, int(r*self.indsquare+(self.indsquare/2))+380), self.radius)
                 if board[2][r][c] == 2:
                     pygame.draw.circle(self.screen,BLACK, (int(c*self.indsquare+(self.indsquare/2))+65, int(r*self.indsquare+(self.indsquare/2))+380), self.radius)
-    
+
         pygame.draw.rect(self.screen, RED, (self.squaresize + 110, 110 + self.squaresize, self.squaresize, self.squaresize), 2)
         for c in range(3):
             for r in range(3):
                 pygame.draw.rect(self.screen,RED, ((c*self.indsquare)+110 +self.squaresize, (r*self.indsquare)+110 + self.squaresize, self.indsquare, self.indsquare))
-                
+
                 if board[3][r][c] == 0:
                     pygame.draw.circle(self.screen,DARK_RED, (int(c*self.indsquare+(self.indsquare/2))+380, int(r*self.indsquare+(self.indsquare/2))+380), self.radius)
                 if board[3][r][c] == 1:
@@ -698,37 +734,37 @@ class Board():
         x = 15
         y = 70
         pygame.draw.polygon(self.screen, color, ((16+x,10+y),(16+x,50+y),(8+x,50+y),(23+x,75+y),(38+x,50+y),(30+x,50+y),(30+x,10+y)))
-         
+
         x = 655
-        y = 70 
+        y = 70
         pygame.draw.polygon(self.screen, color, ((16+x,10+y),(16+x,50+y),(8+x,50+y),(23+x,75+y),(38+x,50+y),(30+x,50+y),(30+x,10+y)))
-        
+
         x = 70
         y = 15
         pygame.draw.polygon(self.screen, color, ((10+x,16+y),(50+x,16+y),(50+x,8+y),(75+x,23+y),(50+x,38+y),(50+x,30+y),(10+x,30+y)))
-                            
+
         x = 70
         y = 655
         pygame.draw.polygon(self.screen, color, ((10+x,16+y),(50+x,16+y),(50+x,8+y),(75+x,23+y),(50+x,38+y),(50+x,30+y),(10+x,30+y)))
-    
+
         x = 655
         y = 570
         pygame.draw.polygon(self.screen, color, ((16+x,75+y),(16+x,35+y),(8+x,35+y),(23+x,10+y),(38+x, 35+y),(30+x,35+y),(30+x,75+y)))
-    
+
         x = 15
         y = 570
         pygame.draw.polygon(self.screen, color, ((16+x,75+y),(16+x,35+y),(8+x,35+y),(23+x,10+y),(38+x,35+y),(30+x,35+y),(30+x,75+y)))
-    
-    
+
+
         x = 570
         y = 15
         pygame.draw.polygon(self.screen, color, ((10+x,23+y),(35+x,8+y),(35+x,16+y),(75+x,16+y),(75+x,30+y),(35+x,30+y),(35+x,38+y)))
-        
+
         x = 570
         y = 655
         pygame.draw.polygon(self.screen, color, ((10+x,23+y),(35+x,8+y),(35+x,16+y),(75+x,16+y),(75+x,30+y),(35+x,30+y),(35+x,38+y)))
     def whichQuadRot(self, x,y):
-        if (80 < x and x < 145) and (23 < y and y < 45): 
+        if (80 < x and x < 145) and (23 < y and y < 45):
             quad = 0
             rotation = 0
         elif (23 < x and x < 53) and (80 < y and y < 145):
@@ -737,7 +773,7 @@ class Board():
         elif (663 < x and x < 693) and (80 < y and y < 145):
             quad=1
             rotation=0
-        elif (580 < x and x < 645) and (23 < y and y < 53): 
+        elif (580 < x and x < 645) and (23 < y and y < 53):
             quad = 1
             rotation= 1
         elif (23 < x and x < 53) and (580 < y and y < 645):
@@ -769,52 +805,70 @@ class Board():
             x = 5
         elif value > 566 and value < 644:
             x = 6
-        else: 
+        else:
             x = 0
-        
-        return x 
-        
-#Game Running
+
+        return x
+
     def clearButton(self, x,y):
         if(x > 65 and x <223) and (y > 713 and y < 744):
-            return True  
+            return True
         else:
-            return False 
+            return False
+    def undoButton(self, x, y):
+        if (x > 500 and x < 600) and (y > 713 and y < 744):
+            return True
+        else:
+            return False
+
+#Game Running
 def running():
     running = True
-    
+
     pygame.init()
 
     pentago = Pentago()
     board = Board()
     moveComplete = False
-    
+
     while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 sys.exit()
-                
+
             if event.type == pygame.MOUSEBUTTONDOWN and board.clearButton(event.pos[0],event.pos[1]):
                 pentago.clear_board()
                 board.draw_board(pentago.board, pentago.turn)
                 board.draw_arrows(BLACK)
                 pygame.display.update()
-                
+
             elif pentago.board_full() and moveComplete:
-                pentago.state = 3 
-            
+                pentago.state = 3
+
+            elif event.type == pygame.MOUSEBUTTONDOWN and board.undoButton(event.pos[0], event.pos[1]) and moveComplete:
+                pentago.undo()
+                if pentago.turn == 1:
+                    turn = 0
+                else:
+                    turn = 1
+                board.draw_board(pentago.board, turn)
+                pentago.undo()
+                board.draw_board(pentago.board, pentago.turn)
+                pygame.display.update()
+
+
             elif pentago.state == -1:
                 #start menu
                 board.game_menu()
                 pygame.display.update()
-                
+
                 pressed = 2
-                
+
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     pressed = board.gamemenuButton(event.pos[0], event.pos[1])
-                
+
                 if pressed == 0: #one player
-                    pentago.state = 1
+                    pentago.state = 0
                 if pressed == 1: #two player
                     pentago.state = 0
                 else:
@@ -823,11 +877,11 @@ def running():
 #               game won by one player
                 if pentago.player1:
                     label = board.font_gameover.render(f"Game Over:  Player 1 Won!", 1, RED, BLACK)
-                    board.screen.blit(label, (100,337))
+                    board.screen.blit(label, (65,340))
                     pygame.display.update()
                 if pentago.player2:
                     label = board.font_gameover.render(f"Game Over:  Player 2 Won!", 1, RED, BLACK)
-                    board.screen.blit(label, (100,337))
+                    board.screen.blit(label, (65,340))
                     pygame.display.update()
                 pentago.state = 2
             elif pentago.state == 3:
@@ -837,18 +891,19 @@ def running():
                     board.screen.blit(label, (65,340))
                     pygame.display.update()
                 pentago.state = 3
-                
+
             else:
                 board.draw_board(pentago.board, pentago.turn)
                 pygame.display.update()
                 if pentago.turn == 1:
                     if pentago.state == 0:
                         #drop piece
-                        moveComplete = False
                         if event.type == pygame.MOUSEBUTTONDOWN:
+                            moveComplete = False
+
                             x = event.pos[0]
                             y = event.pos[1]
-                                
+
                             col = board.whichRowCol(x)
                             row = board.whichRowCol(y)
                             if col == 0 or row == 0:
@@ -858,20 +913,20 @@ def running():
                                     pentago.drop_piece(row, col)
                                 else:
                                     pentago.drop_piece(row, col)
-                                
+
                             board.draw_board(pentago.board, pentago.turn)
                             pygame.display.update()
-                        
-                            
+
+
                     if pentago.state == 1:
                         #rotate quadrant
                         board.draw_arrows(GRAY)
                         pygame.display.update()
-                        
+
                         if event.type == pygame.MOUSEBUTTONDOWN:
                             x = event.pos[0]
                             y = event.pos[1]
-                            
+
                             quad, rotation = board.whichQuadRot(x,y)
                             if quad == 5 or rotation == 5:
                                 pass
@@ -879,17 +934,15 @@ def running():
                                 pentago.rotate_quad(quad, rotation)
                                 board.draw_board(pentago.board, pentago.turn)
                                 pygame.display.update()
-                                
+
                                 moveComplete = True
 
                                 pentago.turn += 1
                                 pentago.turn = pentago.turn % 2
-                                
-                                print(pentago.turn)
+
                                 if pentago.state == 0 or pentago.state == 1:
                                     pentago.state += 1
                                     pentago.state = pentago.state % 2
-                                    print(pentago.state)
                             board.draw_arrows(BLACK)
                             board.draw_board(pentago.board, pentago.turn)
                             pygame.display.update()
@@ -897,13 +950,13 @@ def running():
                 elif pentago.turn == 0:
                     if pentago.state == 0:
                         #drop piece
-                        moveComplete = False
                         #If this is the AI's turn, then don't wait for a click event. instead,
                         #make sure the AI takes its turn.
 
                         #Take the scpre based on the current rotation
                         AI.score_taking_rotations(quad_0_rotation, quad_1_rotation, quad_2_rotation, quad_3_rotation)
                         AI_Defense.score_taking_rotations(quad_0_rotation, quad_1_rotation, quad_2_rotation, quad_3_rotation)
+                        moveComplete = False
 
                         #get scores based on offense and defense
                         highest_score = -1
@@ -920,7 +973,7 @@ def running():
                             if node_list_defense[i] > highest_score:
                                 highest_score = node_list_defense[i]
                                 node_for_highest_score = i
-                            
+
                         #Get the row and col based on the Node the AI chose.
                         if quad_0_rotation == 0:
                             if node_for_highest_score == 0:
@@ -1038,7 +1091,7 @@ def running():
                                 row = 1
                                 col = 3
     #/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                        if quad_1_rotation == 0:    
+                        if quad_1_rotation == 0:
                             if node_for_highest_score == 3:
                                 row = 1
                                 col = 4
@@ -1067,7 +1120,7 @@ def running():
                                 row = 3
                                 col = 6
     ##############################################################################################
-                        elif quad_1_rotation == 1:    
+                        elif quad_1_rotation == 1:
                             if node_for_highest_score == 3:
                                 row = 1
                                 col = 6
@@ -1096,7 +1149,7 @@ def running():
                                 row = 3
                                 col = 4
     ##############################################################################################
-                        elif quad_1_rotation == 2:    
+                        elif quad_1_rotation == 2:
                             if node_for_highest_score == 3:
                                 row = 3
                                 col = 6
@@ -1125,7 +1178,7 @@ def running():
                                 row = 1
                                 col = 4
     ##############################################################################################
-                        elif quad_1_rotation == 3:    
+                        elif quad_1_rotation == 3:
                             if node_for_highest_score == 3:
                                 row = 3
                                 col = 4
@@ -1154,7 +1207,7 @@ def running():
                                 row = 1
                                 col = 6
     #/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                        if quad_2_rotation == 0:        
+                        if quad_2_rotation == 0:
                             if node_for_highest_score == 18:
                                 row = 4
                                 col = 1
@@ -1183,7 +1236,7 @@ def running():
                                 row = 6
                                 col = 3
     ################################################################################################
-                        elif quad_2_rotation == 1:        
+                        elif quad_2_rotation == 1:
                             if node_for_highest_score == 18:
                                 row = 4
                                 col = 3
@@ -1212,7 +1265,7 @@ def running():
                                 row = 6
                                 col = 1
     ################################################################################################
-                        elif quad_2_rotation == 2:        
+                        elif quad_2_rotation == 2:
                             if node_for_highest_score == 18:
                                 row = 6
                                 col = 3
@@ -1241,7 +1294,7 @@ def running():
                                 row = 4
                                 col = 1
     ################################################################################################
-                        elif quad_2_rotation == 3:        
+                        elif quad_2_rotation == 3:
                             if node_for_highest_score == 18:
                                 row = 6
                                 col = 1
@@ -1270,7 +1323,7 @@ def running():
                                 row = 4
                                 col = 3
     #/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                        if quad_3_rotation == 0:           
+                        if quad_3_rotation == 0:
                             if node_for_highest_score == 21:
                                 row = 4
                                 col = 4
@@ -1288,7 +1341,7 @@ def running():
                                 col = 5
                             elif node_for_highest_score == 29:
                                 row = 5
-                                col = 6 
+                                col = 6
                             elif node_for_highest_score == 33:
                                 row = 6
                                 col = 4
@@ -1299,7 +1352,7 @@ def running():
                                 row = 6
                                 col = 6
     #################################################################################################
-                        elif quad_3_rotation == 1:           
+                        elif quad_3_rotation == 1:
                             if node_for_highest_score == 21:
                                 row = 4
                                 col = 6
@@ -1317,7 +1370,7 @@ def running():
                                 col = 5
                             elif node_for_highest_score == 29:
                                 row = 6
-                                col = 5 
+                                col = 5
                             elif node_for_highest_score == 33:
                                 row = 4
                                 col = 4
@@ -1328,7 +1381,7 @@ def running():
                                 row = 6
                                 col = 4
     #################################################################################################
-                        elif quad_3_rotation == 2:           
+                        elif quad_3_rotation == 2:
                             if node_for_highest_score == 21:
                                 row = 6
                                 col = 6
@@ -1346,7 +1399,7 @@ def running():
                                 col = 5
                             elif node_for_highest_score == 29:
                                 row = 5
-                                col = 4 
+                                col = 4
                             elif node_for_highest_score == 33:
                                 row = 4
                                 col = 6
@@ -1357,7 +1410,7 @@ def running():
                                 row = 4
                                 col = 4
     #################################################################################################
-                        elif quad_3_rotation == 3:           
+                        elif quad_3_rotation == 3:
                             if node_for_highest_score == 21:
                                 row = 6
                                 col = 4
@@ -1375,7 +1428,7 @@ def running():
                                 col = 5
                             elif node_for_highest_score == 29:
                                 row = 4
-                                col = 5 
+                                col = 5
                             elif node_for_highest_score == 33:
                                 row = 6
                                 col = 6
@@ -1389,8 +1442,8 @@ def running():
                         board.draw_board(pentago.board, pentago.turn)
                         pygame.display.update()
                         node_for_highest_score = 0
-                        
-                            
+
+
                     if pentago.state == 1:
                         #rotate quadrant
                         quad_0_rotation_right = quad_0_rotation +1
@@ -1410,9 +1463,9 @@ def running():
                         left_2 = 0
                         right_3 = 0
                         left_3 = 0
-                        
 
-                        
+
+
                         right_0 = AI.score_taking_rotations(quad_0_rotation_right, quad_1_rotation, quad_2_rotation, quad_3_rotation)
                         #print("right_0")
                         left_0 = AI.score_taking_rotations(quad_0_rotation_left, quad_1_rotation, quad_2_rotation, quad_3_rotation)
@@ -1435,7 +1488,7 @@ def running():
                         #print ("quad 3: " + str(left_3) + "," + str(right_3))
 
 
-                        
+
                         if right_0 > high_score:
                             high_score = right_0
                             quad = 0
@@ -1471,10 +1524,10 @@ def running():
                             quad = 3
                             rotation = 1
                         #print(high_score)
-                                
+
                         pentago.rotate_quad(quad, rotation)
                         board.draw_board(pentago.board, pentago.turn)
-                        pygame.display.update()                              
+                        pygame.display.update()
                         moveComplete = True
                         pentago.turn += 1
                         print(pentago.turn)
@@ -1485,5 +1538,4 @@ def running():
                         board.draw_board(pentago.board, pentago.turn)
                         pygame.display.update()
 
-running()        
-        
+running()    
