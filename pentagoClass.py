@@ -1,9 +1,14 @@
 import numpy as np
+import random
+import time
 import pygame
 import sys
 import AI
 import AI_Defense
 
+new = time.localtime(time.time())
+print (new)
+random.seed(new)
 #colors used in game
 BLUE = (0,0,255)
 BLACK = (0,0,0)
@@ -595,6 +600,10 @@ class Pentago():
         self.player2 = False
         self.state = 0
         self.moves = np.zeros((36,6))
+        self.top = -1
+        AI.reset_board()
+        AI_Defense.reset_board()
+        
     def undo(self):
         if self.top == -1:
             return
@@ -962,17 +971,35 @@ def running():
                         highest_score = -1
                         node_list_offense = AI.look_at_scores()
                         node_list_defense = AI_Defense.look_at_scores()
-
-
+                        node_list_offense_randomness = node_list_offense.copy()
+                        node_list_defense_randomness = node_list_defense.copy()
+                        node_list_offense_2 = []
+                        node_list_defense_2 = []
+                        node_list_select_place = []
                         #compare all scores for offense and defense
                         #get the highest one to put piece in there
                         for i in range(36):
-                            if node_list_offense[i] > highest_score:
+                            if node_list_offense[i] >= highest_score:
                                 highest_score = node_list_offense[i]
-                                node_for_highest_score = i
-                            if node_list_defense[i] > highest_score:
+                                #node_for_highest_score = i
+                            if node_list_defense[i] >= highest_score:
                                 highest_score = node_list_defense[i]
-                                node_for_highest_score = i
+                                #node_for_highest_score = i
+                        for i in range(36):
+                            if node_list_offense[i] >= highest_score:
+                                node_list_offense_2.append(i)
+                            if node_list_defense[i] >= highest_score:
+                                node_list_defense_2.append(i)
+                        for i in range(len(node_list_offense_2)):
+                            node_list_select_place.append(node_list_offense_2[i])
+                        for i in range(len(node_list_defense_2)):
+                            node_list_select_place.append(node_list_defense_2[i])
+                        
+                        node_for_highest_score = random.choice(node_list_select_place)
+                        
+
+                        
+
 
                         #Get the row and col based on the Node the AI chose.
                         if quad_0_rotation == 0:

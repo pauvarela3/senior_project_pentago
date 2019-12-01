@@ -64,6 +64,10 @@ class monomial:
         return self.__monomial
     def return_score(self):
         return self.__score
+    def reset(self):
+        self.__score = 1
+        self.__passed = False
+        self.__passing = 0
     
 
     
@@ -103,6 +107,9 @@ class node:
         return self.__taken
     def return_score(self):
         return self.__score
+    def reset(self):
+        self.__score = 0
+        self.__taken = 2
     
     
 
@@ -602,6 +609,14 @@ def look_at_scores():
             #node_for_highest_score = i
     #return node_for_highest_score
     return node_list
+
+def reset_board():
+    global nodes
+    global monomial_objects
+    for i in range(36):
+        nodes[i].reset()
+    for i in range(len(monomial_objects)):
+        monomial_objects[i].reset()
         
         
 #IGNORE COMMMENTED OUT STUFF
