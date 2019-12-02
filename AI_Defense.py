@@ -18,16 +18,16 @@ class monomial:
     def monomial_score_update(self, taken):
         #CHANGE THIS TO 1 IF YOU WANT THE AI TO BE SECOND PLAYER
         if taken == 1:
-            #if (self.__score <= 3):
-            self.__score = self.__score*4
-            #elif (self.__score <= 6):
-                #self.__score = self.__score*4
-            #elif (self.__score <= 24):
-                #self.__score = self.__score*8
-            #elif (self.__score <= 192):
-                #self.__score = self.__score * 16
-            #elif (self.__score <= 3072):
-                #self.__score = self.__score * 32
+            if (self.__score <= 3):
+                self.__score = self.__score*2
+            elif (self.__score <= 6):
+                self.__score = self.__score*4
+            elif (self.__score <= 24):
+                self.__score = self.__score*8
+            elif (self.__score <= 192):
+                self.__score = self.__score * 16
+            elif (self.__score <= 3072):
+                self.__score = self.__score * 32
         elif taken == 0:
             self.__score = self.__score*0
     def monomial_score_rotation_update(self, rotations_away):   
