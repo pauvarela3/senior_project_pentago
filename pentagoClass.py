@@ -996,10 +996,10 @@ def running():
                                 go_defense = True
                                 node_list_defense_2.append(i)
                                 
-                        for i in range(len(node_list_offense_2)):
-                            node_list_select_place.append(node_list_offense_2[i])
-                        for i in range(len(node_list_defense_2)):
-                            node_list_select_place.append(node_list_defense_2[i])
+                        #for i in range(len(node_list_offense_2)):
+                            #node_list_select_place.append(node_list_offense_2[i])
+                        #for i in range(len(node_list_defense_2)):
+                            #node_list_select_place.append(node_list_defense_2[i])
                             
                         if go_defense == True:
                             node_for_highest_score = random.choice(node_list_defense_2)
