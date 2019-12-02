@@ -1604,42 +1604,42 @@ def running():
 
 
                             
-                        if right_0_defense > high_score:
+                        if right_0_defense >= high_score:
                             high_score = right_0_defense
                             quad = 0
                             rotation = 1
                             print("This is a defensive rotation on quad: " + str(quad))
-                        if left_0_defense > high_score:
+                        if left_0_defense >= high_score:
                             high_score = left_0_defense
                             quad = 0
                             rotation = 0
                             print("This is a defensive rotation on quad: " + str(quad))
-                        if right_1_defense > high_score:
+                        if right_1_defense >= high_score:
                             high_score = right_1_defense
                             quad = 1
                             rotation = 1
                             print("This is a defensive rotation on quad: " + str(quad))
-                        if left_1_defense > high_score:
+                        if left_1_defense >= high_score:
                             high_score = left_1_defense
                             quad = 1
                             rotation = 0
                             print("This is a defensive rotation on quad: " + str(quad))
-                        if right_2_defense > high_score:
+                        if right_2_defense >= high_score:
                             high_score = right_2_defense
                             quad = 2
                             rotation = 1
                             print("This is a defensive rotation on quad: " + str(quad))
-                        if left_2_defense > high_score:
+                        if left_2_defense >= high_score:
                             high_score = left_2_defense
                             quad = 2
                             rotation = 0
                             print("This is a defensive rotation on quad: " + str(quad))
-                        if right_3_defense > high_score:
+                        if right_3_defense >= high_score:
                             high_score = right_3_defense
                             quad = 3
                             rotation = 1
                             print("This is a defensive rotation on quad: " + str(quad))
-                        if left_3_defense > high_score:
+                        if left_3_defense >= high_score:
                             high_score = left_3_defense
                             quad = 3
                             rotation = 0

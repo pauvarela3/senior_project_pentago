@@ -19,7 +19,7 @@ class monomial:
         #CHANGE THIS TO 1 IF YOU WANT THE AI TO BE SECOND PLAYER
         if taken == 1:
             #if (self.__score <= 3):
-            self.__score = self.__score*4
+            self.__score = self.__score*5
             #elif (self.__score <= 6):
                 #self.__score = self.__score*4
             #elif (self.__score <= 24):
