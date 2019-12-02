@@ -36,17 +36,17 @@ class monomial:
                 self.__score = int(self.__score/3)
                 self.__passing = 0
             elif rotations_away >= 2 and self.__passing == 1:
-                self.__score = int(self.__score/2)
+                self.__score = int(self.__score/3)
                 self.__passing = 0
             elif rotations_away == 1 and self.__passing == 2:
                 self.__score = int(self.__score/3)
-                self.__score = self.__score*2
+                self.__score = self.__score*3
                 self.__passing = 1
             elif rotations_away == 1 and self.__passing == 0:
-                self.__score = self.__score*2
+                self.__score = self.__score*3
                 self.__passing = 1
             elif rotations_away == 0 and self.__passing == 1:
-                self.__score = int(self.__score/2)
+                self.__score = int(self.__score/3)
                 self.__score = self.__score*3
                 self.__passing = 2
             elif rotations_away == 0 and self.__passing == 0:
