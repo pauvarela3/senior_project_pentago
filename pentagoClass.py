@@ -603,7 +603,7 @@ class Pentago():
         self.top = -1
         AI.reset_board()
         AI_Defense.reset_board()
-        
+
     def undo(self):
         if self.top == -1:
             return
@@ -856,12 +856,12 @@ def running():
 
             elif event.type == pygame.MOUSEBUTTONDOWN and board.undoButton(event.pos[0], event.pos[1]) and moveComplete:
                 pentago.undo()
-                if pentago.turn == 1:
-                    turn = 0
-                else:
-                    turn = 1
-                board.draw_board(pentago.board, turn)
-                pentago.undo()
+                # if pentago.turn == 1:
+                #     turn = 0
+                # else:
+                #     turn = 1
+                # board.draw_board(pentago.board, turn)
+                # pentago.undo()
                 board.draw_board(pentago.board, pentago.turn)
                 pygame.display.update()
 
@@ -995,21 +995,21 @@ def running():
                                 print ("This is defense " + str(i) + ": " + str(node_list_defense[i]))
                                 go_defense = True
                                 node_list_defense_2.append(i)
-                                
+
                         #for i in range(len(node_list_offense_2)):
                             #node_list_select_place.append(node_list_offense_2[i])
                         #for i in range(len(node_list_defense_2)):
                             #node_list_select_place.append(node_list_defense_2[i])
-                            
+
                         if go_defense == True:
                             node_for_highest_score = random.choice(node_list_defense_2)
                             go_defense = False
                         else:
                             node_for_highest_score = random.choice(node_list_offense_2)
                         #node_for_highest_score = random.choice(node_list_select_place)
-                        
 
-                        
+
+
 
 
                         #Get the row and col based on the Node the AI chose.
@@ -1477,6 +1477,7 @@ def running():
                                 row = 4
                                 col = 6
                         pentago.drop_piece(row, col)
+
                         board.draw_board(pentago.board, pentago.turn)
                         pygame.display.update()
                         node_for_highest_score = 0
@@ -1545,7 +1546,7 @@ def running():
                         right_3_defense = AI_Defense.score_taking_rotations(quad_0_rotation, quad_1_rotation, quad_2_rotation, quad_3_rotation_right)
                         #print("right_3")
                         left_3_defensse = AI_Defense.score_taking_rotations(quad_0_rotation, quad_1_rotation, quad_2_rotation, quad_3_rotation_left)
-                        
+
 
 
 
@@ -1603,7 +1604,7 @@ def running():
 
 
 
-                            
+
                         if right_0_defense > high_score:
                             high_score = right_0_defense
                             go_defense_rotation = True
@@ -1673,8 +1674,8 @@ def running():
                                 print("This is an defensive rotation on quad: " + str(quad))
 
 
-                            
-                        
+
+
                         print("highscore: " + str(high_score))
 
                         pentago.rotate_quad(quad, rotation)
@@ -1690,4 +1691,4 @@ def running():
                         board.draw_board(pentago.board, pentago.turn)
                         pygame.display.update()
 
-running()    
+running()
