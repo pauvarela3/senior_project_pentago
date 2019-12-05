@@ -5,9 +5,11 @@ import pygame
 import sys
 import AI
 import AI_Defense
+import BoardHash
+
 
 new = time.localtime(time.time())
-print (new)
+# print (new)
 random.seed(new)
 #colors used in game
 BLUE = (0,0,255)
@@ -18,6 +20,15 @@ WHITE = (255,255,255)
 GRAY = (131,139,139)
 GREEN = (0,255,0)
 YELLOW = (0, 127,127)
+
+# variables for positioning 'game over' message
+gameOver_dimension_x = 100
+gameOver_dimension_y = 645
+gameOver_font = 40
+
+# variables for positioning 'player turn' message
+playerTurn_dimension_x = 245
+playerTurn_dimension_y = 645
 
 #GLOBALS ADDED BY GEORGE
 quad_0_rotation = 0
@@ -594,10 +605,6 @@ class Pentago():
             print(f'Congrats Player {piece}, you have won the game!')
             self.state = 2
     def clear_board(self):
-        global quad_0_rotation
-        global quad_1_rotation
-        global quad_2_rotation
-        global quad_3_rotation
         self.board = np.zeros((self.squares, self.rows, self.columns))
         self.turn = 0
         self.player1 = False
@@ -607,10 +614,6 @@ class Pentago():
         self.top = -1
         AI.reset_board()
         AI_Defense.reset_board()
-        quad_0_rotation = 0
-        quad_1_rotation = 0
-        quad_2_rotation = 0
-        quad_3_rotation = 0
         
     def undo(self):
         if self.top == -1:
@@ -666,7 +669,7 @@ class Board():
 
         self.font_label = pygame.font.Font(self.default_font, 32)
         self.font_tiny = pygame.font.Font(self.default_font, 20)
-        self.font_gameover = pygame.font.Font(self.default_font, 45)
+        self.font_gameover = pygame.font.Font(self.default_font, gameOver_font)
         label1 = self.font_label.render("Start Game:", 1, RED)
         label12 = self.font_tiny.render("One Player", 1, RED)
         label2 = self.font_label.render("Start Game:", 1, RED)
@@ -688,65 +691,68 @@ class Board():
             return -1
     def draw_board(self, board, turn):
 
+
         pygame.draw.rect(self.screen, BLACK, (65, 65, (self.squaresize * 2) + 45, (self.squaresize * 2) + 45))
         label = self.font_gameover.render(f"Game Over:  Player {turn + 1} Won!", 1, BLACK, BLACK)
-        self.screen.blit(label, (65,340))
+        self.screen.blit(label, (gameOver_dimension_x,gameOver_dimension_y))
         label = self.font_label.render(f"Turn: Player {turn + 1}", 1, WHITE, BLACK)
-        self.screen.blit(label, (245,670))
+        self.screen.blit(label, (playerTurn_dimension_x,playerTurn_dimension_y))
         label = self.font_label.render("  Start Over  ", 1, WHITE, GRAY)
         self.screen.blit(label, (65, 710))
         label = self.font_label.render("   Undo   ", 1, WHITE, GRAY)
         self.screen.blit(label, (475, 710))
 
-
-        pygame.draw.rect(self.screen, RED, (65,65,self.squaresize, self.squaresize), 2)
+        # top left quadrant
+        pygame.draw.rect(self.screen, RED, (85,85,self.squaresize, self.squaresize), 2)
         for c in range(3):
             for r in range(3):
-                pygame.draw.rect(self.screen,RED, ((c*self.indsquare)+65, (r*self.indsquare)+65, self.indsquare, self.indsquare))
+                pygame.draw.rect(self.screen,RED, ((c*self.indsquare)+85, (r*self.indsquare)+85, self.indsquare, self.indsquare))
 
                 if board[0][r][c] == 0:
-                    pygame.draw.circle(self.screen,DARK_RED, (int(c*self.indsquare+(self.indsquare/2))+65, int(r*self.indsquare+(self.indsquare/2))+65), self.radius)
+                    pygame.draw.circle(self.screen,DARK_RED, (int(c*self.indsquare+(self.indsquare/2))+85, int(r*self.indsquare+(self.indsquare/2))+85), self.radius)
                 if board[0][r][c] == 1:
-                    pygame.draw.circle(self.screen,WHITE, (int(c*self.indsquare+(self.indsquare/2))+65, int(r*self.indsquare+(self.indsquare/2))+65), self.radius)
+                    pygame.draw.circle(self.screen,WHITE, (int(c*self.indsquare+(self.indsquare/2))+85, int(r*self.indsquare+(self.indsquare/2))+85), self.radius)
                 if board[0][r][c] == 2:
-                    pygame.draw.circle(self.screen,BLACK, (int(c*self.indsquare+(self.indsquare/2))+65, int(r*self.indsquare+(self.indsquare/2))+65), self.radius)
+                    pygame.draw.circle(self.screen,BLACK, (int(c*self.indsquare+(self.indsquare/2))+85, int(r*self.indsquare+(self.indsquare/2))+85), self.radius)
 
-
-        pygame.draw.rect(self.screen, RED, (self.squaresize + 110, 65, self.squaresize, self.squaresize), 2)
+        # top right quadrant
+        pygame.draw.rect(self.screen, RED, (self.squaresize + 95, 85, self.squaresize, self.squaresize), 2)
         for c in range(3):
             for r in range(3):
-                pygame.draw.rect(self.screen,RED, ((c*self.indsquare)+110 + self.squaresize, (r*self.indsquare)+65, self.indsquare, self.indsquare))
+                pygame.draw.rect(self.screen,RED, ((c*self.indsquare)+95 + self.squaresize, (r*self.indsquare)+85, self.indsquare, self.indsquare))
 
                 if board[1][r][c] == 0:
-                    pygame.draw.circle(self.screen,DARK_RED, (int(c*self.indsquare+(self.indsquare/2))+380, int(r*self.indsquare+(self.indsquare/2))+65), self.radius)
+                    pygame.draw.circle(self.screen,DARK_RED, (int(c*self.indsquare+(self.indsquare/2))+365, int(r*self.indsquare+(self.indsquare/2))+85), self.radius)
                 if board[1][r][c] == 1:
-                    pygame.draw.circle(self.screen,WHITE, (int(c*self.indsquare+(self.indsquare/2))+380, int(r*self.indsquare+(self.indsquare/2))+65), self.radius)
+                    pygame.draw.circle(self.screen,WHITE, (int(c*self.indsquare+(self.indsquare/2))+365, int(r*self.indsquare+(self.indsquare/2))+85), self.radius)
                 if board[1][r][c] == 2:
-                    pygame.draw.circle(self.screen,BLACK, (int(c*self.indsquare+(self.indsquare/2))+380, int(r*self.indsquare+(self.indsquare/2))+65), self.radius)
+                    pygame.draw.circle(self.screen,BLACK, (int(c*self.indsquare+(self.indsquare/2))+365, int(r*self.indsquare+(self.indsquare/2))+85), self.radius)
 
-        pygame.draw.rect(self.screen, RED, (65, 110 + self.squaresize, self.squaresize, self.squaresize), 2)
+        # bottom left quadrant
+        pygame.draw.rect(self.screen, RED, (85, 95 + self.squaresize, self.squaresize, self.squaresize), 2)
         for c in range(3):
             for r in range(3):
-                pygame.draw.rect(self.screen,RED, ((c*self.indsquare)+65, (r*self.indsquare)+110 + self.squaresize, self.indsquare, self.indsquare))
+                pygame.draw.rect(self.screen,RED, ((c*self.indsquare)+85, (r*self.indsquare)+95 + self.squaresize, self.indsquare, self.indsquare))
 
                 if board[2][r][c] == 0:
-                    pygame.draw.circle(self.screen,DARK_RED, (int(c*self.indsquare+(self.indsquare/2))+65, int(r*self.indsquare+(self.indsquare/2))+380), self.radius)
+                    pygame.draw.circle(self.screen,DARK_RED, (int(c*self.indsquare+(self.indsquare/2))+85, int(r*self.indsquare+(self.indsquare/2))+365), self.radius)
                 if board[2][r][c] == 1:
-                    pygame.draw.circle(self.screen,WHITE, (int(c*self.indsquare+(self.indsquare/2))+65, int(r*self.indsquare+(self.indsquare/2))+380), self.radius)
+                    pygame.draw.circle(self.screen,WHITE, (int(c*self.indsquare+(self.indsquare/2))+85, int(r*self.indsquare+(self.indsquare/2))+365), self.radius)
                 if board[2][r][c] == 2:
-                    pygame.draw.circle(self.screen,BLACK, (int(c*self.indsquare+(self.indsquare/2))+65, int(r*self.indsquare+(self.indsquare/2))+380), self.radius)
+                    pygame.draw.circle(self.screen,BLACK, (int(c*self.indsquare+(self.indsquare/2))+85, int(r*self.indsquare+(self.indsquare/2))+365), self.radius)
 
-        pygame.draw.rect(self.screen, RED, (self.squaresize + 110, 110 + self.squaresize, self.squaresize, self.squaresize), 2)
+        # bottom right quadrant
+        pygame.draw.rect(self.screen, RED, (self.squaresize + 95, 95 + self.squaresize, self.squaresize, self.squaresize), 2)
         for c in range(3):
             for r in range(3):
-                pygame.draw.rect(self.screen,RED, ((c*self.indsquare)+110 +self.squaresize, (r*self.indsquare)+110 + self.squaresize, self.indsquare, self.indsquare))
+                pygame.draw.rect(self.screen,RED, ((c*self.indsquare)+95 +self.squaresize, (r*self.indsquare)+95 + self.squaresize, self.indsquare, self.indsquare))
 
                 if board[3][r][c] == 0:
-                    pygame.draw.circle(self.screen,DARK_RED, (int(c*self.indsquare+(self.indsquare/2))+380, int(r*self.indsquare+(self.indsquare/2))+380), self.radius)
+                    pygame.draw.circle(self.screen,DARK_RED, (int(c*self.indsquare+(self.indsquare/2))+365, int(r*self.indsquare+(self.indsquare/2))+365), self.radius)
                 if board[3][r][c] == 1:
-                    pygame.draw.circle(self.screen,WHITE, (int(c*self.indsquare+(self.indsquare/2))+380, int(r*self.indsquare+(self.indsquare/2))+380), self.radius)
+                    pygame.draw.circle(self.screen,WHITE, (int(c*self.indsquare+(self.indsquare/2))+365, int(r*self.indsquare+(self.indsquare/2))+365), self.radius)
                 if board[3][r][c] == 2:
-                    pygame.draw.circle(self.screen,BLACK, (int(c*self.indsquare+(self.indsquare/2))+380, int(r*self.indsquare+(self.indsquare/2))+380), self.radius)
+                    pygame.draw.circle(self.screen,BLACK, (int(c*self.indsquare+(self.indsquare/2))+365, int(r*self.indsquare+(self.indsquare/2))+365), self.radius)
     def draw_arrows(self, color):
         x = 15
         y = 70
@@ -864,12 +870,12 @@ def running():
 
             elif event.type == pygame.MOUSEBUTTONDOWN and board.undoButton(event.pos[0], event.pos[1]) and moveComplete:
                 pentago.undo()
-                # if pentago.turn == 1:
-                #     turn = 0
-                # else:
-                #     turn = 1
-                # board.draw_board(pentago.board, turn)
-                # pentago.undo()
+                if pentago.turn == 1:
+                    turn = 0
+                else:
+                    turn = 1
+                board.draw_board(pentago.board, turn)
+                pentago.undo()
                 board.draw_board(pentago.board, pentago.turn)
                 pygame.display.update()
 
@@ -885,7 +891,7 @@ def running():
                     pressed = board.gamemenuButton(event.pos[0], event.pos[1])
 
                 if pressed == 0: #one player
-                    pentago.state = 0
+                    pentago.state = 1
                 if pressed == 1: #two player
                     pentago.state = 0
                 else:
@@ -894,18 +900,18 @@ def running():
 #               game won by one player
                 if pentago.player1:
                     label = board.font_gameover.render(f"Game Over:  Player 1 Won!", 1, RED, BLACK)
-                    board.screen.blit(label, (65,340))
+                    board.screen.blit(label, (gameOver_dimension_x,gameOver_dimension_y))
                     pygame.display.update()
                 if pentago.player2:
                     label = board.font_gameover.render(f"Game Over:  Player 2 Won!", 1, RED, BLACK)
-                    board.screen.blit(label, (65,340))
+                    board.screen.blit(label, (gameOver_dimension_x,gameOver_dimension_y))
                     pygame.display.update()
                 pentago.state = 2
             elif pentago.state == 3:
 #               game draw
                 if pentago.draw:
                     label = board.font_gameover.render(f"Game Over: Draw", 1, RED, BLACK)
-                    board.screen.blit(label, (65,340))
+                    board.screen.blit(label, (gameOver_dimension_x,gameOver_dimension_y))
                     pygame.display.update()
                 pentago.state = 3
 
@@ -974,561 +980,84 @@ def running():
                         AI.score_taking_rotations(quad_0_rotation, quad_1_rotation, quad_2_rotation, quad_3_rotation)
                         AI_Defense.score_taking_rotations(quad_0_rotation, quad_1_rotation, quad_2_rotation, quad_3_rotation)
                         moveComplete = False
-                        high_score_defense = 0
-                        high_score_offense = 0
-                        node_for_highest_score_defense,high_score_defense = AI_Defense.look_at_score_monomial()
-                        node_for_highest_score_offense,high_score_offense = AI.look_at_score_monomial()
 
-
-                        print("This is the high_score for defense:"+ str(high_score_defense))
-                        print ("This is the high_score for offense" + str(high_score_offense))
-                        if high_score_offense >= high_score_defense:
-                            node_for_highest_score = node_for_highest_score_offense
-                        else:
-                            node_for_highest_score = node_for_highest_score_defense
-                        print("This is the node: "+str(node_for_highest_score))
                         #get scores based on offense and defense
-##                        highest_score = -1
-##                        highest_score_offensive = -1
-##                        highest_score_defensive = -1
-##                        go_defense = False
-##                        go_offense = False
-##                        node_list_offense = AI.look_at_scores()
-##                        node_list_defense = AI_Defense.look_at_scores()
-##                        node_list_offense_randomness = node_list_offense.copy()
-##                        node_list_defense_randomness = node_list_defense.copy()
-##                        node_list_offense_2 = []
-##                        node_list_defense_2 = []
-##                        node_list_select_place = []
+                        highest_score = -1
+                        go_defense = False
+                        node_list_offense = AI.look_at_scores()
+                        node_list_defense = AI_Defense.look_at_scores()
+                        node_list_offense_randomness = node_list_offense.copy()
+                        node_list_defense_randomness = node_list_defense.copy()
+                        node_list_offense_2 = []
+                        node_list_defense_2 = []
+                        node_list_select_place = []
                         #compare all scores for offense and defense
                         #get the highest one to put piece in there
-##                        for i in range(36):
-##                            if node_list_offense[i] >= highest_score_offensive:
-##                                highest_score_offensive = node_list_offense[i]
-##                            if node_list_defense[i] >= highest_score_defensive:
-##                                highest_score_defensive = node_list_defense[i]
-##                            if node_list_offense[i] >= highest_score:
-##                                highest_score = node_list_offense[i]
-##                                #node_for_highest_score = i
-##                            if node_list_defense[i] >= highest_score:
-##                                highest_score = node_list_defense[i]
-                                
-                                #node_for_highest_score = i
-                        #print ("Highest score is: " + str(highest_score))
-##                        for i in range(36):
-##                            #if node_list_offense[i] >= highest_score_defensive:
-##                                #node_list_offense_2.append(i)
-##                                #print ("This is offense " + str(i) + ": " + str(node_list_offense[i]))
-##                            #if node_list_defense[i] >= highest_score:
-##                                #node_list_defense_2.append(i)
-##                                #go_defense = True
-##                                #print ("This is defense " + str(i) + ": " + str(node_list_defense[i]))
-##
-##                            if node_list_offense[i] >= highest_score:
-##                                print ("This is offense " + str(i) + ": " + str(node_list_offense[i]))
-##                                go_offense = True
-##                                node_list_offense_2.append(i)
-##                            if node_list_defense[i] >= highest_score:
-##                                print ("This is defense " + str(i) + ": " + str(node_list_defense[i]))
-##                                go_defense = True
-##                                node_list_defense_2.append(i)
+                        for i in range(36):
+                            if node_list_offense[i] >= highest_score:
+                                highest_score = node_list_offense[i]
+                                node_for_highest_score = i
+                            # print(f' node for highest score offense: {node_for_highest_score}')
+                            if node_list_defense[i] >= highest_score:
+                                highest_score = node_list_defense[i]
+                                node_for_highest_score = i
+                                # print(f' node for highest score defense: {node_for_highest_score}')
+                        print(f'Highest score node: {node_for_highest_score}')
 
-                            #if go_offense == True and highest_score >= 2000:
-                                #go_defense = False
+                            # previous higher score hash stuff
+
+                        print ("Highest score: " + str(highest_score))
+                        for i in range(36):
+                            if node_list_offense[i] >= highest_score:
+                                print(f'Offense.  Node: {i}. Score: {node_list_offense[i]}')
+                                # print ("This is offense " + str(i) + ": " + str(node_list_offense[i]))
+                                node_list_offense_2.append(i)
+                            if node_list_defense[i] >= highest_score:
+                                # print ("This is defense " + str(i) + ": " + str(node_list_defense[i]))
+                                print(f'Defense.  Node: {i}. Score: {node_list_defense[i]}')
+                                go_defense = True
+                                node_list_defense_2.append(i)
                                 
                         #for i in range(len(node_list_offense_2)):
                             #node_list_select_place.append(node_list_offense_2[i])
                         #for i in range(len(node_list_defense_2)):
                             #node_list_select_place.append(node_list_defense_2[i])
-
-##                        if go_offense == True:
-##                            node_for_highest_score = random.choice(node_list_offense_2)
-##                            go_offense = False
-##                        else:
-##                            node_for_highest_score = random.choice(node_list_defense_2)
-##                           
-                        #if go_defense == True:
-                            #node_for_highest_score = random.choice(node_list_defense_2)
-                            #go_defense = False
-                        #else:
-                            #node_for_highest_score = random.choice(node_list_offense_2)
+                            
+                        if go_defense == True:
+                            node_for_highest_score = random.choice(node_list_defense_2)
+                            go_defense = False
+                        else:
+                            node_for_highest_score = random.choice(node_list_offense_2)
                         #node_for_highest_score = random.choice(node_list_select_place)
+                        
 
+                        # refactored the if statements
+                        # figuring out quad for searching row, col in board hash
+                        if (node_for_highest_score in BoardHash.quad_0_variables):
+                            quad_for_highest_score = 0
+                        if (node_for_highest_score in BoardHash.quad_1_variables):
+                            quad_for_highest_score = 1
+                        if (node_for_highest_score in BoardHash.quad_2_variables):
+                            quad_for_highest_score = 2
+                        if (node_for_highest_score in BoardHash.quad_3_variables):
+                            quad_for_highest_score = 3
 
+                        # value of specific quad rotation.  quad_0_rotation, quad_1_rotation etc
+                        # quad changes depending on which quad is highest score
+                        quad_rotation = globals()[('quad_')+str(quad_for_highest_score)+('_rotation')]
 
+                        # print(f'quad for highest score: {quad_for_highest_score}')
+                        # print(f'node for highest score: {node_for_highest_score}')
+                        # print(f'quad rotation: {quad_rotation}')
 
+                        row = BoardHash.board_hash[quad_for_highest_score][node_for_highest_score][quad_rotation][0]
+                        col = BoardHash.board_hash[quad_for_highest_score][node_for_highest_score][quad_rotation][1]
+                        # end of refactoring if statements
 
-                        #Get the row and col based on the Node the AI chose.
-                        if quad_0_rotation == 0:
-                            if node_for_highest_score == 0:
-                                row = 1
-                                col = 1
-                            elif node_for_highest_score == 1:
-                                row = 1
-                                col = 2
-                            elif node_for_highest_score == 2:
-                                row = 1
-                                col = 3
-                            elif node_for_highest_score == 6:
-                                row = 2
-                                col = 1
-                            elif node_for_highest_score == 7:
-                                row = 2
-                                col = 2
-                            elif node_for_highest_score == 8:
-                                row = 2
-                                col = 3
-                            elif node_for_highest_score == 12:
-                                row = 3
-                                col = 1
-                            elif node_for_highest_score == 13:
-                                row = 3
-                                col = 2
-                            elif node_for_highest_score == 14:
-                                row = 3
-                                col = 3
-    #######################################################################################################################################################################
-                        elif quad_0_rotation == 1:
-                            if node_for_highest_score == 0:
-                                row = 1
-                                col = 3
-                            elif node_for_highest_score == 1:
-                                row = 2
-                                col = 3
-                            elif node_for_highest_score == 2:
-                                row = 3
-                                col = 3
-                            elif node_for_highest_score == 6:
-                                row = 1
-                                col = 2
-                            elif node_for_highest_score == 7:
-                                row = 2
-                                col = 2
-                            elif node_for_highest_score == 8:
-                                row = 3
-                                col = 2
-                            elif node_for_highest_score == 12:
-                                row = 1
-                                col = 1
-                            elif node_for_highest_score == 13:
-                                row = 2
-                                col = 1
-                            elif node_for_highest_score == 14:
-                                row = 3
-                                col = 1
-    #################################################################################################################################################################
-                        elif quad_0_rotation == 2:
-                            if node_for_highest_score == 0:
-                                row = 3
-                                col = 3
-                            elif node_for_highest_score == 1:
-                                row = 3
-                                col = 2
-                            elif node_for_highest_score == 2:
-                                row = 3
-                                col = 1
-                            elif node_for_highest_score == 6:
-                                row = 2
-                                col = 3
-                            elif node_for_highest_score == 7:
-                                row = 2
-                                col = 2
-                            elif node_for_highest_score == 8:
-                                row = 2
-                                col = 1
-                            elif node_for_highest_score == 12:
-                                row = 1
-                                col = 3
-                            elif node_for_highest_score == 13:
-                                row = 1
-                                col = 2
-                            elif node_for_highest_score == 14:
-                                row = 1
-                                col = 1
-    #################################################################################################################################################################
-                        elif quad_0_rotation == 3:
-                            if node_for_highest_score == 0:
-                                row = 3
-                                col = 1
-                            elif node_for_highest_score == 1:
-                                row = 2
-                                col = 1
-                            elif node_for_highest_score == 2:
-                                row = 1
-                                col = 1
-                            elif node_for_highest_score == 6:
-                                row = 3
-                                col = 2
-                            elif node_for_highest_score == 7:
-                                row = 2
-                                col = 2
-                            elif node_for_highest_score == 8:
-                                row = 1
-                                col = 2
-                            elif node_for_highest_score == 12:
-                                row = 3
-                                col = 3
-                            elif node_for_highest_score == 13:
-                                row = 2
-                                col = 3
-                            elif node_for_highest_score == 14:
-                                row = 1
-                                col = 3
-    #/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                        if quad_1_rotation == 0:
-                            if node_for_highest_score == 3:
-                                row = 1
-                                col = 4
-                            elif node_for_highest_score == 4:
-                                row = 1
-                                col = 5
-                            elif node_for_highest_score == 5:
-                                row = 1
-                                col = 6
-                            elif node_for_highest_score == 9:
-                                row = 2
-                                col = 4
-                            elif node_for_highest_score == 10:
-                                row = 2
-                                col = 5
-                            elif node_for_highest_score == 11:
-                                row = 2
-                                col = 6
-                            elif node_for_highest_score == 15:
-                                row = 3
-                                col = 4
-                            elif node_for_highest_score == 16:
-                                row = 3
-                                col = 5
-                            elif node_for_highest_score == 17:
-                                row = 3
-                                col = 6
-    ##############################################################################################
-                        elif quad_1_rotation == 1:
-                            if node_for_highest_score == 3:
-                                row = 1
-                                col = 6
-                            elif node_for_highest_score == 4:
-                                row = 2
-                                col = 6
-                            elif node_for_highest_score == 5:
-                                row = 3
-                                col = 6
-                            elif node_for_highest_score == 9:
-                                row = 1
-                                col = 5
-                            elif node_for_highest_score == 10:
-                                row = 2
-                                col = 5
-                            elif node_for_highest_score == 11:
-                                row = 3
-                                col = 5
-                            elif node_for_highest_score == 15:
-                                row = 1
-                                col = 4
-                            elif node_for_highest_score == 16:
-                                row = 2
-                                col = 4
-                            elif node_for_highest_score == 17:
-                                row = 3
-                                col = 4
-    ##############################################################################################
-                        elif quad_1_rotation == 2:
-                            if node_for_highest_score == 3:
-                                row = 3
-                                col = 6
-                            elif node_for_highest_score == 4:
-                                row = 3
-                                col = 5
-                            elif node_for_highest_score == 5:
-                                row = 3
-                                col = 4
-                            elif node_for_highest_score == 9:
-                                row = 2
-                                col = 6
-                            elif node_for_highest_score == 10:
-                                row = 2
-                                col = 5
-                            elif node_for_highest_score == 11:
-                                row = 2
-                                col = 4
-                            elif node_for_highest_score == 15:
-                                row = 1
-                                col = 6
-                            elif node_for_highest_score == 16:
-                                row = 1
-                                col = 5
-                            elif node_for_highest_score == 17:
-                                row = 1
-                                col = 4
-    ##############################################################################################
-                        elif quad_1_rotation == 3:
-                            if node_for_highest_score == 3:
-                                row = 3
-                                col = 4
-                            elif node_for_highest_score == 4:
-                                row = 2
-                                col = 4
-                            elif node_for_highest_score == 5:
-                                row = 1
-                                col = 4
-                            elif node_for_highest_score == 9:
-                                row = 3
-                                col = 5
-                            elif node_for_highest_score == 10:
-                                row = 2
-                                col = 5
-                            elif node_for_highest_score == 11:
-                                row = 1
-                                col = 5
-                            elif node_for_highest_score == 15:
-                                row = 3
-                                col = 6
-                            elif node_for_highest_score == 16:
-                                row = 2
-                                col = 6
-                            elif node_for_highest_score == 17:
-                                row = 1
-                                col = 6
-    #/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                        if quad_2_rotation == 0:
-                            if node_for_highest_score == 18:
-                                row = 4
-                                col = 1
-                            elif node_for_highest_score == 19:
-                                row = 4
-                                col = 2
-                            elif node_for_highest_score == 20:
-                                row = 4
-                                col = 3
-                            elif node_for_highest_score == 24:
-                                row = 5
-                                col = 1
-                            elif node_for_highest_score == 25:
-                                row = 5
-                                col = 2
-                            elif node_for_highest_score == 26:
-                                row = 5
-                                col = 3
-                            elif node_for_highest_score == 30:
-                                row = 6
-                                col = 1
-                            elif node_for_highest_score == 31:
-                                row = 6
-                                col = 2
-                            elif node_for_highest_score == 32:
-                                row = 6
-                                col = 3
-    ################################################################################################
-                        elif quad_2_rotation == 1:
-                            if node_for_highest_score == 18:
-                                row = 4
-                                col = 3
-                            elif node_for_highest_score == 19:
-                                row = 5
-                                col = 3
-                            elif node_for_highest_score == 20:
-                                row = 6
-                                col = 3
-                            elif node_for_highest_score == 24:
-                                row = 4
-                                col = 2
-                            elif node_for_highest_score == 25:
-                                row = 5
-                                col = 2
-                            elif node_for_highest_score == 26:
-                                row = 6
-                                col = 2
-                            elif node_for_highest_score == 30:
-                                row = 4
-                                col = 1
-                            elif node_for_highest_score == 31:
-                                row = 5
-                                col = 1
-                            elif node_for_highest_score == 32:
-                                row = 6
-                                col = 1
-    ################################################################################################
-                        elif quad_2_rotation == 2:
-                            if node_for_highest_score == 18:
-                                row = 6
-                                col = 3
-                            elif node_for_highest_score == 19:
-                                row = 6
-                                col = 2
-                            elif node_for_highest_score == 20:
-                                row = 6
-                                col = 1
-                            elif node_for_highest_score == 24:
-                                row = 5
-                                col = 3
-                            elif node_for_highest_score == 25:
-                                row = 5
-                                col = 2
-                            elif node_for_highest_score == 26:
-                                row = 5
-                                col = 1
-                            elif node_for_highest_score == 30:
-                                row = 4
-                                col = 3
-                            elif node_for_highest_score == 31:
-                                row = 4
-                                col = 2
-                            elif node_for_highest_score == 32:
-                                row = 4
-                                col = 1
-    ################################################################################################
-                        elif quad_2_rotation == 3:
-                            if node_for_highest_score == 18:
-                                row = 6
-                                col = 1
-                            elif node_for_highest_score == 19:
-                                row = 5
-                                col = 1
-                            elif node_for_highest_score == 20:
-                                row = 4
-                                col = 1
-                            elif node_for_highest_score == 24:
-                                row = 6
-                                col = 2
-                            elif node_for_highest_score == 25:
-                                row = 5
-                                col = 2
-                            elif node_for_highest_score == 26:
-                                row = 4
-                                col = 2
-                            elif node_for_highest_score == 30:
-                                row = 6
-                                col = 3
-                            elif node_for_highest_score == 31:
-                                row = 5
-                                col = 3
-                            elif node_for_highest_score == 32:
-                                row = 4
-                                col = 3
-    #/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                        if quad_3_rotation == 0:
-                            if node_for_highest_score == 21:
-                                row = 4
-                                col = 4
-                            elif node_for_highest_score == 22:
-                                row = 4
-                                col = 5
-                            elif node_for_highest_score == 23:
-                                row = 4
-                                col = 6
-                            elif node_for_highest_score == 27:
-                                row = 5
-                                col = 4
-                            elif node_for_highest_score == 28:
-                                row = 5
-                                col = 5
-                            elif node_for_highest_score == 29:
-                                row = 5
-                                col = 6
-                            elif node_for_highest_score == 33:
-                                row = 6
-                                col = 4
-                            elif node_for_highest_score == 34:
-                                row = 6
-                                col = 5
-                            elif node_for_highest_score == 35:
-                                row = 6
-                                col = 6
-    #################################################################################################
-                        elif quad_3_rotation == 1:
-                            if node_for_highest_score == 21:
-                                row = 4
-                                col = 6
-                            elif node_for_highest_score == 22:
-                                row = 5
-                                col = 6
-                            elif node_for_highest_score == 23:
-                                row = 6
-                                col = 6
-                            elif node_for_highest_score == 27:
-                                row = 4
-                                col = 5
-                            elif node_for_highest_score == 28:
-                                row = 5
-                                col = 5
-                            elif node_for_highest_score == 29:
-                                row = 6
-                                col = 5
-                            elif node_for_highest_score == 33:
-                                row = 4
-                                col = 4
-                            elif node_for_highest_score == 34:
-                                row = 5
-                                col = 4
-                            elif node_for_highest_score == 35:
-                                row = 6
-                                col = 4
-    #################################################################################################
-                        elif quad_3_rotation == 2:
-                            if node_for_highest_score == 21:
-                                row = 6
-                                col = 6
-                            elif node_for_highest_score == 22:
-                                row = 6
-                                col = 5
-                            elif node_for_highest_score == 23:
-                                row = 6
-                                col = 4
-                            elif node_for_highest_score == 27:
-                                row = 5
-                                col = 6
-                            elif node_for_highest_score == 28:
-                                row = 5
-                                col = 5
-                            elif node_for_highest_score == 29:
-                                row = 5
-                                col = 4
-                            elif node_for_highest_score == 33:
-                                row = 4
-                                col = 6
-                            elif node_for_highest_score == 34:
-                                row = 4
-                                col = 5
-                            elif node_for_highest_score == 35:
-                                row = 4
-                                col = 4
-    #################################################################################################
-                        elif quad_3_rotation == 3:
-                            if node_for_highest_score == 21:
-                                row = 6
-                                col = 4
-                            elif node_for_highest_score == 22:
-                                row = 5
-                                col = 4
-                            elif node_for_highest_score == 23:
-                                row = 4
-                                col = 4
-                            elif node_for_highest_score == 27:
-                                row = 6
-                                col = 5
-                            elif node_for_highest_score == 28:
-                                row = 5
-                                col = 5
-                            elif node_for_highest_score == 29:
-                                row = 4
-                                col = 5
-                            elif node_for_highest_score == 33:
-                                row = 6
-                                col = 6
-                            elif node_for_highest_score == 34:
-                                row = 5
-                                col = 6
-                            elif node_for_highest_score == 35:
-                                row = 4
-                                col = 6
-                        print("row:" + str(row) + "| col:" + str(col))
                         pentago.drop_piece(row, col)
-
                         board.draw_board(pentago.board, pentago.turn)
                         pygame.display.update()
                         node_for_highest_score = 0
-
 
                     if pentago.state == 1:
                         #rotate quadrant
@@ -1541,22 +1070,6 @@ def running():
                         quad_2_rotation_left = quad_2_rotation -1
                         quad_3_rotation_left = quad_3_rotation -1
                         high_score = 0
-                        right_0 = 0
-                        left_0 = 0
-                        right_1 = 0
-                        left_1 = 0
-                        right_2 = 0
-                        left_2 = 0
-                        right_3 = 0
-                        left_3 = 0
-                        right_0_defense = 0
-                        left_0_defense = 0
-                        right_1_defense = 0
-                        left_1_defense = 0
-                        right_2_defense = 0
-                        left_2_defense = 0
-                        right_3_defense = 0
-                        left_3_defense = 0
                         go_defense_rotation = False
 
 
@@ -1604,143 +1117,127 @@ def running():
                         #print ("quad 2: " + str(left_2) + "," + str(right_2))
                         #print ("quad 3: " + str(left_3) + "," + str(right_3))
 
-##                        print ("right_0: " + str(right_0))
-##                        print ("left_0: " + str(left_0))
-##                        print ("right_1: " + str(right_1))
-##                        print ("left_1: " + str(left_1))
-##                        print ("right_2: " + str(right_2))
-##                        print ("left_2: " + str(left_2))
-##                        print ("right_3: " + str(right_3))
-##                        print ("left_3: " + str(left_3))
 
 
                         if right_0 > high_score:
                             high_score = right_0
                             quad = 0
                             rotation = 0
-                            #print("This is an offensive rotation on quad: " + str(quad)+ " with rotation, " + str(rotation))
+                            print("This is an offensive rotation on quad: " + str(quad))
                             #print("here")
                         if left_0 > high_score:
                             high_score = left_0
                             quad = 0
                             rotation = 1
-                            #print("This is an offensive rotation on quad: " + str(quad)+ " with rotation, " + str(rotation))
+                            print("This is an offensive rotation on quad: " + str(quad))
                             #print("here")
                         if right_1 > high_score:
                             high_score = right_1
                             quad = 1
                             rotation = 0
-                            #print("This is an offensive rotation on quad: " + str(quad)+ " with rotation, " + str(rotation))
+                            print("This is an offensive rotation on quad: " + str(quad))
                         if left_1 > high_score:
                             high_score = left_1
                             quad = 1
                             rotation = 1
-                            #print("This is an offensive rotation on quad: " + str(quad)+ " with rotation, " + str(rotation))
+                            print("This is an offensive rotation on quad: " + str(quad))
                         if right_2 > high_score:
                             high_score = right_2
                             quad = 2
                             rotation = 0
-                            #print("This is an offensive rotation on quad: " + str(quad)+ " with rotation, " + str(rotation))
+                            print("This is an offensive rotation on quad: " + str(quad))
                         if left_2 > high_score:
                             high_score = left_2
                             quad = 2
                             rotation = 1
-                            #print("This is an offensive rotation on quad: " + str(quad)+ " with rotation, " + str(rotation))
+                            print("This is an offensive rotation on quad: " + str(quad))
                         if right_3 > high_score:
                             high_score = right_3
                             quad = 3
                             rotation = 0
-                            #print("This is an offensive rotation on quad: " + str(quad)+ " with rotation, " + str(rotation))
+                            print("This is an offensive rotation on quad: " + str(quad))
                         if left_3 > high_score:
                             high_score = left_3
                             quad = 3
                             rotation = 1
-                            #print("This is an offensive rotation on quad: " + str(quad)+ " with rotation, " + str(rotation))
+                            print("This is an offensive rotation on quad: " + str(quad))
 
 
 
-##                        print ("right_0_defense: " + str(right_0_defense))
-##                        print ("left_0_defense: " + str(left_0_defense))
-##                        print ("right_1_defense: " + str(right_1_defense))
-##                        print ("left_1_defense: " + str(left_1_defense))
-##                        print ("right_2_defense: " + str(right_2_defense))
-##                        print ("left_2_defense: " + str(left_2_defense))
-##                        print ("right_3_defense: " + str(right_3_defense))
-##                        print ("left_3_defense: " + str(left_3_defense))
-##                        
-                        if right_0_defense >= high_score:
+                            
+                        if right_0_defense > high_score:
                             high_score = right_0_defense
                             go_defense_rotation = True
-                        if left_0_defense >= high_score:
+                        if left_0_defense > high_score:
                             high_score = left_0_defense
                             go_defense_rotation = True
-                        if right_1_defense >= high_score:
+                        if right_1_defense > high_score:
                             high_score = right_1_defense
                             go_defense_rotation = True
-                        if left_1_defense >= high_score:
+                        if left_1_defense > high_score:
                             high_score = left_1_defense
                             go_defense_rotation = True
-                        if right_2_defense >= high_score:
+                        if right_2_defense > high_score:
                             high_score = right_2_defense
                             go_defense_rotation = True
-                        if left_2_defense >= high_score:
+                        if left_2_defense > high_score:
                             high_score = left_2_defense
                             go_defense_rotation = True
-                        if right_3_defense >= high_score:
+                        if right_3_defense > high_score:
                             high_score = right_3_defense
                             go_defense_rotation = True
-                        if left_3_defense >= high_score:
+                        if left_3_defense > high_score:
                             high_score = left_3_defense
                             go_defense_rotation = True
 
                         if go_defense_rotation == True:
                             go_defense_rotation = False
-                            high_score = high_score +1
-                            if right_0_defense < high_score:
+                            if right_0_defense >= high_score:
                                 high_score = right_0_defense
                                 quad = 0
-                                rotation = 0
-                                #print("This is an defensive rotation on quad: " + str(quad)+ " with rotation, " + str(rotation))
-                            if left_0_defense < high_score:
+                                rotation = 1
+                                print("This is an defensive rotation on quad: " + str(quad))
+                            if left_0_defense >= high_score:
                                 high_score = left_0_defense
                                 quad = 0
-                                rotation = 1
-                                #print("This is an defensive rotation on quad: " + str(quad)+ " with rotation, " + str(rotation))
-                            if right_1_defense < high_score:
+                                rotation = 0
+                                print("This is an defensive rotation on quad: " + str(quad))
+                            if right_1_defense >= high_score:
                                 high_score = right_1_defense
                                 quad = 1
-                                rotation = 0
-                                #print("This is an defensive rotation on quad: " + str(quad)+ " with rotation, " + str(rotation))
-                            if left_1_defense < high_score:
+                                rotation = 1
+                                print("This is an defensive rotation on quad: " + str(quad))
+                            if left_1_defense >= high_score:
                                 high_score = left_1_defense
                                 quad = 1
-                                rotation = 1
-                                #print("This is an defensive rotation on quad: " + str(quad)+ " with rotation, " + str(rotation))
-                            if right_2_defense < high_score:
+                                rotation = 0
+                                print("This is an defensive rotation on quad: " + str(quad))
+                            if right_2_defense >= high_score:
                                 high_score = right_2_defense
                                 quad = 2
-                                rotation = 0
-                                #print("This is an defensive rotation on quad: " + str(quad)+ " with rotation, " + str(rotation))
-                            if left_2_defense < high_score:
+                                rotation = 1
+                                print("This is an defensive rotation on quad: " + str(quad))
+                            if left_2_defense >= high_score:
                                 high_score = left_2_defense
                                 quad = 2
-                                rotation = 1
-                                #print("This is an defensive rotation on quad: " + str(quad)+ " with rotation, " + str(rotation))
-                            if right_3_defense < high_score:
+                                rotation = 0
+                                print("This is an defensive rotation on quad: " + str(quad))
+                            if right_3_defense >= high_score:
                                 high_score = right_3_defense
                                 quad = 3
-                                rotation = 0
-                                #print("This is an defensive rotation on quad: " + str(quad)+ " with rotation, " + str(rotation))
-                            if left_3_defense < high_score:
+                                rotation = 1
+                                print("This is an defensive rotation on quad: " + str(quad))
+                            if left_3_defense >= high_score:
                                 high_score = left_3_defense
                                 quad = 3
-                                rotation = 1
-                                #print("This is an defensive rotation on quad: " + str(quad)+ " with rotation, " + str(rotation))
+                                rotation = 0
+                                print("This is an defensive rotation on quad: " + str(quad))
+                            go_defense_rotation = False
 
 
                             
                         
-                        #print("highscore: " + str(high_score))
+                        print("highscore: " + str(high_score))
 
                         pentago.rotate_quad(quad, rotation)
                         board.draw_board(pentago.board, pentago.turn)
