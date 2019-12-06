@@ -10,6 +10,9 @@ import sys
 import AI
 import AI_Defense
 
+first_turn = True
+first_turn_list = [8,13,9,16,19,26,27,22]
+
 new = time.localtime(time.time())
 random.seed(new)
 
@@ -621,6 +624,7 @@ class Pentago():
         global quad_1_rotation
         global quad_2_rotation
         global quad_3_rotation
+        global first_turn
         self.board = np.zeros((self.squares, self.rows, self.columns))
         self.turn = 0
         self.player1 = False
@@ -642,6 +646,7 @@ class Pentago():
         quad_1_rotation = 0
         quad_2_rotation = 0
         quad_3_rotation = 0
+        first_turn = True
 
     def undo(self):
         #not fully working with ai but works with two player
@@ -1062,6 +1067,8 @@ def running():
                         #make sure the AI takes its turn.
 
                         #Take the scpre based on the current rotation
+                        global first_turn
+                        global first_turn_list
                         AI.score_taking_rotations(quad_0_rotation, quad_1_rotation, quad_2_rotation, quad_3_rotation)
                         AI_Defense.score_taking_rotations(quad_0_rotation, quad_1_rotation, quad_2_rotation, quad_3_rotation)
                         moveComplete = False
@@ -1069,14 +1076,17 @@ def running():
                         high_score_offense = 0
                         node_for_highest_score_defense,high_score_defense = AI_Defense.look_at_score_monomial()
                         node_for_highest_score_offense,high_score_offense = AI.look_at_score_monomial()
-
-
+                        
                         print("This is the high_score for defense:"+ str(high_score_defense))
                         print ("This is the high_score for offense" + str(high_score_offense))
                         if high_score_offense >= high_score_defense:
                             node_for_highest_score = node_for_highest_score_offense
                         else:
                             node_for_highest_score = node_for_highest_score_defense
+
+                        if first_turn == True:
+                            node_for_highest_score = random.choice(first_turn_list)
+                            first_turn = False
                         print("This is the node: "+str(node_for_highest_score))
                         #get scores based on offense and defense
 ##                        highest_score = -1
@@ -1623,7 +1633,6 @@ def running():
 
 
                     if pentago.state == 1:
-                        #rotate quadrant
                         quad_0_rotation_right = quad_0_rotation +1
                         quad_1_rotation_right = quad_1_rotation +1
                         quad_2_rotation_right = quad_2_rotation +1
@@ -1651,115 +1660,67 @@ def running():
                         left_3_defense = 0
                         go_defense_rotation = False
 
-
-
                         right_0 = AI.score_taking_rotations(quad_0_rotation_right, quad_1_rotation, quad_2_rotation, quad_3_rotation)
-                        #print("right_0")
                         left_0 = AI.score_taking_rotations(quad_0_rotation_left, quad_1_rotation, quad_2_rotation, quad_3_rotation)
-                        #print("left_0")
                         right_1 = AI.score_taking_rotations(quad_0_rotation, quad_1_rotation_right, quad_2_rotation, quad_3_rotation)
-                        #print("right_1")
                         left_1 = AI.score_taking_rotations(quad_0_rotation, quad_1_rotation_left, quad_2_rotation, quad_3_rotation)
-                        #print("left_1")
                         right_2 = AI.score_taking_rotations(quad_0_rotation, quad_1_rotation, quad_2_rotation_right, quad_3_rotation)
-                        #print("right_2")
                         left_2 = AI.score_taking_rotations(quad_0_rotation, quad_1_rotation, quad_2_rotation_left, quad_3_rotation)
-                        #print("left_2")
                         right_3 = AI.score_taking_rotations(quad_0_rotation, quad_1_rotation, quad_2_rotation, quad_3_rotation_right)
-                        #print("right_3")
                         left_3 = AI.score_taking_rotations(quad_0_rotation, quad_1_rotation, quad_2_rotation, quad_3_rotation_left)
 
 ############################################################################################################################################
                         right_0_defense = AI_Defense.score_taking_rotations(quad_0_rotation_right, quad_1_rotation, quad_2_rotation, quad_3_rotation)
-                        #print("right_0")
                         left_0_defense = AI_Defense.score_taking_rotations(quad_0_rotation_left, quad_1_rotation, quad_2_rotation, quad_3_rotation)
-                        #print("left_0")
                         right_1_defense = AI_Defense.score_taking_rotations(quad_0_rotation, quad_1_rotation_right, quad_2_rotation, quad_3_rotation)
-                        #print("right_1")
                         left_1_defense = AI_Defense.score_taking_rotations(quad_0_rotation, quad_1_rotation_left, quad_2_rotation, quad_3_rotation)
-                        #print("left_1")
                         right_2_defense = AI_Defense.score_taking_rotations(quad_0_rotation, quad_1_rotation, quad_2_rotation_right, quad_3_rotation)
-                        #print("right_2")
                         left_2_defense = AI_Defense.score_taking_rotations(quad_0_rotation, quad_1_rotation, quad_2_rotation_left, quad_3_rotation)
-                        #print("left_2")
                         right_3_defense = AI_Defense.score_taking_rotations(quad_0_rotation, quad_1_rotation, quad_2_rotation, quad_3_rotation_right)
-                        #print("right_3")
                         left_3_defense = AI_Defense.score_taking_rotations(quad_0_rotation, quad_1_rotation, quad_2_rotation, quad_3_rotation_left)
-
-
-
-
-
-                        #print("left_3")
-                        #print ("quad 0: " + str(left_0) + "," + str(right_0))
-                        #print ("quad 1: " + str(left_1) + "," + str(right_1))
-                        #print ("quad 2: " + str(left_2) + "," + str(right_2))
-                        #print ("quad 3: " + str(left_3) + "," + str(right_3))
-
-##                        print ("right_0: " + str(right_0))
-##                        print ("left_0: " + str(left_0))
-##                        print ("right_1: " + str(right_1))
-##                        print ("left_1: " + str(left_1))
-##                        print ("right_2: " + str(right_2))
-##                        print ("left_2: " + str(left_2))
-##                        print ("right_3: " + str(right_3))
-##                        print ("left_3: " + str(left_3))
 
 
                         if right_0 > high_score:
                             high_score = right_0
                             quad = 0
                             rotation = 0
-                            #print("This is an offensive rotation on quad: " + str(quad)+ " with rotation, " + str(rotation))
-                            #print("here")
+                            print("This is an offensive rotation on quad: " + str(quad)+ " with rotation, " + str(rotation) + " and score, " + str(high_score))
                         if left_0 > high_score:
                             high_score = left_0
                             quad = 0
                             rotation = 1
-                            #print("This is an offensive rotation on quad: " + str(quad)+ " with rotation, " + str(rotation))
-                            #print("here")
+                            print("This is an offensive rotation on quad: " + str(quad)+ " with rotation, " + str(rotation) + " and score, " + str(high_score))
                         if right_1 > high_score:
                             high_score = right_1
                             quad = 1
                             rotation = 0
-                            #print("This is an offensive rotation on quad: " + str(quad)+ " with rotation, " + str(rotation))
+                            print("This is an offensive rotation on quad: " + str(quad)+ " with rotation, " + str(rotation) + " and score, " + str(high_score))
                         if left_1 > high_score:
                             high_score = left_1
                             quad = 1
                             rotation = 1
-                            #print("This is an offensive rotation on quad: " + str(quad)+ " with rotation, " + str(rotation))
+                            print("This is an offensive rotation on quad: " + str(quad)+ " with rotation, " + str(rotation) + " and score, " + str(high_score))
                         if right_2 > high_score:
                             high_score = right_2
                             quad = 2
                             rotation = 0
-                            #print("This is an offensive rotation on quad: " + str(quad)+ " with rotation, " + str(rotation))
+                            print("This is an offensive rotation on quad: " + str(quad)+ " with rotation, " + str(rotation) + " and score, " + str(high_score))
                         if left_2 > high_score:
                             high_score = left_2
                             quad = 2
                             rotation = 1
-                            #print("This is an offensive rotation on quad: " + str(quad)+ " with rotation, " + str(rotation))
+                            print("This is an offensive rotation on quad: " + str(quad)+ " with rotation, " + str(rotation) + " and score, " + str(high_score))
                         if right_3 > high_score:
                             high_score = right_3
                             quad = 3
                             rotation = 0
-                            #print("This is an offensive rotation on quad: " + str(quad)+ " with rotation, " + str(rotation))
+                            print("This is an offensive rotation on quad: " + str(quad)+ " with rotation, " + str(rotation) + " and score, " + str(high_score))
                         if left_3 > high_score:
                             high_score = left_3
                             quad = 3
                             rotation = 1
-                            #print("This is an offensive rotation on quad: " + str(quad)+ " with rotation, " + str(rotation))
+                            print("This is an offensive rotation on quad: " + str(quad)+ " with rotation, " + str(rotation) + " and score, " + str(high_score))
 
-
-
-##                        print ("right_0_defense: " + str(right_0_defense))
-##                        print ("left_0_defense: " + str(left_0_defense))
-##                        print ("right_1_defense: " + str(right_1_defense))
-##                        print ("left_1_defense: " + str(left_1_defense))
-##                        print ("right_2_defense: " + str(right_2_defense))
-##                        print ("left_2_defense: " + str(left_2_defense))
-##                        print ("right_3_defense: " + str(right_3_defense))
-##                        print ("left_3_defense: " + str(left_3_defense))
-##
                         if right_0_defense >= high_score:
                             high_score = right_0_defense
                             go_defense_rotation = True
@@ -1797,37 +1758,37 @@ def running():
                                 high_score = left_0_defense
                                 quad = 0
                                 rotation = 1
-                                #print("This is an defensive rotation on quad: " + str(quad)+ " with rotation, " + str(rotation))
+                                print("This is an defensive rotation on quad: " + str(quad)+ " with rotation, " + str(rotation) + " and score, " + str(high_score))
                             if right_1_defense < high_score:
                                 high_score = right_1_defense
                                 quad = 1
                                 rotation = 0
-                                #print("This is an defensive rotation on quad: " + str(quad)+ " with rotation, " + str(rotation))
+                                print("This is an defensive rotation on quad: " + str(quad)+ " with rotation, " + str(rotation) + " and score, " + str(high_score))
                             if left_1_defense < high_score:
                                 high_score = left_1_defense
                                 quad = 1
                                 rotation = 1
-                                #print("This is an defensive rotation on quad: " + str(quad)+ " with rotation, " + str(rotation))
+                                print("This is an defensive rotation on quad: " + str(quad)+ " with rotation, " + str(rotation) + " and score, " + str(high_score))
                             if right_2_defense < high_score:
                                 high_score = right_2_defense
                                 quad = 2
                                 rotation = 0
-                                #print("This is an defensive rotation on quad: " + str(quad)+ " with rotation, " + str(rotation))
+                                print("This is an defensive rotation on quad: " + str(quad)+ " with rotation, " + str(rotation) + " and score, " + str(high_score))
                             if left_2_defense < high_score:
                                 high_score = left_2_defense
                                 quad = 2
                                 rotation = 1
-                                #print("This is an defensive rotation on quad: " + str(quad)+ " with rotation, " + str(rotation))
+                                print("This is an defensive rotation on quad: " + str(quad)+ " with rotation, " + str(rotation) + " and score, " + str(high_score))
                             if right_3_defense < high_score:
                                 high_score = right_3_defense
                                 quad = 3
                                 rotation = 0
-                                #print("This is an defensive rotation on quad: " + str(quad)+ " with rotation, " + str(rotation))
+                                print("This is an defensive rotation on quad: " + str(quad)+ " with rotation, " + str(rotation) + " and score, " + str(high_score))
                             if left_3_defense < high_score:
                                 high_score = left_3_defense
                                 quad = 3
                                 rotation = 1
-                                #print("This is an defensive rotation on quad: " + str(quad)+ " with rotation, " + str(rotation))
+                                print("This is an defensive rotation on quad: " + str(quad)+ " with rotation, " + str(rotation) + " and score, " + str(high_score))
 
 
 

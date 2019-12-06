@@ -468,28 +468,15 @@ def monomial_constructor(score):
         monomial_objects.append(monomial(i, nodes, score, passed, passing, iterator, complete))
     
 def score_taking(variable_number,turn):
-    #print (turn)
     global nodes
     for i in range(36):
         if i == variable_number:
-            #pprint (nodes[i].return_string())
-            #print (i)
             nodes[i].update_taken_state(turn)
-            #print("##########################################################################")
             for j in range (len(nodes[i].return_monomials())):
                 nodes[i].return_monomials()[j].monomial_score_update(turn)
                 if nodes[i].return_monomials()[j].return_score() >= 1024:
                     nodes[i].return_monomials()[j].update_complete()
-                #print (j)
-                #pprint(nodes[i].return_monomials()[j].return_monomial())
-                #pprint(nodes[i].return_monomials()[j].return_score())
-    #for i in range(36):
-        #print(i)
-        #for j in range(len(nodes[i].return_monomials())):
-            #pprint(nodes[i].return_monomials()[j].return_monomial())
-            #pprint(nodes[i].return_monomials()[j].return_score())
 def score_taking_rotations(rotation_0,rotation_1,rotation_2,rotation_3):
-    #print("################################################################")
     if rotation_0 == -1:
         rotation_0 = 3
     elif rotation_1 == -1:
@@ -506,10 +493,6 @@ def score_taking_rotations(rotation_0,rotation_1,rotation_2,rotation_3):
         rotation_2 = 0
     elif rotation_3 == 4:
         rotation_3 = 0
-    #print("rotation_0: "+ str(rotation_0))
-    #print("rotation_1: "+ str(rotation_1))
-    #print("rotation_2: "+ str(rotation_2))
-    #print("rotation_3: "+ str(rotation_3))
     global monomial_objects
     global nodes
     quad_0_passed = False
@@ -522,11 +505,8 @@ def score_taking_rotations(rotation_0,rotation_1,rotation_2,rotation_3):
     rotation_character = ''
     quad_character = ''
     monomial_index = 0
-    #print ("This is a new rotation")
-    #for i in range(36):
     for j in monomial_objects:
         for k in j.return_monomial():
-            #pprint(k)
             rotation_character = k[3]
             quad_character = k[0]
             if quad_character == '0' and quad_0_passed == False:
@@ -562,32 +542,16 @@ def score_taking_rotations(rotation_0,rotation_1,rotation_2,rotation_3):
         quad_1_passed = False
         quad_2_passed = False
         quad_3_passed = False
-        #print(str(monomial_index) + ":rotations_away: " + str(rotations_away_total))
         monomial_objects[monomial_index].monomial_score_rotation_update(rotations_away_total)
-        #if(monomial_objects[monomial_index].return_score() == 3 ):
-            #pprint(monomial_objects[monomial_index].return_monomial())
-            #print(monomial_objects[monomial_index].return_score())
         if (monomial_objects[monomial_index].return_score() > highest_score):
             highest_score = monomial_objects[monomial_index].return_score()
-            #print(monomial_objects[monomial_index].return_monomial())
-            #print("rotations_away: " + str(rotations_away_total))
-            #print(nodes[i].return_monomials()[j].return_monomial())
-            #print(highest_score)
-        #pprint(rotations_away_total)
-        #pprint(monomial_objects[monomial_index].return_monomial())
-        #pprint(monomial_objects[monomial_index].return_score())
         monomial_index +=1
         rotations_away = 0
         rotations_away_total = 0
-    #print ("Highest_Score: " + str(highest_score))
     adding_scores()
     for i in range(36):
         for j in range(len(nodes[i].return_monomials())):
             nodes[i].return_monomials()[j].reset_passed()
-            #print(i)
-            #print(j)
-            #pprint(nodes[i].return_monomials()[j].return_monomial())
-            #pprint(nodes[i].return_monomials()[j].return_score())
     return highest_score
 
 
@@ -598,30 +562,10 @@ def adding_scores():
         if nodes[i].return_state() == 2:
             for j in range (len(nodes[i].return_monomials())):
                 score += nodes[i].return_monomials()[j].return_score()
-                #print (j)
-                #pprint(nodes[i].return_monomials()[j].return_monomial())
-                #pprint(nodes[i].return_monomials()[j].return_score())
         else:
             score = 0
         nodes[i].update_score(score)
-        #if i == 17:
-            #print("This is the 17th node#################")
-            #print (score)
-            #print (nodes[i].return_score())
-        #if i == 22:
-            #print("This is the 22th node################")
-            #print(score)
-            #print(nodes[i].return_score())
         score = 0
-    #for i in range(36):
-        #print (str(i+1) + ":" + str(nodes[i].return_score()) + ":" + str(nodes[i].return_state()))
-        #for j in range (len(nodes[i].return_monomials())):
-            #if i == 17:
-                #print (str(i+1) + ":" + str(nodes[i].return_score()) + ":" + str(nodes[i].return_state()))
-                #pprint(str(j) + ":" + str(nodes[i].return_monomials()[j].return_monomial()) + ":" + str(nodes[i].return_monomials()[j].return_score()))
-            #elif i == 22:
-                #print (str(i+1) + ":" + str(nodes[i].return_score()) + ":" + str(nodes[i].return_state()))
-                #pprint(str(j) + ":" + str(nodes[i].return_monomials()[j].return_monomial()) + ":" + str(nodes[i].return_monomials()[j].return_score()))
 def look_at_scores():
     global nodes
     highest_score = 0
@@ -631,8 +575,6 @@ def look_at_scores():
         node_list[i] = nodes[i].return_score()
         if nodes[i].return_score() > highest_score:
             highest_score = nodes[i].return_score()
-            #node_for_highest_score = i
-    #return node_for_highest_score
     return node_list
 
 def score_taking_in_advance(variable_number,turn):
@@ -640,7 +582,6 @@ def score_taking_in_advance(variable_number,turn):
     global changed
     for i in range(36):
         if i == variable_number and nodes[i].return_state() == 2: 
-            #nodes[i].update_taken_state(turn)
             for j in range (len(nodes[i].return_monomials())):
                 nodes[i].return_monomials()[j].monomial_score_update(turn)
             changed = True
@@ -649,11 +590,7 @@ def revert_score_taking_in_advance(variable_number,turn):
     global nodes
     for i in range(36):
         if i == variable_number:
-            print (variable_number)
-            #nodes[i].update_taken_state(turn)
             for j in range (len(nodes[i].return_monomials())):
-                #print ("This is the node that is reverting score:" + str(i))
-                #print ("Reverting monomial score of:" + str(nodes[i].return_monomials()[j].return_nodes()))
                 nodes[i].return_monomials()[j].monomial_score_reset()
 
 def look_at_score_monomial():
@@ -665,55 +602,119 @@ def look_at_score_monomial():
     global monomial_objects
     global nodes
     for i in range(36):
-        #print ("This is AI_Defense:")
         score_taking_in_advance(i, 1)
         for j in monomial_objects:
             if j.return_score() > highest_monomial_score and j.return_complete() == False:
-                #print("Here in the defense!!!!!!!!!!!!!!!" + str(j.return_score()))
                 highest_monomial_score = j.return_score()
                 list_with_highest_monomial_score = j.return_nodes()
         if changed == True:
             revert_score_taking_in_advance(i,2)
             changed = False
-    #print (list_with_highest_monomial_score)
     for i in list_with_highest_monomial_score:
         if nodes[i].return_score() >= highest_score:
             highest_score = nodes[i].return_score()
-            #print ("This is the highest score for defense:" + str(highest_score))
             variable_number = i
-    #for i in range (36):
-        #print ("This is the defense nodes:" + str(nodes[i].return_score()))
-    #for j in monomial_objects:
-        #if j.return_complete() == True:
-            #print ("AI: Is this monomial complete:")
-            #print (j.return_monomial())
-            #print (j.return_complete())
     return variable_number,highest_monomial_score
+
+def score_taking_rotations_in_advance(rotation_0,rotation_1,rotation_2,rotation_3):
+    if rotation_0 == -1:
+        rotation_0 = 3
+    elif rotation_1 == -1:
+        rotation_1 = 3
+    elif rotation_2 == -1:
+        rotation_2 = 3
+    elif rotation_3 == -1:
+        rotation_3 = 3
+    elif rotation_0 == 4:
+        rotation_0 = 0
+    elif rotation_1 == 4:
+        rotation_1 = 0
+    elif rotation_2 == 4:
+        rotation_2 = 0
+    elif rotation_3 == 4:
+        rotation_3 = 0
+    global changed
+    global monomial_objects
+    global nodes
+    quad_0_passed = False
+    quad_1_passed = False
+    quad_2_passed = False
+    quad_3_passed = False
+    highest_score = 0
+    rotations_away = 0
+    rotations_away_total = 0
+    rotation_character = ''
+    quad_character = ''
+    monomial_index = 0
+    for j in monomial_objects:
+        for k in j.return_monomial():
+            rotation_character = k[3]
+            quad_character = k[0]
+            if quad_character == '0' and quad_0_passed == False:
+                rotations_away = abs(int(rotation_character) - int(rotation_0))
+                if rotations_away == 3:
+                    rotations_away = 1
+                rotations_away_total += rotations_away
+                quad_0_passed = True
+                rotations_away = 0
+            elif quad_character == '1' and quad_1_passed == False:
+                rotations_away = abs(int(rotation_character) - int(rotation_1))
+                if rotations_away == 3:
+                    rotations_away = 1
+                rotations_away_total += rotations_away
+                quad_1_passed = True
+                rotations_away = 0
+            elif quad_character == '2' and quad_2_passed == False:
+                rotations_away = abs(int(rotation_character) - int(rotation_2))
+                if rotations_away == 3:
+                    rotations_away = 1
+                rotations_away_total += rotations_away
+                rotations_away = 0
+                quad_2_passed = True
+            elif quad_character == '3' and quad_3_passed == False:
+                rotations_away = abs(int(rotation_character) - int(rotation_3))
+                if rotations_away == 3:
+                    rotations_away = 1
+                rotations_away_total += rotations_away
+                quad_3_passed = True
+                rotations_away = 0
+                
+        quad_0_passed = False
+        quad_1_passed = False
+        quad_2_passed = False
+        quad_3_passed = False
+        monomial_objects[monomial_index].monomial_score_rotation_update(rotations_away_total)
+        monomial_index +=1
+        rotations_away = 0
+        rotations_away_total = 0
+
+################################
+    monomial_index = 0
+    for i in range(36):
+        score_taking_in_advance(i,1)
+        for j in monomial_objects:
+            if (monomial_objects[monomial_index].return_score() > highest_score):
+                highest_score = monomial_objects[monomial_index].return_score()
+            monomial_index +=1
+        if changed == True:
+            revert_score_taking_in_advance(i,2)
+            changed = False
+        monomial_index = 0
+    for i in range(36):
+        for j in range(len(nodes[i].return_monomials())):
+            nodes[i].return_monomials()[j].reset_passed()
+    return highest_score
 
 def connect_nodes_with_monomials():
     global nodes
     global monomial_objects
     iterator = 0
     for i in range(36):        
-        #print ("This is node #" +str(i) +":")
         for j in range (len(nodes[i].return_monomials())):
             iterator = 0
-            #print (nodes[i].return_monomials()[j].return_monomial())
             for k in range(len(monomial_objects)):
                 if monomial_objects[k].return_monomial() == nodes[i].return_monomials()[j].return_monomial():
-                    #if iterator == 100: 
-                        #print ("This is monomial Object number:" + str(iterator))
-                        #print ("Separation!--------------------------------------------------------")
-                        #print ("This is node#" + str(i) + " with the monomial:" + str(j) + ":")
-                        #print (k.return_monomial())
-                        #print (nodes[i].return_monomials()[j].return_monomial())
                     monomial_objects[k].add_node(i)
-                #iterator += 1
-    #for j in monomial_objects:
-        #print("This is monomial #" + str(iterator) + ":")
-        #print(j.return_monomial())
-        #print(j.return_nodes())
-        #iterator += 1
             
 
 def reset_board():
