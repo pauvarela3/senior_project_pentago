@@ -488,6 +488,7 @@ class Pentago():
                 self.state = 3
             elif self.player1 or self.player2:
                 # print(f'Congrats Player {piece}, you have won the game!')
+                pygame.event.post(pygame.event.Event(pygame.MOUSEMOTION, {"pos":pygame.mouse.get_post(), "rel": None, "buttons": None}))
                 self.state = 2
 
     def valid_move(self, row, col, quad):
