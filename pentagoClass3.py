@@ -24,14 +24,11 @@ random.seed(new)
 print("this is main code")
 
 #colors used in game
-BLUE = (0,0,255)
 BLACK = (0,0,0)
 RED = (255,0,0)
 DARK_RED = (169,0,0)
 WHITE = (255,255,255)
 GRAY = (131,139,139)
-GREEN = (0,255,0)
-YELLOW = (0, 127,127)
 
 # variables for positioning 'game over' message
 gameOver_dimension_x = 100
@@ -43,17 +40,11 @@ playerTurn_dimension_x = 245
 playerTurn_dimension_y = 645
 
 
-
 # variables for positioning arrows
 arrow_align_top = 35
 arrow_align_bottom = 640
 arrow_align_left = 30
 arrow_align_right = 640
-
-
-
-
-
 
 
 
@@ -651,15 +642,18 @@ class Pentago():
         self.turn = 0
         self.player1 = False
         self.player2 = False
-        self.twoplayer = False
+
         if setting == "menu":
             self.state = -1
+            self.twoplayer = False
+
         elif setting == "reset":
             self.state = 0
             if self.humanfirst == True:
                 self.turn = 1
         else:
             self.state = 0
+
         self.moves = np.zeros((36,6))
         self.top = -1
         AI.reset_board()
