@@ -1,3 +1,5 @@
+## Human Player 1
+
 import numpy as np
 import random
 import time
@@ -35,6 +37,8 @@ quad_0_rotation = 0
 quad_1_rotation = 0
 quad_2_rotation = 0
 quad_3_rotation = 0
+
+
 class Pentago():
     def __init__(self):
         self.squares = 4
@@ -609,12 +613,12 @@ class Pentago():
         self.turn = 0
         self.player1 = False
         self.player2 = False
-        self.state = 0
+        self.state = -1
         self.moves = np.zeros((36,6))
         self.top = -1
         AI.reset_board()
         AI_Defense.reset_board()
-        
+
     def undo(self):
         if self.top == -1:
             return
@@ -657,49 +661,53 @@ class Board():
         pygame.display.set_caption("Pentago")
         self.default_font = pygame.font.get_default_font()
     def game_menu(self):
+        pygame.draw.rect(self.screen, BLACK, (0,0, self.screensize, self.screensize + 65))
         font_gameTitle = pygame.font.Font(self.default_font, 80)
         gameTitle = font_gameTitle.render("PENTAGO", 1, RED)
         self.screen.blit(gameTitle, (165,120))
         coord = (135, 220, 450, 320)
         pygame.draw.rect(self.screen, GRAY, coord)
-        button1 = (220, 260, 280, 100)
+        button1 = (225, 300, 270, 64)
         pygame.draw.rect(self.screen, BLACK, button1)
-        button3 = (220, 400, 280, 100)
+        button2 = (225, 380, 270, 64)
+        pygame.draw.rect(self.screen, BLACK, button2)
+        button3 = (225, 460, 270, 64)
         pygame.draw.rect(self.screen, BLACK, button3)
 
         self.font_label = pygame.font.Font(self.default_font, 32)
         self.font_tiny = pygame.font.Font(self.default_font, 20)
         self.font_gameover = pygame.font.Font(self.default_font, gameOver_font)
-        label1 = self.font_label.render("Start Game:", 1, RED)
-        label12 = self.font_tiny.render("One Player", 1, RED)
-        label2 = self.font_label.render("Start Game:", 1, RED)
-        label22 = self.font_tiny.render("Two Player", 1, RED)
+        label1 = self.font_label.render("Start Game", 1, RED)
+        label12 = self.font_tiny.render("Human (P1) v. AI (P2)", 1, RED)
+        label22 = self.font_tiny.render("AI (P1) v Human (P2)", 1, RED)
+        label32 = self.font_tiny.render("Human v. Human", 1, RED)
 
-        self.screen.blit(label1, (265, 280))
-        self.screen.blit(label12, (300, 310))
-        self.screen.blit(label2, (265, 420))
-        self.screen.blit(label22, (300, 450))
+        self.screen.blit(label1, (170, 240))
+        self.screen.blit(label12, (270, 320))
+        self.screen.blit(label22, (270, 400))
+        self.screen.blit(label32, (280, 480))
 
         pygame.display.update()
     def gamemenuButton(self, x,y):
-        if( 219 < x and x < 501) and (259 < y and y < 359):
+        if( 225 < x and x < 495) and (300 < y and y < 364):
             return 0
 
-        elif (219 < x and x < 501) and (399 < y and y < 501):
+        elif (225 < x and x < 495) and (380 < y and y < 444):
             return 1
+        elif (225 < x < 495) and (460 < y < 524):
+            return 2
         else:
             return -1
     def draw_board(self, board, turn):
-
 
         pygame.draw.rect(self.screen, BLACK, (65, 65, (self.squaresize * 2) + 45, (self.squaresize * 2) + 45))
         label = self.font_gameover.render(f"Game Over:  Player {turn + 1} Won!", 1, BLACK, BLACK)
         self.screen.blit(label, (gameOver_dimension_x,gameOver_dimension_y))
         label = self.font_label.render(f"Turn: Player {turn + 1}", 1, WHITE, BLACK)
         self.screen.blit(label, (playerTurn_dimension_x,playerTurn_dimension_y))
-        label = self.font_label.render("  Start Over  ", 1, WHITE, GRAY)
+        label = self.font_label.render(" Restart ", 1, WHITE, GRAY)
         self.screen.blit(label, (65, 710))
-        label = self.font_label.render("   Undo   ", 1, WHITE, GRAY)
+        label = self.font_label.render("  Game Menu ", 1, WHITE, GRAY)
         self.screen.blit(label, (475, 710))
 
         # top left quadrant
@@ -838,8 +846,8 @@ class Board():
             return True
         else:
             return False
-    def undoButton(self, x, y):
-        if (x > 500 and x < 600) and (y > 713 and y < 744):
+    def menuButton(self, x, y):
+        if (x > 500 and x < 650) and (y > 713 and y < 744):
             return True
         else:
             return False
@@ -847,6 +855,7 @@ class Board():
 #Game Running
 def running():
     running = True
+    twoplayer = False
 
     pygame.init()
 
@@ -860,42 +869,45 @@ def running():
                 sys.exit()
 
             if event.type == pygame.MOUSEBUTTONDOWN and board.clearButton(event.pos[0],event.pos[1]):
+                #if restart / startover / clear button is clicked
                 pentago.clear_board()
                 board.draw_board(pentago.board, pentago.turn)
                 board.draw_arrows(BLACK)
                 pygame.display.update()
 
             elif pentago.board_full() and moveComplete:
+                # if game ends in draw with the board being full
                 pentago.state = 3
 
-            elif event.type == pygame.MOUSEBUTTONDOWN and board.undoButton(event.pos[0], event.pos[1]) and moveComplete:
-                pentago.undo()
-                if pentago.turn == 1:
-                    turn = 0
-                else:
-                    turn = 1
-                board.draw_board(pentago.board, turn)
-                pentago.undo()
-                board.draw_board(pentago.board, pentago.turn)
+            elif event.type == pygame.MOUSEBUTTONDOWN and board.menuButton(event.pos[0], event.pos[1]):
+                #if menu button is clicked
+                pentago.clear_board()
+                board.game_menu()
                 pygame.display.update()
-
+                print(f"pentago state {pentago.state}")
+                print("clearing the board, back to menu")
 
             elif pentago.state == -1:
                 #start menu
                 board.game_menu()
                 pygame.display.update()
 
-                pressed = 2
+                pressed = -1
 
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     pressed = board.gamemenuButton(event.pos[0], event.pos[1])
-
+                    print(f"pressed: {pressed}")
+                print(f"pentago.state: {pentago.state}")
                 if pressed == 0: #one player
                     pentago.state = 1
-                if pressed == 1: #two player
+                elif pressed == 1: #one player ai first
                     pentago.state = 0
+                elif pressed == 2:
+                    pentago.state = 0 #two player
+                    twoplayer = True
                 else:
-                    pass
+                    pentago.state = -1
+                print(f"pentago.state: {pentago.state}, twoplayer: {twoplayer}")
             elif pentago.state == 2:
 #               game won by one player
                 if pentago.player1:
@@ -916,6 +928,7 @@ def running():
                 pentago.state = 3
 
             else:
+                print("hahha fuck you. ")
                 board.draw_board(pentago.board, pentago.turn)
                 pygame.display.update()
                 if pentago.turn == 1:
@@ -969,8 +982,60 @@ def running():
                             board.draw_arrows(BLACK)
                             board.draw_board(pentago.board, pentago.turn)
                             pygame.display.update()
+###############################################################################
+                elif pentago.turn == 0 and twoplayer:
+                    if pentago.state == 0:
+                        #drop piece
+                        if event.type == pygame.MOUSEBUTTONDOWN:
+                            moveComplete = False
+
+                            x = event.pos[0]
+                            y = event.pos[1]
+
+                            col = board.whichRowCol(x)
+                            row = board.whichRowCol(y)
+                            if col == 0 or row == 0:
+                                continue
+                            else:
+                                if pentago.turn == 0:
+                                    pentago.drop_piece(row, col)
+                                else:
+                                    pentago.drop_piece(row, col)
+
+                            board.draw_board(pentago.board, pentago.turn)
+                            pygame.display.update()
+
+
+                    if pentago.state == 1:
+                        #rotate quadrant
+                        board.draw_arrows(GRAY)
+                        pygame.display.update()
+
+                        if event.type == pygame.MOUSEBUTTONDOWN:
+                            x = event.pos[0]
+                            y = event.pos[1]
+
+                            quad, rotation = board.whichQuadRot(x,y)
+                            if quad == 5 or rotation == 5:
+                                pass
+                            else:
+                                pentago.rotate_quad(quad, rotation)
+                                board.draw_board(pentago.board, pentago.turn)
+                                pygame.display.update()
+
+                                moveComplete = True
+
+                                pentago.turn += 1
+                                pentago.turn = pentago.turn % 2
+
+                                if pentago.state == 0 or pentago.state == 1:
+                                    pentago.state += 1
+                                    pentago.state = pentago.state % 2
+                            board.draw_arrows(BLACK)
+                            board.draw_board(pentago.board, pentago.turn)
+                            pygame.display.update()
 ################################################################################
-                elif pentago.turn == 0:
+                elif pentago.turn == 0 and not twoplayer:
                     if pentago.state == 0:
                         #drop piece
                         #If this is the AI's turn, then don't wait for a click event. instead,
@@ -1017,19 +1082,19 @@ def running():
                                 print(f'Defense.  Node: {i}. Score: {node_list_defense[i]}')
                                 go_defense = True
                                 node_list_defense_2.append(i)
-                                
+
                         #for i in range(len(node_list_offense_2)):
                             #node_list_select_place.append(node_list_offense_2[i])
                         #for i in range(len(node_list_defense_2)):
                             #node_list_select_place.append(node_list_defense_2[i])
-                            
+
                         if go_defense == True:
                             node_for_highest_score = random.choice(node_list_defense_2)
                             go_defense = False
                         else:
                             node_for_highest_score = random.choice(node_list_offense_2)
                         #node_for_highest_score = random.choice(node_list_select_place)
-                        
+
 
                         # refactored the if statements
                         # figuring out quad for searching row, col in board hash
@@ -1106,7 +1171,7 @@ def running():
                         right_3_defense = AI_Defense.score_taking_rotations(quad_0_rotation, quad_1_rotation, quad_2_rotation, quad_3_rotation_right)
                         #print("right_3")
                         left_3_defense = AI_Defense.score_taking_rotations(quad_0_rotation, quad_1_rotation, quad_2_rotation, quad_3_rotation_left)
-                        
+
 
 
 
@@ -1164,7 +1229,7 @@ def running():
 
 
 
-                            
+
                         if right_0_defense > high_score:
                             high_score = right_0_defense
                             go_defense_rotation = True
@@ -1235,8 +1300,8 @@ def running():
                             go_defense_rotation = False
 
 
-                            
-                        
+
+
                         print("highscore: " + str(high_score))
 
                         pentago.rotate_quad(quad, rotation)
