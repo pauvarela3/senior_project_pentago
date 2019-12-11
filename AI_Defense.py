@@ -13,8 +13,7 @@ class monomial:
     __passing = 0
     __iterator = 0
     __complete = False
-    __score_saver = 1
-    def __init__(self,monomial = 0, nodes = [0] * 5, score =1,passed = False, passing = 0, iterator = 0, complete = False, score_saver = 1):
+    def __init__(self,monomial = 0, nodes = [0] * 5, score =1,passed = False, passing = 0, iterator = 0, complete = False):
         self.__monomial = monomial
         self.__nodes = nodes
         self.__score = score
@@ -22,13 +21,11 @@ class monomial:
         self.__passing = passing
         self.__iterator = iterator
         self.__complete = complete
-        self.__score_saver = score_saver
     def monomial_score_update(self, taken):
         #CHANGE THIS TO 1 IF YOU WANT THE AI TO BE SECOND PLAYER
         if taken == 1:
             #if (self.__score <= 3):
             self.__score = self.__score*4
-            self.__score_saver = self.__score_saver *4
             #elif (self.__score <= 6):
                 #self.__score = self.__score*4
             #elif (self.__score <= 24):
@@ -466,10 +463,9 @@ def monomial_constructor(score):
     passed = False
     iterator = 0
     complete = False
-    score_saver = 1
     for i in monomials.empty_1:
         nodes = [0] * 5
-        monomial_objects.append(monomial(i, nodes, score, passed, passing, iterator, complete,score_saver))
+        monomial_objects.append(monomial(i, nodes, score, passed, passing, iterator, complete))
 
 def score_taking(variable_number,turn):
     global nodes
