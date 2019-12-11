@@ -40,7 +40,7 @@ class monomial:
     def monomial_score_reset(self):
         self.__score = int(self.__score/4)
         #print("This is the score: " + str(self.__score))
-    def monomial_score_rotation_update(self, rotations_away):
+    def monomial_score_rotation_update(self, rotations_away):   
         if self.__passed == False:
             if rotations_away >= 2 and self.__passing == 2:
                 self.__score = int(self.__score/3)
@@ -89,9 +89,9 @@ class monomial:
         self.__passed = False
         self.__passing = 0
         self.__complete = False
+    
 
-
-
+    
 class node:
     #class variables
     __quad = 0
@@ -131,8 +131,8 @@ class node:
     def reset(self):
         self.__score = 0
         self.__taken = 2
-
-
+    
+    
 
 #def main():
 #    pass
@@ -251,7 +251,7 @@ def defining_backboard():
                         for k in j.return_monomial():
                             if string == k:
                                 monomials_1.append(j)
-                                break
+                                break        
 ##################################################################################
 #In here it's the 1st col in the 2nd row
             elif positions == "10":
@@ -431,7 +431,7 @@ def defining_backboard():
                         for k in j.return_monomial():
                             if string == k:
                                 monomials_1.append(j)
-                                break
+                                break 
         #########################################################################
         nodes.append(node(quad, col, row, rotation, string, monomials_1, taken))
         monomials_1 = []#here you reset the monomials_1 list to get the other node monomials
@@ -468,12 +468,12 @@ def monomial_constructor(score):
     for i in monomials.empty_1:
         nodes = [0] * 5
         monomial_objects.append(monomial(i, nodes, score, passed, passing, iterator,complete))
-
+    
 def score_taking(variable_number,turn):
     #print (turn)
     global nodes
     for i in range(36):
-        if i == variable_number:
+        if i == variable_number: 
             #pprint (nodes[i].return_string())
             #print (i)
             nodes[i].update_taken_state(turn)
@@ -485,7 +485,7 @@ def score_taking(variable_number,turn):
                 #print (j)
                 #pprint(nodes[i].return_monomials()[j].return_monomial())
                 #pprint(nodes[i].return_monomials()[j].return_score())
-
+      
     #for i in range(36):
         #print(i)
         #for j in range(len(nodes[i].return_monomials())):
@@ -560,7 +560,7 @@ def score_taking_rotations(rotation_0,rotation_1,rotation_2,rotation_3):
                 rotations_away_total += rotations_away
                 quad_3_passed = True
                 rotations_away = 0
-
+            
         quad_0_passed = False
         quad_1_passed = False
         quad_2_passed = False
@@ -785,14 +785,14 @@ def reset_board():
         monomial_objects[i].reset()
     #for i in range(36):
         #print(nodes[i].return_score())
-
-
+        
+        
 #IGNORE COMMMENTED OUT STUFF
     #for i in monomial_objects:
         #pprint(index)
         #pprint(i.return_monomial())
         #index+=1
-
+        
 #def connect_to_monomials():
     #global nodes
     #nodes_1[0].monomials_constructor(monomials.empty_1)
@@ -828,3 +828,12 @@ connect_nodes_with_monomials()
     #for j in range(len(nodes[i].return_monomials())):
         #pprint(nodes[i].return_monomials()[j].return_monomial())
         #pprint(nodes[i].return_monomials()[j].return_score())
+
+
+
+
+
+
+
+
+
