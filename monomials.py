@@ -1,7 +1,10 @@
+###This program finds out all the possible monomials in the 6x6 board.
+
+
 from pprint import pprint
 import copy
-print('\n')
 
+#List of monomials in state 0 where state 0 is when all quads are in rotation 0
 monomials = [
      ['0000', '0010', '0020', '1000', '1010'],# 16
      ['0010', '0020', '1000', '1010', '1020'],# 16
@@ -37,11 +40,15 @@ monomials = [
      ['2210', '2120', '3000', '1210', '1120'],# 64
                                               # 704
 ]
-number_of_states = 0
-empty = []
+empty = []#array that will get all the different combination of monomials
+          #including duplicates
 
+#All the rotate functions do is make sure to rotate it's own quadrant,
+#and add the monomials that are made by rotating that quadrant including
+#duplicates
 
-
+#This function rotates quadrant 3 which is the last layer to get
+#all the different combinations 
 def rotate_4(quadrant, array):
     boolean = False
     direction = "0"
@@ -63,10 +70,8 @@ def rotate_4(quadrant, array):
         direction = str((int(direction) + 1))
         count = count + 1
 
-# rotate_4("0", monomials)
-# print("value of empty after loop: ")
-# pprint(empty)
-# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+#This function rotates quadrant 2 which is the second to last layer
+#to get all the different combinations
 def rotate_3(quadrant, array):
   direction = "0"
   count = 0
@@ -88,11 +93,8 @@ def rotate_3(quadrant, array):
     direction = str((int(direction) + 1))
     count = count + 1
 
-
-# rotate_3("0", monomials)
-# print("value of empty after loop: ")
-# pprint(empty)
-# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+#This function rotates quadrant 1 which is the second layer to get
+#all the different combinations
 def rotate_2(quadrant, array):
   direction = "0"
   count = 0
@@ -114,12 +116,8 @@ def rotate_2(quadrant, array):
     direction = str((int(direction) + 1))
     count = count + 1
 
-
-# rotate_2("0", monomials)
-# print("value of empty after loop: ")
-# pprint(empty)
-# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-
+#This function rotates quadrant 0 which is the first layer to get
+#all the different combinations
 def rotate_1(quadrant, array):
   empty = copy.deepcopy(monomials)  
   direction = "0"
@@ -143,105 +141,10 @@ def rotate_1(quadrant, array):
     direction = str((int(direction) + 1))
     count = count + 1
 
-
+#call rotate_1 to start the rotations starting with all the quadrants being 0
 rotate_1("0", monomials)
-#print("this is the number of monomials with duplicates")
-#print(len(empty))
-
-
+#Since empty has duplicates, here we take away the duplicates.
 empty_1 = []
 for i in empty:
     if i not in empty_1:
         empty_1.append(i)
-
-#print("Should have the duplicates cleaned off")
-#pprint(empty_1)
-#print("length of clean empty:")
-#print(len(empty_1))
-# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-#This is the start of making the diffrent variable classes  6
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-
-# # # # # # # # # # # # # # # # # # code with comments# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-# keys = ['0000', '0010', '0020', '0100', '0110', '0120', '0200', '0210', '0220' ]
-
-# keys to be used in for loop (maybe)
-# keys = [
-#   ['0000', '0010', '0020', '0100', '0110', '0120', '0200', '0210', '0220'],
-#   ['0001', '0011', '0021', '0101', '0111', '0121', '0201', '0211', '0221'],
-#   ['0002', '0012', '0022', '0102', '0112', '0122', '0202', '0212', '0222'],
-#   ['0003', '0013', '0023', '0103', '0113', '0123', '0203', '0213', '0223']
-# ]
-
-# print("keys")
-# pprint(keys)
-
-
-# direction = "0"
-# empty = []
-# count = 0
-# while count < 4:
-
-    # copying monomials array by value
-    # mono_copy = copy.deepcopy(monomials)
-
-#   # looping through each array in monomials
-#   for i in range(len(mono_copy)):
-#
-#     # looping through each element in array
-#     for j in range(len(mono_copy[i])):
-#
-#       two methods below=> either find by keys or find by first character
-#       # if specific monomial is in keys array
-#       # if monomials[i][j] in keys:
-#
-#       # if specific momonial's first character is a zero
-#       if monomials[i][j][0] == "0":
-#         mono_copy[i][j] = mono_copy[i][j][:-1] + direction
-#
-#   # incrementing 'direction': setting string value of direction to => integer value + 1
-#   direction = str((int(direction) + 1))
-#
-#   # direction = str(direction)
-#   count += 1
-#
-#
-#
-#
-#   # print(f'value of array 'empty' after iteration direction {direction}')
-#   # pprint(empty)
-#
-#   !when apending, either 3D or 2D:
-#   # 3D array generated with arrays depicting 'states'
-#   empty.append(copy.deepcopy(mono_copy))
-#   # 2D array generated
-#   # concatentation generates 2D array with every monomial
-#   # empty = empty + copy.deepcopy(mono_copy)
-#
-#
-# print("value of empty after loop: ")
-# pprint(empty)
-# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-
-
-print('\n')

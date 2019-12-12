@@ -1,5 +1,6 @@
-# AI is Player 1 with both buttons
-
+###This program runs the game and runs all the graphics of the pentago game.
+###It makes sure that all the turns are taken properly and that the game is
+###playable against an AI or against another player
 
 
 import numpy as np
@@ -11,9 +12,14 @@ import AI
 import AI_Defense
 import BoardHash
 
+#These global variables are used to figure out what pieces it should go for
+#at the very beginning, right now it's hard coded to start at any of the 8
+#nodes that are in the list.
 first_turn = True
 first_turn_list = [8,13,9,16,19,26,27,22]
 
+#These global variables are used to make the AI start at a randomized
+#position of the first_turn_list
 new = time.localtime(time.time())
 random.seed(new)
 
@@ -39,7 +45,8 @@ arrow_align_bottom = 640
 arrow_align_left = 30
 arrow_align_right = 640
 
-#GLOBALS ADDED BY GEORGE
+#These global variables are used to always know what rotations the quadrants
+#are currently at (They all always start at rotation 0)
 quad_0_rotation = 0
 quad_1_rotation = 0
 quad_2_rotation = 0
@@ -72,12 +79,6 @@ class Pentago():
                         return False
         return True
     def drop_piece(self, row, col, quad_rotation=0):
-
-
-        
-
-
-
         global quad_0_rotation
         global quad_1_rotation
         global quad_2_rotation
@@ -89,6 +90,8 @@ class Pentago():
             #Here, I'm changing which variable is in which spot
             #based on the rotations of the quad :)
             #These first 4 if statements are for quad_3
+            #The variable number is used to update the scoring of the AI
+            #and the AI_Defense
             if quad_3_rotation == 0:
                 if col == 0:
                     if row == 0:
@@ -468,20 +471,21 @@ class Pentago():
                         variable_number = 13
                     else:
                         variable_number = 12
+        #Here we update the scores on the boards the AI sees
         AI.score_taking(variable_number,self.turn)
         AI_Defense.score_taking(variable_number,self.turn)
+        #based on the turn, the piece put in the array that holds
+        #the game board together is changed, thus we can figure out
+        #who's piece it is.
         if self.turn ==0:
             piece = 1
         else:
             piece = 2
 
-        #new = self.turn + 1
-        #new = new % 2
-
+        #if it's not a valid move, don't continue and don't update the board
         if not self.valid_move(row, col, quad):
-            #maybe put a label here
-            # print("Space is already occupied, select another place")
             return self.turn
+        #if it's a valid move, update the board
         else:
             ## for undo button, not necessary
             self.board[quad][row][col] = piece
@@ -491,7 +495,7 @@ class Pentago():
             self.moves[self.top][2] = row
             self.moves[self.top][3] = col
             ## undo ends here
-
+            #check, winning move
             if self.winning_move(1):
                 self.player1 = True
             if self.winning_move(2):
@@ -500,9 +504,12 @@ class Pentago():
                 self.draw = True
                 self.state = 3
             elif self.player1 or self.player2:
-                # print(f'Congrats Player {piece}, you have won the game!')
                 self.state = 2
-
+    #This function makes sure the player or the AI is not putting it in
+    #a position that is taken. Specifically for the player, it makes sure
+    #that it doesn't skip the player's turn if the player clicks on any
+    #position of the screen that is not an open spot (this includes the
+    #outside of the board).
     def valid_move(self, row, col, quad):
         if self.board[quad][row][col] == 0:
             self.state = 1
@@ -510,6 +517,7 @@ class Pentago():
         else:
             self.state = 0
             return False
+    #This function checks if the move that was made is a winning move
     def winning_move(self, piece):
         #horizontal wins
         for i in range(len(self.board[0]) * 2):
@@ -559,6 +567,7 @@ class Pentago():
         if self.board[1][1][2] == piece and self.board[1][2][1] == piece and self.board[3][0][0]== piece and self.board[2][1][2] == piece and self.board[2][2][1] == piece:
             return True
         return False
+    #This function rotates the quad that the player or the AI wants to rotate
     def rotate_quad(self, quad, rotation):
         global quad_0_rotation
         global quad_1_rotation
@@ -570,11 +579,10 @@ class Pentago():
         self.moves[self.top][4] = quad
         self.moves[self.top][5] = rotation
         ## undo ends here
-        #GEORGE STUFF
 
-        #In here, I ended up adding code to make sure
-        #That the quad_#_rotation get updated based on
-        #which rotation was done.
+        #rotate left if the player or the AI decided to rotate left
+        #also update the quad_#_rotation global variables based on
+        #which quadrant was rotated
         if rotation == left:
             self.board[quad] = list(zip(*reversed(self.board[quad])))
             self.board[quad] = list(zip(*reversed(self.board[quad])))
@@ -587,6 +595,9 @@ class Pentago():
                 quad_2_rotation = quad_2_rotation - 1
             else:
                 quad_3_rotation = quad_3_rotation - 1
+        #rotate left if the player or the AI decided to rotate right
+        #also update the quad_#_rotation global variables based on
+        #which quadrant was rotated
         elif rotation == right:
             self.board[quad] = list(zip(*reversed(self.board[quad])))
             if quad == 0:
@@ -597,6 +608,10 @@ class Pentago():
                 quad_2_rotation = quad_2_rotation + 1
             else:
                 quad_3_rotation = quad_3_rotation + 1
+        #Make sure the quad_#_rotations don't go over 3 or under 0 since
+        #the quads only have 4 states (0-3). The state loops after it gets to the 4th
+        #rotation if you're rotating right, and it loops after it gets to the -1th
+        #rotation if you're rotating left.
         if quad_0_rotation == 4:
             quad_0_rotation = 0
         elif quad_0_rotation == -1:
@@ -613,10 +628,11 @@ class Pentago():
             quad_3_rotation = 0
         elif quad_3_rotation == -1:
             quad_3_rotation = 3
-        #AI stuff to update scores based on the rotations
+        #AI updates score based on the current rotations of the board
         AI.score_taking_rotations(quad_0_rotation, quad_1_rotation, quad_2_rotation, quad_3_rotation)
         AI_Defense.score_taking_rotations(quad_0_rotation, quad_1_rotation, quad_2_rotation, quad_3_rotation)
 
+        #Check if this is a winning move rotation
         if self.winning_move(1):
             self.player1 = True
             piece = 1
@@ -627,8 +643,8 @@ class Pentago():
             self.draw = True
             self.state = 3
         elif self.player1 or self.player2:
-            # print(f'Congrats Player {piece}, you have won the game!')
             self.state = 2
+    #Reset the board to play again
     def clear_board(self, setting):
         global quad_0_rotation
         global quad_1_rotation
@@ -662,6 +678,9 @@ class Pentago():
         quad_3_rotation = 0
         first_turn = True
 
+    #Experimental: NOT USED
+    #This function is an experimental undo button but it's still not fully
+    #working.
     def undo(self):
         #not fully working with ai but works with two player
         if self.top == -1:
@@ -688,6 +707,7 @@ class Pentago():
             self.moves[self.top][x] = 0
         self.top -= 1
 
+#This class holds all the board changes (graphically)
 class Board():
     def __init__(self):
 
@@ -704,6 +724,7 @@ class Board():
         self.screen = pygame.display.set_mode(size)
         pygame.display.set_caption("Pentago")
         self.default_font = pygame.font.get_default_font()
+    #The menu of the game
     def game_menu(self):
         pygame.draw.rect(self.screen, BLACK, (0,0, self.screensize, self.screensize + 65))
         font_gameTitle = pygame.font.Font(self.default_font, 80)
@@ -736,6 +757,7 @@ class Board():
         self.screen.blit(label32, (270, 480))
 
         pygame.display.update()
+    #game menu's button positions
     def gamemenuButton(self, x,y):
         if( 225 < x < 495) and (300 < y < 364):
             return 0
@@ -745,6 +767,7 @@ class Board():
             return 2
         else:
             return -1
+    #draws the board based on the array's state
     def draw_board(self, board, turn, humanfirst):
 
         pygame.draw.rect(self.screen, BLACK, (65, 65, (self.squaresize * 2) + 45, (self.squaresize * 2) + 45))
@@ -768,7 +791,6 @@ class Board():
         for c in range(3):
             for r in range(3):
                 pygame.draw.rect(self.screen,RED, ((c*self.indsquare)+85, (r*self.indsquare)+85, self.indsquare, self.indsquare))
-
                 if board[0][r][c] == 0:
                     pygame.draw.circle(self.screen,DARK_RED, (int(c*self.indsquare+(self.indsquare/2))+85, int(r*self.indsquare+(self.indsquare/2))+85), self.radius)
                 if board[0][r][c] == 1:
@@ -871,6 +893,8 @@ class Board():
         pygame.draw.polygon(self.screen, color, (
         (10 + x, 23 + y), (35 + x, 8 + y), (35 + x, 16 + y), (75 + x, 16 + y), (75 + x, 30 + y), (35 + x, 30 + y),
         (35 + x, 38 + y)))
+    #The positions where the arrows are to get the correct rotation based
+    #on which arrow is clicked
     def whichQuadRot(self, x,y):
         if (80 < x and x < 145) and (37 < y and y < 67):
             quad = 0
@@ -924,11 +948,13 @@ class Board():
 
         return x
 
+    #clear button to reset the board
     def clearButton(self, x,y):
         if(x > 84 and x <235) and (y > 705 and y < 744):
             return True
         else:
             return False
+    #menu button to return to the menu
     def menuButton(self, x, y):
         if (x > 495 and x < 645) and (y > 705 and y < 744):
             return True
@@ -938,9 +964,7 @@ class Board():
 #Game Running
 def running():
     running = True
-
     pygame.init()
-
     pentago = Pentago()
     board = Board()
     moveComplete = False
@@ -1013,15 +1037,17 @@ def running():
             else:
                 board.draw_board(pentago.board, pentago.turn, pentago.humanfirst)
                 pygame.display.update()
+                #The first turn 
                 if pentago.turn == 1:
                     if pentago.state == 0:
-                        #drop piece
+                        #drop piece into the game board
+                        #it knows where to drop the piece based on the col
+                        #and row which is based on the position of the mouse
+                        #when you clicked the mouse
                         if event.type == pygame.MOUSEBUTTONDOWN:
                             moveComplete = False
-
                             x = event.pos[0]
                             y = event.pos[1]
-
                             col = board.whichRowCol(x)
                             row = board.whichRowCol(y)
                             if col == 0 or row == 0:
@@ -1031,20 +1057,17 @@ def running():
                                     pentago.drop_piece(row, col)
                                 else:
                                     pentago.drop_piece(row, col)
-
                             board.draw_board(pentago.board, pentago.turn, pentago.humanfirst)
                             pygame.display.update()
-
-
                     if pentago.state == 1:
                         #rotate quadrant
                         board.draw_arrows(GRAY)
                         pygame.display.update()
-
+                        #rotates the respective quadrant based on which
+                        #arrow you clicked
                         if event.type == pygame.MOUSEBUTTONDOWN:
                             x = event.pos[0]
                             y = event.pos[1]
-
                             quad, rotation = board.whichQuadRot(x,y)
                             if quad == 5 or rotation == 5:
                                 pass
@@ -1052,12 +1075,9 @@ def running():
                                 pentago.rotate_quad(quad, rotation)
                                 board.draw_board(pentago.board, pentago.turn, pentago.humanfirst)
                                 pygame.display.update()
-
                                 moveComplete = True
-
                                 pentago.turn += 1
                                 pentago.turn = pentago.turn % 2
-
                                 if pentago.state == 0 or pentago.state == 1:
                                     pentago.state += 1
                                     pentago.state = pentago.state % 2
@@ -1070,10 +1090,8 @@ def running():
                         #drop piece
                         if event.type == pygame.MOUSEBUTTONDOWN:
                             moveComplete = False
-
                             x = event.pos[0]
                             y = event.pos[1]
-
                             col = board.whichRowCol(x)
                             row = board.whichRowCol(y)
                             if col == 0 or row == 0:
@@ -1083,20 +1101,15 @@ def running():
                                     pentago.drop_piece(row, col)
                                 else:
                                     pentago.drop_piece(row, col)
-
                             board.draw_board(pentago.board, pentago.turn, pentago.humanfirst)
                             pygame.display.update()
-
-
                     if pentago.state == 1:
                         #rotate quadrant
                         board.draw_arrows(GRAY)
                         pygame.display.update()
-
                         if event.type == pygame.MOUSEBUTTONDOWN:
                             x = event.pos[0]
                             y = event.pos[1]
-
                             quad, rotation = board.whichQuadRot(x,y)
                             if quad == 5 or rotation == 5:
                                 pass
@@ -1104,12 +1117,9 @@ def running():
                                 pentago.rotate_quad(quad, rotation)
                                 board.draw_board(pentago.board, pentago.turn, pentago.humanfirst)
                                 pygame.display.update()
-
                                 moveComplete = True
-
                                 pentago.turn += 1
                                 pentago.turn = pentago.turn % 2
-
                                 if pentago.state == 0 or pentago.state == 1:
                                     pentago.state += 1
                                     pentago.state = pentago.state % 2
@@ -1123,7 +1133,7 @@ def running():
                         #If this is the AI's turn, then don't wait for a click event. instead,
                         #make sure the AI takes its turn.
 
-                        #Take the scpre based on the current rotation
+                        #Take the score based on the current rotation
                         global first_turn
                         global first_turn_list
                         AI.score_taking_rotations(quad_0_rotation, quad_1_rotation, quad_2_rotation, quad_3_rotation)
@@ -1131,91 +1141,20 @@ def running():
                         moveComplete = False
                         high_score_defense = 0
                         high_score_offense = 0
+                        #Find our which node has the highest score on both offense and defense and also get the
+                        #score of the highest scoring monomial those nodes are part of
                         node_for_highest_score_defense,high_score_defense = AI_Defense.look_at_score_monomial()
                         node_for_highest_score_offense,high_score_offense = AI.look_at_score_monomial()
-                        
-                        # print("This is the high_score for defense:"+ str(high_score_defense))
-                        # print ("This is the high_score for offense" + str(high_score_offense))
+                        #Prioritizes offensive moves, based on the score of the monomials, play defensevely
+                        #or offensevely
                         if high_score_offense >= high_score_defense:
                             node_for_highest_score = node_for_highest_score_offense
                         else:
                             node_for_highest_score = node_for_highest_score_defense
-
+                        #if it's the first turn, choose randomly based on the list of starting moves.
                         if first_turn == True:
                             node_for_highest_score = random.choice(first_turn_list)
                             first_turn = False
-                        # print("This is the node: "+str(node_for_highest_score))
-                        #get scores based on offense and defense
-##                        highest_score = -1
-##                        highest_score_offensive = -1
-##                        highest_score_defensive = -1
-##                        go_defense = False
-##                        go_offense = False
-##                        node_list_offense = AI.look_at_scores()
-##                        node_list_defense = AI_Defense.look_at_scores()
-##                        node_list_offense_randomness = node_list_offense.copy()
-##                        node_list_defense_randomness = node_list_defense.copy()
-##                        node_list_offense_2 = []
-##                        node_list_defense_2 = []
-##                        node_list_select_place = []
-                        #compare all scores for offense and defense
-                        #get the highest one to put piece in there
-##                        for i in range(36):
-##                            if node_list_offense[i] >= highest_score_offensive:
-##                                highest_score_offensive = node_list_offense[i]
-##                            if node_list_defense[i] >= highest_score_defensive:
-##                                highest_score_defensive = node_list_defense[i]
-##                            if node_list_offense[i] >= highest_score:
-##                                highest_score = node_list_offense[i]
-##                                #node_for_highest_score = i
-##                            if node_list_defense[i] >= highest_score:
-##                                highest_score = node_list_defense[i]
-
-                                #node_for_highest_score = i
-                        #print ("Highest score is: " + str(highest_score))
-##                        for i in range(36):
-##                            #if node_list_offense[i] >= highest_score_defensive:
-##                                #node_list_offense_2.append(i)
-##                                #print ("This is offense " + str(i) + ": " + str(node_list_offense[i]))
-##                            #if node_list_defense[i] >= highest_score:
-##                                #node_list_defense_2.append(i)
-##                                #go_defense = True
-##                                #print ("This is defense " + str(i) + ": " + str(node_list_defense[i]))
-##
-##                            if node_list_offense[i] >= highest_score:
-##                                print ("This is offense " + str(i) + ": " + str(node_list_offense[i]))
-##                                go_offense = True
-##                                node_list_offense_2.append(i)
-##                            if node_list_defense[i] >= highest_score:
-##                                print ("This is defense " + str(i) + ": " + str(node_list_defense[i]))
-##                                go_defense = True
-##                                node_list_defense_2.append(i)
-
-                            #if go_offense == True and highest_score >= 2000:
-                                #go_defense = False
-
-                        #for i in range(len(node_list_offense_2)):
-                            #node_list_select_place.append(node_list_offense_2[i])
-                        #for i in range(len(node_list_defense_2)):
-                            #node_list_select_place.append(node_list_defense_2[i])
-
-##                        if go_offense == True:
-##                            node_for_highest_score = random.choice(node_list_offense_2)
-##                            go_offense = False
-##                        else:
-##                            node_for_highest_score = random.choice(node_list_defense_2)
-##
-                        #if go_defense == True:
-                            #node_for_highest_score = random.choice(node_list_defense_2)
-                            #go_defense = False
-                        #else:
-                            #node_for_highest_score = random.choice(node_list_offense_2)
-                        #node_for_highest_score = random.choice(node_list_select_place)
-
-
-
-
-
                         # refactored the if statements
                         # figuring out quad for searching row, col in board hash
 
@@ -1231,32 +1170,21 @@ def running():
                         # value of specific quad rotation.  quad_0_rotation, quad_1_rotation etc
                         # quad changes depending on which quad is highest score
                         quad_rotation = globals()[('quad_') + str(quad_for_highest_score) + ('_rotation')]
-
-                        # print(f'quad for highest score: {quad_for_highest_score}')
-                        # print(f'node for highest score: {node_for_highest_score}')
-                        # print(f'quad rotation: {quad_rotation}')
-
                         row = BoardHash.board_hash[quad_for_highest_score][node_for_highest_score][quad_rotation][0]
                         col = BoardHash.board_hash[quad_for_highest_score][node_for_highest_score][quad_rotation][1]
                         # end of refactoring if statements
 
-
-
-                        # print("row:" + str(row) + "| col:" + str(col))
+                        #drop the piece based on the quad, the row, and the column
                         pentago.drop_piece(row, col, quad_rotation)
 
                         # # trigger mouse event so win message will display in case AI wins
                         pygame.event.post(pygame.event.Event(pygame.MOUSEMOTION,
                                                              {"pos": pygame.mouse.get_pos(), "rel": None,
                                                               "buttons": None}))
-                        # print("AI piece dropped")
-
                         board.draw_board(pentago.board, pentago.turn, pentago.humanfirst)
                         pygame.display.update()
-
                         node_for_highest_score = 0
-
-
+                    #AI rotation phase
                     if pentago.state == 1:
                         quad_0_rotation_right = quad_0_rotation +1
                         quad_1_rotation_right = quad_1_rotation +1
@@ -1285,6 +1213,8 @@ def running():
                         left_3_defense = 0
                         go_defense_rotation = False
 
+                        #Look at all possible offensive rotations and figure out the highest scoring
+                        #monomial based on the rotation
                         right_0 = AI.score_taking_rotations(quad_0_rotation_right, quad_1_rotation, quad_2_rotation, quad_3_rotation)
                         left_0 = AI.score_taking_rotations(quad_0_rotation_left, quad_1_rotation, quad_2_rotation, quad_3_rotation)
                         right_1 = AI.score_taking_rotations(quad_0_rotation, quad_1_rotation_right, quad_2_rotation, quad_3_rotation)
@@ -1295,6 +1225,8 @@ def running():
                         left_3 = AI.score_taking_rotations(quad_0_rotation, quad_1_rotation, quad_2_rotation, quad_3_rotation_left)
 
 ############################################################################################################################################
+                        #Look at all possible defensive rotations and figure out the highest scoring
+                        #monomial based on the rotation
                         right_0_defense = AI_Defense.score_taking_rotations(quad_0_rotation_right, quad_1_rotation, quad_2_rotation, quad_3_rotation)
                         left_0_defense = AI_Defense.score_taking_rotations(quad_0_rotation_left, quad_1_rotation, quad_2_rotation, quad_3_rotation)
                         right_1_defense = AI_Defense.score_taking_rotations(quad_0_rotation, quad_1_rotation_right, quad_2_rotation, quad_3_rotation)
@@ -1304,48 +1236,41 @@ def running():
                         right_3_defense = AI_Defense.score_taking_rotations(quad_0_rotation, quad_1_rotation, quad_2_rotation, quad_3_rotation_right)
                         left_3_defense = AI_Defense.score_taking_rotations(quad_0_rotation, quad_1_rotation, quad_2_rotation, quad_3_rotation_left)
 
-
+                        #Figure out which offensive move is the highest scoring monomial.
                         if right_0 > high_score:
                             high_score = right_0
                             quad = 0
                             rotation = 0
-                            # print("This is an offensive rotation on quad: " + str(quad)+ " with rotation, " + str(rotation) + " and score, " + str(high_score))
                         if left_0 > high_score:
                             high_score = left_0
                             quad = 0
                             rotation = 1
-                            # print("This is an offensive rotation on quad: " + str(quad)+ " with rotation, " + str(rotation) + " and score, " + str(high_score))
                         if right_1 > high_score:
                             high_score = right_1
                             quad = 1
                             rotation = 0
-                            # print("This is an offensive rotation on quad: " + str(quad)+ " with rotation, " + str(rotation) + " and score, " + str(high_score))
                         if left_1 > high_score:
                             high_score = left_1
                             quad = 1
                             rotation = 1
-                            # print("This is an offensive rotation on quad: " + str(quad)+ " with rotation, " + str(rotation) + " and score, " + str(high_score))
                         if right_2 > high_score:
                             high_score = right_2
                             quad = 2
                             rotation = 0
-                            # print("This is an offensive rotation on quad: " + str(quad)+ " with rotation, " + str(rotation) + " and score, " + str(high_score))
                         if left_2 > high_score:
                             high_score = left_2
                             quad = 2
                             rotation = 1
-                            # print("This is an offensive rotation on quad: " + str(quad)+ " with rotation, " + str(rotation) + " and score, " + str(high_score))
                         if right_3 > high_score:
                             high_score = right_3
                             quad = 3
                             rotation = 0
-                            # print("This is an offensive rotation on quad: " + str(quad)+ " with rotation, " + str(rotation) + " and score, " + str(high_score))
                         if left_3 > high_score:
                             high_score = left_3
                             quad = 3
                             rotation = 1
-                            # print("This is an offensive rotation on quad: " + str(quad)+ " with rotation, " + str(rotation) + " and score, " + str(high_score))
 
+                        #If you find a higher or equally level defensive move, go for that instead
                         if right_0_defense >= high_score:
                             high_score = right_0_defense
                             go_defense_rotation = True
@@ -1371,6 +1296,8 @@ def running():
                             high_score = left_3_defense
                             go_defense_rotation = True
 
+                        #Check the scores of the highest scoring monomial based on the rotation and rotate
+                        #to the one that gives the lowest highest scoring monomial
                         if go_defense_rotation == True:
                             go_defense_rotation = False
                             high_score = high_score +1
@@ -1378,57 +1305,44 @@ def running():
                                 high_score = right_0_defense
                                 quad = 0
                                 rotation = 0
-                                #print("This is an defensive rotation on quad: " + str(quad)+ " with rotation, " + str(rotation))
                             if left_0_defense < high_score:
                                 high_score = left_0_defense
                                 quad = 0
                                 rotation = 1
-                                # print("This is an defensive rotation on quad: " + str(quad)+ " with rotation, " + str(rotation) + " and score, " + str(high_score))
                             if right_1_defense < high_score:
                                 high_score = right_1_defense
                                 quad = 1
                                 rotation = 0
-                                # print("This is an defensive rotation on quad: " + str(quad)+ " with rotation, " + str(rotation) + " and score, " + str(high_score))
                             if left_1_defense < high_score:
                                 high_score = left_1_defense
                                 quad = 1
                                 rotation = 1
-                                # print("This is an defensive rotation on quad: " + str(quad)+ " with rotation, " + str(rotation) + " and score, " + str(high_score))
                             if right_2_defense < high_score:
                                 high_score = right_2_defense
                                 quad = 2
                                 rotation = 0
-                                # print("This is an defensive rotation on quad: " + str(quad)+ " with rotation, " + str(rotation) + " and score, " + str(high_score))
                             if left_2_defense < high_score:
                                 high_score = left_2_defense
                                 quad = 2
                                 rotation = 1
-                                # print("This is an defensive rotation on quad: " + str(quad)+ " with rotation, " + str(rotation) + " and score, " + str(high_score))
                             if right_3_defense < high_score:
                                 high_score = right_3_defense
                                 quad = 3
                                 rotation = 0
-                                # print("This is an defensive rotation on quad: " + str(quad)+ " with rotation, " + str(rotation) + " and score, " + str(high_score))
                             if left_3_defense < high_score:
                                 high_score = left_3_defense
                                 quad = 3
                                 rotation = 1
-                                # print("This is an defensive rotation on quad: " + str(quad)+ " with rotation, " + str(rotation) + " and score, " + str(high_score))
-
-
-
-
-                        #print("highscore: " + str(high_score))
-
+                        #rotate the quadrant based on the AI's decision and update the board
                         pentago.rotate_quad(quad, rotation)
                         board.draw_board(pentago.board, pentago.turn, pentago.humanfirst)
                         pygame.event.post(pygame.event.Event(pygame.MOUSEMOTION, {"pos":pygame.mouse.get_pos(), "rel": None, "buttons": None}))
 
-
+                        #update move complete to go to next turn and make sure to make arrows disappear and
+                        #make sure that we restart the states to have the player start at the 1st state
                         pygame.display.update()
                         moveComplete = True
                         pentago.turn += 1
-                        # print(pentago.turn)
                         if pentago.state == 0 or pentago.state == 1:
                             pentago.state += 1
                             pentago.state = pentago.state % 2
