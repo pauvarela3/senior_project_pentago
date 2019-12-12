@@ -1,3 +1,5 @@
+###This program's purpose is to make figuring out which quad, row, and col
+###the AI chooses
 
 # node variables contained in respective quadrants
 quad_0_variables = [0, 1, 2, 6, 7, 8, 12, 13, 14]
@@ -59,31 +61,3 @@ board_hash = {0: quad_0_hash, 1: quad_1_hash, 2: quad_2_hash, 3: quad_3_hash}
 # access row ==> board_hash[quad][node_variable][rotation][0]
 # access col ==> board_hash[quad][node_variable][rotation][1]
 
-
-
-# testing below
-
-# node_variable = 6
-# print(f'test variable: {node_variable}')
-
-# rotation = 3
-# print(f'rotation: {rotation}')
-
-# if (node_variable in quad_0_variables):
-#     quad = 0
-# if (node_variable in quad_1_variables):
-#     quad = 1
-# if (node_variable in quad_2_variables):
-#     quad = 2
-# if (node_variable in quad_3_variables):
-#     quad = 3
-
-# print(f'quad: {quad}')
-
-# row = board_hash[quad][node_variable][rotation][0]
-# column = board_hash[quad][node_variable][rotation][1]
-# print(f'row: {row}')
-# print(f'column: {column}')
-
-# rotation = globals()[('quad_')+str(quad)+('_rotation')]
-# print(f'rotation: {rotation}')
