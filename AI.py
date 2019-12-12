@@ -1,11 +1,19 @@
 #AI Programming Script with backstage gameboard
-from pprint import pprint
-import monomials
-nodes = []
-nodes_1 = []
-monomial_objects = []
-changed = False
+### This Python Program contains what the AI is looking at and how it should act
+### based on the parameters it is given, however this is the offensive AI.
+### This program builds upon a board that acts as a scoring board, which is used
+### to figure out where the AI should put their piece based on the state of the board.
+### In the end, what it is trying to do is finishing up monomials.
 
+
+from pprint import pprint
+import monomials #import monomials so you have a list of all the monomials in the board
+nodes = []#node array used to represent all 36 nodes in the board
+monomial_objects = []#monomial array used to represent all 704 monomials in the board
+changed = False #global variable used to see if you changed the values to look ahead or if you didn't
+
+#BEING USED
+#Monomial objects used to represent each monomial in the board
 class monomial:
     __monomial = []
     __nodes = [0] * 5
@@ -22,24 +30,18 @@ class monomial:
         self.__passing = passing
         self.__iterator = iterator
         self.__complete = complete
+    #update the score of the monomial based on the taken status of nodes it's related to
     def monomial_score_update(self, taken):
-        #CHANGE THIS TO 1 IF YOU WANT THE AI TO BE SECOND PLAYER
+        #CHANGE THE TAKEN TO 1 IF YOU WANT THE AI TO BE SECOND PLAYER
         if taken == 0:
-            #if (self.__score <= 3):
             self.__score = self.__score*4
-            #elif (self.__score <= 6):
-                #self.__score = self.__score*4
-            #elif (self.__score <= 24):
-                #self.__score = self.__score*8
-            #elif (self.__score <= 192):
-                #self.__score = self.__score * 16
-            #elif (self.__score <= 3072):
-                #self.__score = self.__score * 32
+        #CHANGE THE TAKEN TO 0 IF YOU WANT THE AI TO BE SECOND PLAYER
         elif taken == 1:
             self.__score = self.__score*0
+    #reset the monomial score for the looking in advance
     def monomial_score_reset(self):
         self.__score = int(self.__score/4)
-        #print("This is the score: " + str(self.__score))
+    #Update the score of the monomials based on how many rotations away it is from completion
     def monomial_score_rotation_update(self, rotations_away):
         if self.__passed == False:
             if rotations_away >= 2 and self.__passing == 2:
@@ -61,17 +63,18 @@ class monomial:
                 self.__passing = 2
             elif rotations_away == 0 and self.__passing == 0:
                 self.__score = self.__score*3
-                #print("Look at this monomial:" + str(self.__monomial))
                 self.__passing = 2
             elif rotations_away >= 2 and self.__passing == 0:
                 self.__score = self.__score*1
         self.__passed = True
+    #Add the nodes the monomial is related to
     def add_node(self, i):
         self.__nodes[self.__iterator] = i
         self.__iterator += 1
-        #print(i)
+    #Update if the monomial is complete
     def update_complete(self):
         self.__complete = True
+    #Reset passed so you can update with rotations again
     def reset_passed(self):
         self.__passed = False
     def return_complete(self):
@@ -84,16 +87,16 @@ class monomial:
         return self.__score
     def return_nodes(self):
         return self.__nodes
+    #Used to reset the board (the monomial's status)
     def reset(self):
         self.__score = 1
         self.__passed = False
         self.__passing = 0
         self.__complete = False
 
-
-
+#BEING USED
+#Node objects used to represent each space in the board
 class node:
-    #class variables
     __quad = 0
     __row = 0
     __col = 0
@@ -102,7 +105,6 @@ class node:
     __monomials = []
     __taken = 2
     __score = 0
-    #constructor
     def __init__(self,quad = 0, col = 0, row = 0, rotations = 0, string = "", monomials = [], taken = 2, score = 0):
         self.__quad = quad
         self.__col = col
@@ -112,12 +114,13 @@ class node:
         self.__monomials = monomials
         self.__taken = taken
         self.__score = score
-        #static methods
-        #instance methods
+    #Connecting the monomials the node is related to
     def monomials_constructor(self,monomial):
         self.__monomials.append(monomial)
+    #Updating if the node has been taken by the AI or by the player
     def update_taken_state(self,taken):
         self.__taken = taken
+    #Updating score
     def update_score(self, score):
         self.__score = score
     def return_string(self):
@@ -128,21 +131,16 @@ class node:
         return self.__taken
     def return_score(self):
         return self.__score
+    #Used to reset the board (The node's status)
     def reset(self):
         self.__score = 0
         self.__taken = 2
 
-
-
-#def main():
-#    pass
-
-#if __name__ == '__main__':
-#    main()
-
+#BEING USED
+#In here we define the backboard, basically defining the
+#pentago board for the AI to recognize
 def defining_backboard():
     global nodes
-    global nodes_1
     positions = ""
     quad = 0
     col = 0
@@ -161,9 +159,13 @@ def defining_backboard():
         string = str(quad) + str(row_based_on_quad) + str(col_based_on_quad) + str(rotation)
         #########################################################################
         #In here we connect the node objects with monomial objects
+        #The node connects to 4 different positoins because of the different
+        #rotations each quad can be at.
         positions = string[1] + string[2]
         for rotations in range(4):
             string = string[:-1] + str(rotations)
+#################################################################################
+#In here it's the first col of the first row
             if positions == "00":
                 if rotations == 0:
                     for j in monomial_objects:
@@ -432,9 +434,13 @@ def defining_backboard():
                             if string == k:
                                 monomials_1.append(j)
                                 break
-        #########################################################################
+##################################################################################
+#Define the node object and append it to the array nodes
         nodes.append(node(quad, col, row, rotation, string, monomials_1, taken))
         monomials_1 = []#here you reset the monomials_1 list to get the other node monomials
+
+#All this is used to move along the board to make sure that all the nodes have their respective
+#have their respectives spots on the board
         col += 1
         if col == 6:
             row += 1
@@ -449,6 +455,8 @@ def defining_backboard():
                 quad = 1
             else:
                 quad = 3
+        #Make sure that you stay within the 0-2 row and columns (This is to stay withing the
+        #range of rows and columns based on the quad).
         if col >= 3:
             col_based_on_quad = col%3
         else:
@@ -457,8 +465,9 @@ def defining_backboard():
             row_based_on_quad = row%3
         else:
             row_based_on_quad = row
-##############################################################################
-#This construct the list of monomial objects
+            
+#BEING USED  
+#This function constructs the list of monomials
 def monomial_constructor(score):
     global monomial_objects
     passing = 0
@@ -469,30 +478,29 @@ def monomial_constructor(score):
         nodes = [0] * 5
         monomial_objects.append(monomial(i, nodes, score, passed, passing, iterator,complete))
 
+#BEING USED
+#This function updates the scores of the monomials based on the piece dropped (not rotations)
+#and also updates the state of the node (wether the node is taken by the AI or by the player).
+#This function also tells the AI if a monomial is complete so that it doesn't try to complete
+#the monomial if it already is completed.
 def score_taking(variable_number,turn):
-    #print (turn)
     global nodes
     for i in range(36):
         if i == variable_number:
-            #pprint (nodes[i].return_string())
-            #print (i)
             nodes[i].update_taken_state(turn)
-            #print("##########################################################################")
             for j in range (len(nodes[i].return_monomials())):
                 nodes[i].return_monomials()[j].monomial_score_update(turn)
                 if nodes[i].return_monomials()[j].return_score() >= 1024:
                     nodes[i].return_monomials()[j].update_complete()
-                #print (j)
-                #pprint(nodes[i].return_monomials()[j].return_monomial())
-                #pprint(nodes[i].return_monomials()[j].return_score())
 
-    #for i in range(36):
-        #print(i)
-        #for j in range(len(nodes[i].return_monomials())):
-            #pprint(nodes[i].return_monomials()[j].return_monomial())
-            #pprint(nodes[i].return_monomials()[j].return_score())
+#BEING USED
+#This function updates the scores of the monomials based on the current
+#rotations of the board. This function also calls the adding_scores function
+#since this is the last step for the end of the turn. This function also returns
+#the highest scoring monomial of that specified rotation, that way in the pentago
+#game, the AI goes for the highest scoring rotation(quad rotates right/left, etc.)
+#thus continuing to connect the monomial and trying to win the game.
 def score_taking_rotations(rotation_0,rotation_1,rotation_2,rotation_3):
-    #print("################################################################")
     if rotation_0 == -1:
         rotation_0 = 3
     elif rotation_1 == -1:
@@ -509,10 +517,6 @@ def score_taking_rotations(rotation_0,rotation_1,rotation_2,rotation_3):
         rotation_2 = 0
     elif rotation_3 == 4:
         rotation_3 = 0
-    #print("rotation_0: "+ str(rotation_0))
-    #print("rotation_1: "+ str(rotation_1))
-    #print("rotation_2: "+ str(rotation_2))
-    #print("rotation_3: "+ str(rotation_3))
     global monomial_objects
     global nodes
     quad_0_passed = False
@@ -525,11 +529,8 @@ def score_taking_rotations(rotation_0,rotation_1,rotation_2,rotation_3):
     rotation_character = ''
     quad_character = ''
     monomial_index = 0
-    #print ("This is a new rotation")
-    #for i in range(36):
     for j in monomial_objects:
         for k in j.return_monomial():
-            #pprint(k)
             rotation_character = k[3]
             quad_character = k[0]
             if quad_character == '0' and quad_0_passed == False:
@@ -560,39 +561,26 @@ def score_taking_rotations(rotation_0,rotation_1,rotation_2,rotation_3):
                 rotations_away_total += rotations_away
                 quad_3_passed = True
                 rotations_away = 0
-
         quad_0_passed = False
         quad_1_passed = False
         quad_2_passed = False
         quad_3_passed = False
-        #print(str(monomial_index) + ":rotations_away: " + str(rotations_away_total))
         monomial_objects[monomial_index].monomial_score_rotation_update(rotations_away_total)
-        #if(monomial_objects[monomial_index].return_score() == 3 ):
-            #pprint(monomial_objects[monomial_index].return_monomial())
-            #print(monomial_objects[monomial_index].return_score())
         if (monomial_objects[monomial_index].return_score() > highest_score):
             highest_score = monomial_objects[monomial_index].return_score()
-            #print(monomial_objects[monomial_index].return_monomial())
-            #print("rotations_away: " + str(rotations_away_total))
-            #print(nodes[i].return_monomials()[j].return_monomial())
-            #print(highest_score)
-        #pprint(rotations_away_total)
-        #pprint(monomial_objects[monomial_index].return_monomial())
-        #pprint(monomial_objects[monomial_index].return_score())
         monomial_index +=1
         rotations_away = 0
         rotations_away_total = 0
-    #print ("Highest_Score: " + str(highest_score))
     adding_scores()
     for i in range(36):
         for j in range(len(nodes[i].return_monomials())):
             nodes[i].return_monomials()[j].reset_passed()
-            #print(i)
-            #print(j)
-            #pprint(nodes[i].return_monomials()[j].return_monomial())
-            #pprint(nodes[i].return_monomials()[j].return_score())
     return highest_score
 
+#BEING USED
+#This function updates the scores of the nodes based on the scores of the
+#monomials in the current board. Basically, add all the scores of the monomials
+#the node is related to, and that's the score of the node.
 def adding_scores():
     global nodes
     score = 0
@@ -600,30 +588,15 @@ def adding_scores():
         if nodes[i].return_state() == 2:
             for j in range (len(nodes[i].return_monomials())):
                 score += nodes[i].return_monomials()[j].return_score()
-                #print (j)
-                #pprint(nodes[i].return_monomials()[j].return_monomial())
-                #pprint(nodes[i].return_monomials()[j].return_score())
         else:
             score = 0
         nodes[i].update_score(score)
-        #if i == 17:
-            #print("This is the 17th node#################")
-            #print (score)
-            #print (nodes[i].return_score())
-        #if i == 22:
-            #print("This is the 22th node################")
-            #print(score)
-            #print(nodes[i].return_score())
         score = 0
-    #for i in range(36):
-        #print (str(i+1) + ":" + str(nodes[i].return_score()) + ":" + str(nodes[i].return_state()))
-        #for j in range (len(nodes[i].return_monomials())):
-            #if i == 17:
-                #print (str(i+1) + ":" + str(nodes[i].return_score()) + ":" + str(nodes[i].return_state()))
-                #pprint(str(j) + ":" + str(nodes[i].return_monomials()[j].return_monomial()) + ":" + str(nodes[i].return_monomials()[j].return_score()))
-            #elif i == 22:
-                #print (str(i+1) + ":" + str(nodes[i].return_score()) + ":" + str(nodes[i].return_state()))
-                #pprint(str(j) + ":" + str(nodes[i].return_monomials()[j].return_monomial()) + ":" + str(nodes[i].return_monomials()[j].return_score()))
+
+#NOT BEING USED
+#This function looks at every node and sends a list of the highest scoring nodes
+#based on the current board and how many connections to different monomials the
+#node has.
 def look_at_scores():
     global nodes
     highest_score = 0
@@ -633,9 +606,10 @@ def look_at_scores():
         node_list[i] = nodes[i].return_score()
         if nodes[i].return_score() > highest_score:
             highest_score = nodes[i].return_score()
-            #node_for_highest_score = i
-    #return node_for_highest_score
     return node_list
+
+#BEING USED
+#This function affects the scores so that the AI sees one step in the future
 def score_taking_in_advance(variable_number,turn):
     global nodes
     global changed
@@ -643,12 +617,22 @@ def score_taking_in_advance(variable_number,turn):
         for j in range (len(nodes[variable_number].return_monomials())):
             nodes[variable_number].return_monomials()[j].monomial_score_update(turn)
         changed = True
-                
+
+#BEING USED
+#This function reverts the scores that were affected by the AI looking up ahead
+#one move
 def revert_score_taking_in_advance(variable_number,turn):
     global nodes
     for j in range (len(nodes[variable_number].return_monomials())):
         nodes[variable_number].return_monomials()[j].monomial_score_reset()
 
+#BEING USED
+#This function looks at every monomial in the board and looks for the highest
+#scoring one so it prioritizes finishing it up if there's no better monomial
+#in the current rotation, it then picks the best spot it could put it based on
+#the spots that specified monomial has in it. It uses the two functions above,
+#to look ahead and see how the scores will be affected if a piece is put in
+#a specified space. (Looks through all the current open spaces)
 def look_at_score_monomial():
     highest_monomial_score = 0
     list_with_highest_monomial_score = []
@@ -671,7 +655,14 @@ def look_at_score_monomial():
             highest_score = nodes[i].return_score()
             variable_number = i
     return variable_number,highest_monomial_score
-            
+
+#Experimental: NOT BEING USED
+#This function looks ahead in rotations, it basically puts a piece in every:
+#spot that is open and looks at how the score will be affected based on the rotation
+#with a piece of the opponent already taken into account
+#This is experimental because it makes it so that the AI doesn't rotate where it
+#needs to finish a monomial because it thinks it already did it. Atleast, that's,
+#what we predict
 def score_taking_rotations_in_advance(rotation_0,rotation_1,rotation_2,rotation_3):
     if rotation_0 == -1:
         rotation_0 = 3
@@ -733,8 +724,7 @@ def score_taking_rotations_in_advance(rotation_0,rotation_1,rotation_2,rotation_
                     rotations_away = 1
                 rotations_away_total += rotations_away
                 quad_3_passed = True
-                rotations_away = 0
-                
+                rotations_away = 0       
         quad_0_passed = False
         quad_1_passed = False
         quad_2_passed = False
@@ -743,8 +733,6 @@ def score_taking_rotations_in_advance(rotation_0,rotation_1,rotation_2,rotation_
         monomial_index +=1
         rotations_away = 0
         rotations_away_total = 0
-
-################################
     monomial_index = 0
     for i in range(36):
         score_taking_in_advance(i,0)
@@ -761,6 +749,10 @@ def score_taking_rotations_in_advance(rotation_0,rotation_1,rotation_2,rotation_
             nodes[i].return_monomials()[j].reset_passed()
     return highest_score
 
+#BEING USED
+#This function is used to connect the nodes with monomials specifically
+#monomials -> nodes that way the monomial can have a list of the nodes
+#it's part of.
 def connect_nodes_with_monomials():
     global nodes
     global monomial_objects
@@ -771,11 +763,9 @@ def connect_nodes_with_monomials():
             for k in range(len(monomial_objects)):
                 if monomial_objects[k].return_monomial() == nodes[i].return_monomials()[j].return_monomial():
                     monomial_objects[k].add_node(i)
-#def defining_open_fours():
-    #global monomial_objects
-        
-    
 
+#BEING USED
+#This function resets the board
 def reset_board():
     global nodes
     global monomial_objects
@@ -783,48 +773,9 @@ def reset_board():
         nodes[i].reset()
     for i in range(len(monomial_objects)):
         monomial_objects[i].reset()
-    #for i in range(36):
-        #print(nodes[i].return_score())
 
-
-#IGNORE COMMMENTED OUT STUFF
-    #for i in monomial_objects:
-        #pprint(index)
-        #pprint(i.return_monomial())
-        #index+=1
-
-#def connect_to_monomials():
-    #global nodes
-    #nodes_1[0].monomials_constructor(monomials.empty_1)
-    #for i in nodes:
-        #for j in monomials.empty_1:
-            #for k in j:
-                #if i.return_string == k:
-                    #print ("----------------------------------------------")
-                    #i.monomials_constructor(j)
-                    #break
 
 
 defining_backboard()
 connect_nodes_with_monomials()
 
-
-#score_taking(0,0)
-#score_taking_rotations(0,0,0,0)
-#for i in range(36):
-    #pprint(nodes_1[i].return_string())
-    #pprint(str(i) + " " + nodes[i].return_string())
-#connect_to_monomials()
-
-
-##################################################################################
-##########                                                              ##########
-##########                      Printing the monomials                  ##########
-##########                                                              ##########
-##################################################################################
-#score_taking(0,1)
-#for i in range(36):
-    #print(str(i))
-    #for j in range(len(nodes[i].return_monomials())):
-        #pprint(nodes[i].return_monomials()[j].return_monomial())
-        #pprint(nodes[i].return_monomials()[j].return_score())
