@@ -971,8 +971,6 @@ def running():
 
     while running:
         for event in pygame.event.get():
-            if event.type == pygame.mouse:
-                print(event.pos[0], event.pos[1])
             if event.type == pygame.QUIT:
                 sys.exit()
 
@@ -1037,7 +1035,7 @@ def running():
             else:
                 board.draw_board(pentago.board, pentago.turn, pentago.humanfirst)
                 pygame.display.update()
-                #The first turn 
+                #The first turn
                 if pentago.turn == 1:
                     if pentago.state == 0:
                         #drop piece into the game board
